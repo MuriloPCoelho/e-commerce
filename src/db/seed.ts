@@ -1,7 +1,14 @@
 import crypto from "crypto";
 
 import { db } from ".";
-import { categoriesTable, productsTable, productVariantsTable } from "./schema";
+import {
+  categoriesTable,
+  productsTable,
+  productVariantsTable,
+  colorsTable,
+  sizesTable,
+  brandsTable,
+} from "./schema";
 
 const productImages = {
   Mochila: {
@@ -275,7 +282,22 @@ const categories = [
   },
 ];
 
-const products = [
+type VariantSeed = {
+  color: string;
+  price: number;
+  size?: string;
+  stock?: number;
+};
+
+type ProductSeed = {
+  name: string;
+  description: string;
+  categoryName: string;
+  brand?: string;
+  variants: VariantSeed[];
+};
+
+const products: ProductSeed[] = [
   // Acessórios
   {
     name: "Mochila",
@@ -542,28 +564,77 @@ async function main() {
   try {
     // Limpar dados existentes
     console.log("🧹 Limpando dados existentes...");
+    // apagar na ordem das dependências
     await db.delete(productVariantsTable);
     await db.delete(productsTable);
+    await db.delete(brandsTable);
+    await db.delete(colorsTable);
+    await db.delete(sizesTable);
     await db.delete(categoriesTable);
     console.log("✅ Dados limpos com sucesso!");
 
-    // Inserir categorias primeiro
-    const categoryMap = new Map<string, string>();
+    // Inserir cores, tamanhos e marcas padrão
+  const colorMap = new Map<string, number>();
+  const sizeMap = new Map<string, number>();
+  const brandMap = new Map<string, number>();
+
+    console.log("🎨 Criando cores padrão...");
+    const defaultColors = [
+      { name: "Preto", hex: "#000000" },
+      { name: "Branco", hex: "#FFFFFF" },
+      { name: "Azul", hex: "#1E90FF" },
+      { name: "Verde", hex: "#228B22" },
+      { name: "Bege", hex: "#F5F5DC" },
+      { name: "Marrom", hex: "#8B4513" },
+      { name: "Vinho", hex: "#800000" },
+    ];
+
+    for (const c of defaultColors) {
+      const [inserted] = await db
+        .insert(colorsTable)
+        .values({ name: c.name, hex: c.hex })
+        .returning({ id: colorsTable.id });
+
+      colorMap.set(c.name, Number(inserted.id));
+    }
+
+    console.log("📏 Criando tamanhos padrão...");
+    const defaultSizes = ["P", "M", "G", "GG", "U"];
+    for (const s of defaultSizes) {
+      const [inserted] = await db
+        .insert(sizesTable)
+        .values({ name: s })
+        .returning({ id: sizesTable.id });
+
+      sizeMap.set(s, Number(inserted.id));
+    }
+
+    console.log("🏷️ Criando marcas padrão...");
+    const defaultBrands = ["Nike", "Puma", "New Balance", "Jordan", "Adidas"];
+    for (const b of defaultBrands) {
+      const [inserted] = await db
+        .insert(brandsTable)
+        .values({ name: b, slug: generateSlug(b) })
+        .returning({ id: brandsTable.id });
+
+      brandMap.set(b, Number(inserted.id));
+    }
+
+    // Inserir categorias
+  const categoryMap = new Map<string, number>();
 
     console.log("📂 Criando categorias...");
     for (const categoryData of categories) {
-      const categoryId = crypto.randomUUID();
       const categorySlug = generateSlug(categoryData.name);
 
       console.log(`  📁 Criando categoria: ${categoryData.name}`);
 
-      await db.insert(categoriesTable).values({
-        id: categoryId,
-        name: categoryData.name,
-        slug: categorySlug,
-      });
+      const [inserted] = await db
+        .insert(categoriesTable)
+        .values({ name: categoryData.name, slug: categorySlug })
+        .returning({ id: categoriesTable.id });
 
-      categoryMap.set(categoryData.name, categoryId);
+      categoryMap.set(categoryData.name, Number(inserted.id));
     }
 
     // Inserir produtos
@@ -572,10 +643,13 @@ async function main() {
       const productSlug = generateSlug(productData.name);
       const categoryId = categoryMap.get(productData.categoryName);
 
+      // escolher ou criar uma marca aleatória para o produto
+      const brandId =
+        brandMap.get(productData.brand ?? defaultBrands[0]) ??
+        Array.from(brandMap.values())[0];
+
       if (!categoryId) {
-        throw new Error(
-          `Categoria "${productData.categoryName}" não encontrada`
-        );
+        throw new Error(`Categoria "${productData.categoryName}" não encontrada`);
       }
 
       console.log(`📦 Criando produto: ${productData.name}`);
@@ -586,12 +660,11 @@ async function main() {
         slug: productSlug,
         description: productData.description,
         categoryId: categoryId,
-        priceInCents: productData.variants[0]?.price ?? 0, // Use the first variant's price or 0
+        brandId: brandId,
       });
 
       // Inserir variantes do produto
       for (const variantData of productData.variants) {
-        const variantId = crypto.randomUUID();
         const productKey = productData.name as keyof typeof productImages;
         const variantImages =
           productImages[productKey]?.[
@@ -600,15 +673,25 @@ async function main() {
 
         console.log(`  🎨 Criando variante: ${variantData.color}`);
 
-        await db.insert(productVariantsTable).values({
-          id: variantId,
-          name: variantData.color,
-          productId: productId,
-          color: variantData.color,
-          imageUrl: variantImages[0] || "",
-          priceInCents: variantData.price,
-          slug: generateSlug(`${productData.name}-${variantData.color}`),
-        });
+        // mapear colorId e sizeId (usa defaults)
+        const colorId =
+          colorMap.get(variantData.color) ?? Array.from(colorMap.values())[0];
+        const sizeId =
+          sizeMap.get(variantData.size ?? "U") ?? Array.from(sizeMap.values())[0];
+
+        await db
+          .insert(productVariantsTable)
+          .values({
+            name: variantData.color,
+            productId: productId,
+            colorId: colorId,
+            sizeId: sizeId,
+            stock: variantData.stock ?? 10,
+            imageUrl: variantImages[0] || "",
+            priceInCents: variantData.price,
+            slug: generateSlug(`${productData.name}-${variantData.color}`),
+          })
+          .returning({ id: productVariantsTable.id });
       }
     }
 

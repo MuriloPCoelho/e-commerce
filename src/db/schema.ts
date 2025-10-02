@@ -1,5 +1,5 @@
 import { relations } from "drizzle-orm";
-import { integer, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
+import { integer, pgTable, serial, text, timestamp, uuid } from "drizzle-orm/pg-core";
 
 export const usersTable = pgTable("tb_users", {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -8,7 +8,7 @@ export const usersTable = pgTable("tb_users", {
 });
 
 export const categoriesTable = pgTable("tb_categories", {
-  id: uuid("id").primaryKey().defaultRandom(),
+  id: serial("id").primaryKey(),
   name: text("name").notNull(),
   slug: text("slug").notNull().unique(),
   createdAt: timestamp("created_at").notNull().defaultNow(),
@@ -20,13 +20,17 @@ export const categoriesRelations = relations(categoriesTable, ({ many }) => ({
 
 export const productsTable = pgTable("tb_products", {
   id: uuid("id").primaryKey().defaultRandom(),
-  categoryId: uuid("category_id")
+  categoryId: integer("category_id")
     .references(() => categoriesTable.id)
     .notNull(),
+
+  brandId: integer("brand_id")
+    .references(() => brandsTable.id)
+    .notNull(),
+
   name: text("name").notNull(),
   slug: text("slug").notNull().unique(),
   description: text("description").notNull(),
-  priceInCents: integer("price_in_cents").notNull(),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
@@ -36,17 +40,47 @@ export const productsRelations = relations(productsTable, ({ one, many }) => ({
     references: [categoriesTable.id],
   }),
   variants: many(productVariantsTable),
+  brand: one(brandsTable, {
+    fields: [productsTable.brandId],
+    references: [brandsTable.id],
+  }),
 }));
 
 export const productVariantsTable = pgTable("tb_product_variants", {
-  id: uuid("id").primaryKey().defaultRandom(),
+  id: serial("id").primaryKey(),
   productId: uuid("product_id")
     .references(() => productsTable.id)
     .notNull(),
   name: text("name").notNull(),
   slug: text("slug").notNull().unique(),
-  color: text("color").notNull(),
+  colorId: integer("color_id")
+    .references(() => colorsTable.id)
+    .notNull(),
+  sizeId: integer("size_id")
+    .references(() => sizesTable.id)
+    .notNull(),
+  stock: integer("stock").notNull().default(0),
   priceInCents: integer("price_in_cents").notNull(),
   imageUrl: text("image_url").notNull(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+export const colorsTable = pgTable("tb_colors", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  hex: text("hex").notNull(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+export const sizesTable = pgTable("tb_sizes", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+export const brandsTable = pgTable("tb_brands", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  slug: text("slug").notNull().unique(),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
