@@ -1,27 +1,30 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Form, FormField, FormItem, FormLabel } from "@/components/ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import Link from "next/link";
-// import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import Link from "next/link";
 import { useForm } from "react-hook-form";
 import z from "zod";
-import { use } from "react";
 
 const formSchema = z.object({
   email: z.email("Email inválido"),
-  password: z
-    .string()
-    .min(8, "A senha deve ter pelo menos 8 caracteres")
-    .max(32, "A senha deve ter no máximo 32 caracteres"),
+  password: z.string(),
 });
 
 type FormValues = z.infer<typeof formSchema>;
 
 export default function SignIn() {
   const form = useForm<FormValues>({
+    resolver: zodResolver(formSchema),
     defaultValues: {
       email: "",
       password: "",
@@ -34,37 +37,48 @@ export default function SignIn() {
 
   return (
     <div className="h-dvh">
-      <div className="flex justify-center flex-col items-center px-10 gap-4 pt-32">
+      <div className="flex justify-center flex-col items-center px-12 gap-4 pt-32">
         <h1 className="text-2xl font-bold">Entrar</h1>
-        <p>Faça login para continuar</p>
+        <p className="text-neutral-500">Faça login para continuar</p>
 
         <Form {...form}>
-          <FormField
-            control={form.control}
-            name="email"
-            render={({ field }) => (
-              <>
-                <FormItem className="w-full">
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="w-full flex flex-col gap-4"
+          >
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
                   <FormLabel>Email</FormLabel>
-                  <Input placeholder="Email" type="email" {...field} />
+                  <FormControl>
+                    <Input placeholder="Digite seu email" type="email" {...field} />
+                  </FormControl>
+                  <FormMessage />
                 </FormItem>
-              </>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="password"
-            render={({ field }) => (
-              <>
-                <FormItem className="w-full">
-                  <FormLabel>Senha</FormLabel>
-                  <Input placeholder="Senha" type="password" {...field} />
-                </FormItem>
-              </>
-            )}
-          />
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                <>
+                  <FormItem>
+                    <FormLabel>Senha</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Digite sua senha" type="password" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                </>
+              )}
+            />
 
-          <Button type="submit">Entrar</Button>
+            <Button className="mt-4" type="submit">
+              Entrar
+            </Button>
+          </form>
         </Form>
 
         <div>
