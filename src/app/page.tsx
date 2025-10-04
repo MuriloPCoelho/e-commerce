@@ -1,6 +1,12 @@
+import Header from "@/components/commom/header"
+
 const Home = () => {
   return (
-    <div>page</div>
+    <div>
+      <Header />
+      page
+      
+    </div>
   )
 }
 
