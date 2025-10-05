@@ -17,7 +17,7 @@ const Header = () => {
   const { data: session } = authClient.useSession();
 
   return (
-    <header className="w-full flex items-center justify-between p-4 border-b">
+    <header className="w-full flex items-center justify-between py-2 px-4 border-b">
       <div>
         <Sheet>
           <SheetTrigger asChild>
@@ -26,13 +26,13 @@ const Header = () => {
             </Button>
           </SheetTrigger>
           <SheetContent side="left" className="border-none [&>button]:hidden">
-            <SheetHeader className="bg-black p-4 flex relative">
+            <SheetHeader className="bg-black p-4 flex items-end relative">
               <SheetTitle className="text-white py-3">
                 <SheetClose asChild>
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="absolute top-4 right-4 hover:bg-zinc-800"
+                    className="absolute top-2 left-4 hover:bg-zinc-800"
                   >
                     <X className="size-5 text-white" />
                   </Button>
@@ -60,9 +60,9 @@ const Header = () => {
                   <div className="flex">
                     <Link
                       href="sign-in"
-                      className="font-semibold flex gap-2 items-center hover:bg-zinc-800 rounded-full py-2 px-4 transition-colors"
+                      className="font-semibold flex gap-2 items-center hover:bg-zinc-800 rounded-full py-1.5 px-4 transition-colors"
                     >
-                      Entre ou cadastre-se
+                      Entrar
                     </Link>
                   </div>
                 )}
