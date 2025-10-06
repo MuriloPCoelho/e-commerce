@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -17,6 +17,14 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import z from "zod";
+import {
+  Truck,
+  Heart,
+  ShoppingCart,
+  History,
+  CreditCard,
+  TicketPercent,
+} from "lucide-react";
 
 const formSchema = z.object({
   email: z.email("Email inválido"),
@@ -68,9 +76,9 @@ export default function SignIn() {
       provider: "google",
       fetchOptions: {
         onSuccess: () => {
-          router.push("/")
-        }
-      }
+          router.push("/");
+        },
+      },
     });
   }
 
@@ -121,13 +129,23 @@ export default function SignIn() {
                 </>
               )}
             />
+            <div>
+              <Link href="#" className="text-sm underline">
+                Esqueci minha senha
+              </Link>
+            </div>
 
             <div className="flex flex-col w-full gap-2 items-center">
               <Button className="mt-4 w-full" type="submit">
                 Entrar
               </Button>
               <span>ou</span>
-              <Button className="w-full" variant="outline" type="button" onClick={handleSignInWithGoogle}>
+              <Button
+                className="w-full"
+                variant="outline"
+                type="button"
+                onClick={handleSignInWithGoogle}
+              >
                 <svg
                   version="1.1"
                   xmlns="http://www.w3.org/2000/svg"
@@ -161,6 +179,45 @@ export default function SignIn() {
         <div>
           <Link href="/sign-up" className="underline text-sm">
             Não possui uma conta? Crie uma conta
+          </Link>
+        </div>
+
+        <hr className="w-full my-4" />
+
+        <div className="flex flex-col gap-4 w-full pb-6">
+          <h2 className="w-full text-2xl font-semibold">
+            Vantagens de ter uma conta
+          </h2>
+          <ul className="w-full flex flex-col gap-4">
+            <li className="flex gap-2 items-center">
+              <Truck size={40} strokeWidth={1} /> Rastrear seus pedidos
+            </li>
+            <li className="flex gap-2 items-center">
+              <Heart size={40} strokeWidth={1} />
+              Criar uma lista de desejos
+            </li>
+            <li className="flex gap-2 items-center">
+              <ShoppingCart size={40} strokeWidth={1} />
+              Acelerar o processo de compra
+            </li>
+            <li className="flex gap-2 items-center">
+              <History size={40} strokeWidth={1} />
+              Visualizar histórico de compras
+            </li>
+            <li className="flex gap-2 items-center">
+              <CreditCard size={40} strokeWidth={1} />
+              Salvar meios de pagamento
+            </li>
+            <li className="flex gap-2 items-center">
+              <TicketPercent size={40} strokeWidth={1} />
+              Receber cupons de desconto
+            </li>
+          </ul>
+          <Link
+            href="/sign-up"
+            className={buttonVariants({ variant: "default" })}
+          >
+            Criar conta
           </Link>
         </div>
       </div>
