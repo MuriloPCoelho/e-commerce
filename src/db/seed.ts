@@ -8,6 +8,7 @@ import {
   colorsTable,
   sizesTable,
   brandsTable,
+  productVariantSizesTable,
 } from "./schema";
 
 const productImages = {
@@ -566,15 +567,16 @@ async function main() {
   console.log("🌱 Iniciando o seeding do banco de dados...");
 
   try {
-    // Limpar dados existentes
-    console.log("🧹 Limpando dados existentes...");
-    // apagar na ordem das dependências
-    await db.delete(productVariantsTable);
-    await db.delete(productsTable);
-    await db.delete(brandsTable);
-    await db.delete(colorsTable);
-    await db.delete(sizesTable);
-    await db.delete(categoriesTable);
+  // Limpar dados existentes
+  console.log("🧹 Limpando dados existentes...");
+  // apagar na ordem das dependências
+  await db.delete(productVariantSizesTable);
+  await db.delete(productVariantsTable);
+  await db.delete(productsTable);
+  await db.delete(brandsTable);
+  await db.delete(colorsTable);
+  await db.delete(sizesTable);
+  await db.delete(categoriesTable);
     console.log("✅ Dados limpos com sucesso!");
 
     // Inserir cores, tamanhos e marcas padrão
@@ -683,19 +685,35 @@ async function main() {
         const sizeId =
           sizeMap.get(variantData.size ?? "U") ?? Array.from(sizeMap.values())[0];
 
-        await db
+        // Inserir variante e obter o id inserido
+        const [insertedVariant] = await db
           .insert(productVariantsTable)
           .values({
             name: variantData.color,
             productId: productId,
             colorId: colorId,
-            sizeId: sizeId,
-            stock: variantData.stock ?? 10,
             imageUrl: variantImages[0] || "",
             priceInCents: variantData.price,
             slug: generateSlug(`${productData.name}-${variantData.color}`),
           })
           .returning({ id: productVariantsTable.id });
+
+        // Adicionar tamanhos para a variante inserida
+        const defaultStockAmount = 10; // estoque padrão por tamanho
+        const clothingSizes = ["P", "M", "G", "GG"]; // para roupas
+        const accessorySizes = ["U"]; // para acessórios
+        const sizesToUse = productData.categoryName === "Acessórios" ? accessorySizes : clothingSizes;
+
+        for (const s of sizesToUse) {
+          const sizeId = sizeMap.get(s);
+          if (!sizeId) continue;
+          await db.insert(productVariantSizesTable).values({
+            variantId: Number(insertedVariant.id),
+            sizeId: sizeId,
+            priceInCents: variantData.price,
+            stock: defaultStockAmount,
+          });
+        }
       }
     }
 
