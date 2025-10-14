@@ -2,18 +2,20 @@ import { Star, StarHalf } from "lucide-react";
 
 interface ProductRatingProps {
   rating: number; // Valor de 0 a 5
+  size?: "sm" | "md" | "lg";
 }
 
-const ProductRating = ({ rating }: ProductRatingProps) => {
+const ProductRating = ({ rating, size = "md" }: ProductRatingProps) => {
   const fullStars = Math.floor(rating);
   const hasHalfStar = rating - fullStars > 0;
+  const sizeNumber = size === "sm" ? 12 : size === "md" ? 16 : 20;
 
   return (
     <div className="flex items-center gap-1">
       <div className="relative">
         <div className="stars flex">
           {Array.from({ length: 5 }, (_, index) => (
-            <Star fill="oklch(92.2% 0 0)" strokeWidth={0} key={index} size={16} />
+            <Star fill="oklch(92.2% 0 0)" strokeWidth={0} key={index} size={sizeNumber} />
           ))}
         </div>
         <div className="flex absolute top-0">
@@ -22,7 +24,7 @@ const ProductRating = ({ rating }: ProductRatingProps) => {
               color="oklch(85.2% 0.199 91.936)"
               fill="oklch(85.2% 0.199 91.936)"
               strokeWidth={1}
-              size={16}
+              size={sizeNumber}
               key={index}
             />
           ))}
@@ -31,7 +33,7 @@ const ProductRating = ({ rating }: ProductRatingProps) => {
               color="oklch(85.2% 0.199 91.936)"
               fill="oklch(85.2% 0.199 91.936)"
               strokeWidth={1}
-              size={16}
+              size={sizeNumber}
             />
           )}
         </div>
