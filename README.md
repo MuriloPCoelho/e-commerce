@@ -129,11 +129,3 @@ Por favor abra issues e PRs com descrições claras e pequenos commits.
 
 Este projeto está licenciado sob os termos do arquivo `LICENSE` (ver repositório).
 
----
-
-Se quiser, eu posso também:
-- adicionar badges (build, dependabot, license)
-- criar um `Makefile` ou tasks para facilitar comandos comuns
-- gerar um script de `docker-compose` que suba tanto o Postgres quanto a aplicação para desenvolvimento
-
-Marque o que prefere e eu atualizo o README com isso.
