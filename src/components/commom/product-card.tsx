@@ -19,7 +19,7 @@ const ProductCard = ({ product, textContainerClassName }: ProductCardProps) => {
   const firstVariant = product.variants[0];  
 
   return (
-    <Link href={`/${firstVariant.slug}`} className="group flex flex-col gap-2">
+    <Link href={`/p/${firstVariant.slug}`} className="group flex flex-col gap-2">
       <div className="overflow-hidden rounded-xs relative aspect-square">
         <Image
           src={firstVariant.imageUrl}
