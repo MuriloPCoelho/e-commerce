@@ -1,4 +1,5 @@
-import { Star, StarHalf } from "lucide-react";
+import { Star } from "lucide-react";
+import { twJoin } from "tailwind-merge";
 
 interface ProductRatingProps {
   rating: number; // Valor de 0 a 5
@@ -6,41 +7,13 @@ interface ProductRatingProps {
 }
 
 const ProductRating = ({ rating, size = "md" }: ProductRatingProps) => {
-  const fullStars = Math.floor(rating);
-  const hasHalfStar = rating - fullStars > 0;
   const sizeNumber = size === "sm" ? 12 : size === "md" ? 16 : 20;
 
   return (
-    <div className="flex items-center gap-1">
-      <div className="relative">
-        <div className="stars flex">
-          {Array.from({ length: 5 }, (_, index) => (
-            <Star fill="oklch(92.2% 0 0)" strokeWidth={0} key={index} size={sizeNumber} />
-          ))}
-        </div>
-        <div className="flex absolute top-0">
-          {Array.from({ length: fullStars }, (_, index) => (
-            <Star
-              color="oklch(85.2% 0.199 91.936)"
-              fill="oklch(85.2% 0.199 91.936)"
-              strokeWidth={1}
-              size={sizeNumber}
-              key={index}
-            />
-          ))}
-          {hasHalfStar && (
-            <StarHalf
-              color="oklch(85.2% 0.199 91.936)"
-              fill="oklch(85.2% 0.199 91.936)"
-              strokeWidth={1}
-              size={sizeNumber}
-            />
-          )}
-        </div>
-      </div>
-      <span className="text-sm text-neutral-500 tracking-wide">
-        {`(${rating.toFixed(1)})`}
-      </span>
+    <div className={twJoin("flex items-center gap-1", size === "sm" ? "text-xs" : size === "md" ? "text-sm" : "text-lg")}>
+      <span className="">{`${rating.toFixed(1)}`}</span>
+      <Star fill="oklch(85.2% 0.199 91.936)" strokeWidth={0} size={sizeNumber} />
+      <span className="text-neutral-500">{`(${Math.floor(Math.random() * 1000)} avaliações)`}</span>
     </div>
   );
 };
