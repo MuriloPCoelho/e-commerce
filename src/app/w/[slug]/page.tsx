@@ -27,7 +27,6 @@ const CategoryPage = async ({ params }: CategoryPageProps) => {
       },
     },
   });
-  console.log(products);
 
   return (
     <>

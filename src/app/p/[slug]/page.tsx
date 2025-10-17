@@ -12,6 +12,8 @@ import { eq } from "drizzle-orm";
 import { PlusIcon, ShoppingBag } from "lucide-react";
 import Image from "next/image";
 import { Accordion as AccordionPrimitive } from "radix-ui";
+import VariantSelector from "./components/variant-selector";
+import SizeSelector from "./components/size-selector";
 
 interface ProductPageProps {
   params: Promise<{ slug: string }>;
@@ -33,7 +35,7 @@ const ProductPage = async ({ params }: ProductPageProps) => {
 
   if (!variant) return <div>Product not found</div>;
 
-  const sizes = await db.query.productVariantSizesTable.findMany({
+  const variantSizes = await db.query.productVariantSizesTable.findMany({
     where: (size) =>
       eq(size.variantId, variant.id) ||
       variant.product.variants.some((v) => eq(size.variantId, v.id)),
@@ -42,7 +44,7 @@ const ProductPage = async ({ params }: ProductPageProps) => {
     },
   });
 
-  console.log({ sizes });
+  console.log({ variantSizes });
 
   return (
     <>
@@ -71,7 +73,7 @@ const ProductPage = async ({ params }: ProductPageProps) => {
           </span>
         </div>
         <div className="p-4">
-          <div className="flex gap-1.5 w-full flex-wrap">
+          {/* <div className="flex gap-1.5 w-full flex-wrap">
             {variant.product.variants.map((v) => (
               <div
                 className="outline outline-neutral-300 size-12 aspect-square relative"
@@ -85,20 +87,14 @@ const ProductPage = async ({ params }: ProductPageProps) => {
                 />
               </div>
             ))}
-          </div>
+          </div> */}
+          <VariantSelector variants={variant.product.variants} />
         </div>
         <div>
           <div className="p-4">
             <h2 className="text-lg mb-2">Selecione o tamanho</h2>
             <div className="flex gap-1.5 w-full flex-wrap">
-              {sizes.map((size) => (
-                <button
-                  className="outline outline-neutral-300 size-12 aspect-square flex items-center justify-center"
-                  key={size.id}
-                >
-                  {size.size.name}
-                </button>
-              ))}
+              <SizeSelector sizes={variantSizes} />
             </div>
           </div>
         </div>
@@ -127,14 +123,7 @@ const ProductPage = async ({ params }: ProductPageProps) => {
               </AccordionPrimitive.Header>
               <AccordionContent>
                 <p className="text-neutral-600 leading-6">
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed
-                  do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                  Ut enim ad minim veniam, quis nostrud exercitation ullamco
-                  laboris nisi ut aliquip ex ea commodo consequat. Duis aute
-                  irure dolor in reprehenderit in voluptate velit esse cillum
-                  dolore eu fugiat nulla pariatur. Excepteur sint occaecat
-                  cupidatat non proident, sunt in culpa qui officia deserunt
-                  mollit anim id est laborum.
+                  {variant.product.description}
                 </p>
               </AccordionContent>
             </AccordionItem>
