@@ -12,6 +12,7 @@ import {
 } from "../ui/sheet";
 import { authClient } from "@/lib/auth-client";
 import Link from "next/link";
+import Bag from "./bag";
 
 const Header = () => {
   const { data: session } = authClient.useSession();
@@ -50,15 +51,6 @@ const Header = () => {
                       <User />
                       <span>Olá, {session.user.name}</span>
                     </Link>
-                    {/* <Button
-                      variant="link"
-                      size="xs"
-                      title="Sair"
-                      className=" text-white"
-                      onClick={() => authClient.signOut()}
-                    >
-                      <LogOut />
-                    </Button> */}
                   </div>
                 ) : (
                   <div className="flex">
@@ -80,42 +72,7 @@ const Header = () => {
         </Sheet>
       </div>
       <div>
-        <Sheet>
-          <SheetTrigger asChild>
-            <Button variant="ghost" size="icon">
-              <ShoppingBag className="size-6" />
-            </Button>
-          </SheetTrigger>
-          <SheetContent side="right" className="border-none [&>button]:hidden">
-            <SheetHeader className="bg-black px-4 flex relative h-16">
-              <SheetTitle className="text-white">
-                {/* <span>Sua sacola</span> */}
-                <div className="flex">
-                  <Link
-                    href="#"
-                    className={buttonVariants({
-                      variant: "link",
-                      size: "xs",
-                      className: "text-white",
-                    })}
-                    title="Ir para sacola"
-                  >
-                    Sua sacola
-                  </Link>
-                </div>
-                <SheetClose asChild>
-                  <Button
-                    size="icon"
-                    variant="ghost"
-                    className="absolute top-3 right-4 hover:bg-zinc-800"
-                  >
-                    <X className="size-6 text-white" />
-                  </Button>
-                </SheetClose>
-              </SheetTitle>
-            </SheetHeader>
-          </SheetContent>
-        </Sheet>
+        <Bag />
       </div>
     </header>
   );
