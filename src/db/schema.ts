@@ -22,10 +22,14 @@ export const usersTable = pgTable("user", {
     .notNull(),
 });
 
-export const usersRelations = relations(usersTable, ({ many }) => ({
+export const usersRelations = relations(usersTable, ({ many, one }) => ({
   accounts: many(accountsTable),
   sessions: many(sessionsTable),
   shippingAddresses: many(shippingAddressesTable),
+  bags: one(bagsTable, {
+    fields: [usersTable.id],
+    references: [bagsTable.userId],
+  }),
 }));
 
 export const sessionsTable = pgTable("session", {
@@ -216,3 +220,28 @@ export const shippingAddressesRelations = relations(
     }),
   })
 );
+
+export const bagsTable = pgTable("tb_bags", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  userId: text("user_id")
+    .references(() => usersTable.id)
+    .notNull()
+    .unique(),
+  shippingAddressId: uuid("shipping_address_id")
+    .references(() => shippingAddressesTable.id)
+    .notNull(),
+  status: boolean("status").notNull().default(false),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+export const bagsRelations = relations(bagsTable, ({ one }) => ({
+  shippingAddress: one(shippingAddressesTable, {
+    fields: [bagsTable.shippingAddressId],
+    references: [shippingAddressesTable.id],
+  }),
+  user: one(usersTable, {
+    fields: [bagsTable.userId],
+    references: [usersTable.id],
+  }),
+  shippingAddresses: one(shippingAddressesTable),
+}));
