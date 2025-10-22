@@ -23,7 +23,7 @@ export const usersTable = pgTable("user", {
 });
 
 export const usersRelations = relations(usersTable, ({ many, one }) => ({
-  shippingAddresses: many(shippingAddressesTable),
+  userAddresses: many(userAddressesTable),
   bags: one(bagsTable, {
     fields: [usersTable.id],
     references: [bagsTable.userId],
@@ -191,7 +191,7 @@ export const productVariantSizesRelations = relations(
   })
 );
 
-export const shippingAddressesTable = pgTable("tb_shipping_addresses", {
+export const userAddressesTable = pgTable("tb_user_addresses", {
   id: uuid("id").primaryKey().defaultRandom(),
   userId: text("user_id")
     .references(() => usersTable.id)
@@ -209,16 +209,16 @@ export const shippingAddressesTable = pgTable("tb_shipping_addresses", {
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
-export const shippingAddressesRelations = relations(
-  shippingAddressesTable,
+export const userAddressesRelations = relations(
+  userAddressesTable,
   ({ one }) => ({
     user: one(usersTable, {
-      fields: [shippingAddressesTable.userId],
+      fields: [userAddressesTable.userId],
       references: [usersTable.id],
     }),
     bag: one(bagsTable, {
-      fields: [shippingAddressesTable.id],
-      references: [bagsTable.shippingAddressId],
+      fields: [userAddressesTable.id],
+      references: [bagsTable.userAddressId],
     }),
   })
 );
@@ -229,25 +229,25 @@ export const bagsTable = pgTable("tb_bags", {
     .references(() => usersTable.id)
     .notNull()
     .unique(),
-  shippingAddressId: uuid("shipping_address_id")
-    .references(() => shippingAddressesTable.id)
+  userAddressId: uuid("user_address_id")
+    .references(() => userAddressesTable.id)
     .notNull(),
   status: boolean("status").notNull().default(false),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
 export const bagsRelations = relations(bagsTable, ({ one }) => ({
-  shippingAddress: one(shippingAddressesTable, {
-    fields: [bagsTable.shippingAddressId],
-    references: [shippingAddressesTable.id],
+  userAddress: one(userAddressesTable, {
+    fields: [bagsTable.userAddressId],
+    references: [userAddressesTable.id],
   }),
   user: one(usersTable, {
     fields: [bagsTable.userId],
     references: [usersTable.id],
   }),
-  shippingAddresses: one(shippingAddressesTable, {
-    fields: [bagsTable.shippingAddressId],
-    references: [shippingAddressesTable.id],
+  userAddresses: one(userAddressesTable, {
+    fields: [bagsTable.userAddressId],
+    references: [userAddressesTable.id],
   }),
 }));
 
