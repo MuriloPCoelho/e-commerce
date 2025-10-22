@@ -18,8 +18,6 @@ const SizeSelector = ({ sizes }: SizeSelectorProps) => {
   const searchParams = useSearchParams();
   const sizeParam = searchParams.get("size");
 
-  console.log({ params, sizeParam });
-
   return (
     <div className="flex gap-2">
       {sizes.map((size) => (

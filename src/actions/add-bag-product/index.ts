@@ -49,7 +49,7 @@ export const addProductToBag = async (data: AddProductToBagSchema) => {
 
   if (bagItem) {
     await db.update(bagItemsTable).set({
-      quantity: bagItem.quantity + data.quantity,
+      quantity: bagItem.quantity + 1,
     }).where(
       eq(bagItemsTable.id, bagItem.id)
     );
@@ -60,6 +60,6 @@ export const addProductToBag = async (data: AddProductToBagSchema) => {
   await db.insert(bagItemsTable).values({
     bagId: bagId,
     productVariantSizeId: data.productVariantSizeId,
-    quantity: data.quantity,
+    quantity: 1,
   });
 };

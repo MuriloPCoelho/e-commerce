@@ -55,7 +55,7 @@ const Header = () => {
                 ) : (
                   <div className="flex">
                     <Link
-                      href="sign-in"
+                      href="/sign-in"
                       className={buttonVariants({
                         variant: "link",
                         size: "xs",

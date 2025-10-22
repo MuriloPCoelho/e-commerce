@@ -710,7 +710,6 @@ async function main() {
           await db.insert(productVariantSizesTable).values({
             variantId: Number(insertedVariant.id),
             sizeId: sizeId,
-            priceInCents: variantData.price,
             stock: defaultStockAmount,
           });
         }

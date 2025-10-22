@@ -230,13 +230,12 @@ export const bagsTable = pgTable("tb_bags", {
     .notNull()
     .unique(),
   userAddressId: uuid("user_address_id")
-    .references(() => userAddressesTable.id)
-    .notNull(),
+    .references(() => userAddressesTable.id),
   status: boolean("status").notNull().default(false),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
-export const bagsRelations = relations(bagsTable, ({ one }) => ({
+export const bagsRelations = relations(bagsTable, ({ one, many }) => ({
   userAddress: one(userAddressesTable, {
     fields: [bagsTable.userAddressId],
     references: [userAddressesTable.id],
@@ -249,6 +248,7 @@ export const bagsRelations = relations(bagsTable, ({ one }) => ({
     fields: [bagsTable.userAddressId],
     references: [userAddressesTable.id],
   }),
+  items: many(bagItemsTable),
 }));
 
 export const bagItemsTable = pgTable("tb_bag_items", {
