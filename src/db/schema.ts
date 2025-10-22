@@ -23,8 +23,6 @@ export const usersTable = pgTable("user", {
 });
 
 export const usersRelations = relations(usersTable, ({ many, one }) => ({
-  accounts: many(accountsTable),
-  sessions: many(sessionsTable),
   shippingAddresses: many(shippingAddressesTable),
   bags: one(bagsTable, {
     fields: [usersTable.id],
@@ -218,6 +216,10 @@ export const shippingAddressesRelations = relations(
       fields: [shippingAddressesTable.userId],
       references: [usersTable.id],
     }),
+    bag: one(bagsTable, {
+      fields: [shippingAddressesTable.id],
+      references: [bagsTable.shippingAddressId],
+    }),
   })
 );
 
@@ -243,5 +245,29 @@ export const bagsRelations = relations(bagsTable, ({ one }) => ({
     fields: [bagsTable.userId],
     references: [usersTable.id],
   }),
-  shippingAddresses: one(shippingAddressesTable),
+  shippingAddresses: one(shippingAddressesTable, {
+    fields: [bagsTable.shippingAddressId],
+    references: [shippingAddressesTable.id],
+  }),
+}));
+
+export const bagItemsTable = pgTable("tb_bag_items", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  bagId: uuid("bag_id")
+    .references(() => bagsTable.id),
+  productVariantSizeId: integer("product_variant_size_id")
+    .references(() => productVariantSizesTable.id),
+  quantity: integer("quantity").notNull().default(1),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+export const bagItemsRelations = relations(bagItemsTable, ({ one }) => ({
+  bag: one(bagsTable, {
+    fields: [bagItemsTable.bagId],
+    references: [bagsTable.id],
+  }),
+  productVariantSize: one(productVariantSizesTable, {
+    fields: [bagItemsTable.productVariantSizeId],
+    references: [productVariantSizesTable.id],
+  }),
 }));
