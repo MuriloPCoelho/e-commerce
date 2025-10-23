@@ -4,23 +4,29 @@ import {
   Accordion,
   AccordionContent,
   AccordionItem,
-  AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import { db } from "@/db";
 import { eq } from "drizzle-orm";
-import { PlusIcon, ShoppingBag } from "lucide-react";
+import { PlusIcon } from "lucide-react";
 import Image from "next/image";
 import { Accordion as AccordionPrimitive } from "radix-ui";
 import VariantSelector from "./components/variant-selector";
 import SizeSelector from "./components/size-selector";
+import AddToBagButton from "./components/add-to-bag-button";
 
 interface ProductPageProps {
   params: Promise<{ slug: string }>;
+  searchParams?: Promise<Record<string, string | string[] | undefined>>;
 }
 
-const ProductPage = async ({ params }: ProductPageProps) => {
+const ProductPage = async ({ params, searchParams }: ProductPageProps) => {
   const { slug } = await params;
+  const resolvedSearchParams = await searchParams;
+  const size = resolvedSearchParams?.size;
+  const selectedSizeName = Array.isArray(size)
+    ? size[0]
+    : (size as string | undefined);
 
   const variant = await db.query.productVariantsTable.findFirst({
     where: (productVariant) => eq(productVariant.slug, slug),
@@ -44,6 +50,15 @@ const ProductPage = async ({ params }: ProductPageProps) => {
     },
   });
 
+
+  let selectedProductVariantSizeId: number | null = null;
+  if (selectedSizeName) {
+    const found = variantSizes.find((s) => s.size.name === selectedSizeName);
+    selectedProductVariantSizeId = found?.id ?? null;
+  }
+  if (!selectedProductVariantSizeId) {
+    selectedProductVariantSizeId = variantSizes[0]?.id ?? null;
+  }
   console.log({ variantSizes });
 
   return (
@@ -73,21 +88,6 @@ const ProductPage = async ({ params }: ProductPageProps) => {
           </span>
         </div>
         <div className="p-4">
-          {/* <div className="flex gap-1.5 w-full flex-wrap">
-            {variant.product.variants.map((v) => (
-              <div
-                className="outline outline-neutral-300 size-12 aspect-square relative"
-                key={v.id}
-              >
-                <Image
-                  src={v.imageUrl}
-                  alt={v.name}
-                  fill
-                  className="object-cover"
-                />
-              </div>
-            ))}
-          </div> */}
           <VariantSelector variants={variant.product.variants} />
         </div>
         <div>
@@ -102,10 +102,7 @@ const ProductPage = async ({ params }: ProductPageProps) => {
           <Button className="w-full" size="lg">
             Comprar agora
           </Button>
-          <Button className="w-full" variant="outline" size="lg">
-            <ShoppingBag />
-            Adicionar a sacola
-          </Button>
+          <AddToBagButton productVariantSizeId={selectedProductVariantSizeId} />
         </div>
         <div></div>
         <div className="p-4">
