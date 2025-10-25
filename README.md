@@ -122,6 +122,7 @@ Contribuições são bem-vindas. Boas próximas tarefas:
 - CI (GitHub Actions) para lint, build e testes
 - Documentar a API (OpenAPI / Swagger) para os endpoints REST
 - Implementar páginas de admin para gerenciar produtos e pedidos
+- Substituir ESlint e Prettier por Biome
 
 Por favor abra issues e PRs com descrições claras e pequenos commits.
 
