@@ -7,11 +7,11 @@ type InputSize = "default" | "xs" | "sm" | "icon" | "lg" | "xl"
 function Input({ className, type = "text", size = "default", ...props }: Omit<React.ComponentProps<"input">, "size"> & { size?: InputSize }) {
   const sizeClasses: Record<InputSize, string> = {
     default: "h-10 px-3 py-1 text-base md:text-sm",
-    xs: "h-8 px-3 py-0.5 text-sm",
+    xs: "h-7 px-3 py-0.5 text-sm",
     sm: "h-9 px-4 py-2 text-sm",
-    icon: "h-9 px-3 py-1 text-sm",
-    lg: "h-11 px-4 py-1 text-base",
-    xl: "h-12 px-4 py-1 text-base",
+    icon: "h-10 px-3 py-1 text-sm",
+    lg: "h-12 px-4 py-1 text-base",
+    xl: "h-14 px-4 py-1 text-base",
   }
 
   return (
