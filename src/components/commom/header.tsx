@@ -26,7 +26,7 @@ const Header = () => {
               <Menu className="size-6" />
             </Button>
           </SheetTrigger>
-          <SheetContent side="left" className="border-none [&>button]:hidden">
+          <SheetContent side="left" className="border-none [&>button]:hidden w-[90%]">
             <SheetHeader className="bg-black px-4 flex items-end relative h-16">
               <SheetTitle className="text-white">
                 <SheetClose asChild>
