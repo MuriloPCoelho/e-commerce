@@ -13,8 +13,7 @@ import { Button, buttonVariants } from "../ui/button";
 import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
 import { getBag } from "@/actions/get-bag";
-import Image from "next/image";
-import QuantitySelector from "./quantity-selector";
+import BagItem from "./bag-item";
 
 const Bag = () => {
   const { data: bag, isPending: bagIsPending } = useQuery({
@@ -29,7 +28,7 @@ const Bag = () => {
           <ShoppingBag className="size-6" />
         </Button>
       </SheetTrigger>
-      <SheetContent side="right" className="border-none [&>button]:hidden">
+      <SheetContent side="right" className="border-none [&>button]:hidden w-[90%]">
         <SheetHeader className="bg-black px-4 flex relative h-16">
           <SheetTitle className="text-white">
             <div className="flex">
@@ -56,28 +55,17 @@ const Bag = () => {
             </SheetClose>
           </SheetTitle>
         </SheetHeader>
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-3">
           {bagIsPending && <div>Loading...</div>}
           {bag?.items.map((item) => (
-            <div className="grid grid-cols-[96px_1fr] gap-2 px-4" key={item.id}>
-              <div className="aspect-square relative rounded-xs">
-                <Image
-                  src={item.productVariantSize?.variant.imageUrl ?? ""}
-                  alt={item.productVariantSize?.variant.name ?? ""}
-                  fill
-                  className="object-cover object-top rounded-xs te"
-                />
-              </div>
-              <div className="grid">
-                <div className="text-sm font-medium truncate text-ellipsis">{`${item.productVariantSize?.variant.product.name} - ${item.productVariantSize?.variant.name}`}</div>
-                <div className="text-neutral-600 text-xs">
-                  Tamanho: {item.productVariantSize?.size.name}
-                </div>
-                <div>
-                  <QuantitySelector />
-                </div>
-              </div>
-            </div>
+            <BagItem
+              key={item.id}
+              imageUrl={item.productVariantSize?.variant.imageUrl ?? ""}
+              productName={item.productVariantSize?.variant.product.name ?? ""}
+              color={item.productVariantSize?.variant.name ?? ""}
+              size={item.productVariantSize?.size.name ?? ""}
+              priceInCents={item.productVariantSize?.variant?.priceInCents ?? 0}
+            />
           ))}
         </div>
       </SheetContent>
