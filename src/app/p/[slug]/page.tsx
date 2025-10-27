@@ -1,4 +1,3 @@
-import Header from "@/components/commom/header";
 import ProductRating from "@/components/commom/product-rating";
 import {
   Accordion,
@@ -62,19 +61,17 @@ const ProductPage = async ({ params, searchParams }: ProductPageProps) => {
   console.log({ variantSizes });
 
   return (
-    <>
-      <Header />
-      <div className="flex flex-col">
-        <div className="relative aspect-square mb-8">
-          <Image
-            src={variant.imageUrl}
-            alt={variant.name}
-            fill
-            priority
-            className="object-cover"
-          />
-        </div>
-        <div className="p-4">
+    <div className="flex flex-col">
+      <div className="relative aspect-square mb-8">
+        <Image
+          src={variant.imageUrl}
+          alt={variant.name}
+          fill
+          priority
+          className="object-cover"
+        />
+      </div>
+      <div className="p-4">
           <h1 className="text-2xl font-semibold mb-2">{`${variant.product.name} - ${variant.name}`}</h1>
           <ProductRating rating={4.5} size="lg" />
           <p className="mt-4 text-[28px] font-bold">{`R$ ${(
@@ -151,7 +148,6 @@ const ProductPage = async ({ params, searchParams }: ProductPageProps) => {
           </Accordion>
         </div>
       </div>
-    </>
   );
 };
 

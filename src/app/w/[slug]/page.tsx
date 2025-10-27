@@ -1,4 +1,3 @@
-import Header from "@/components/commom/header";
 import ProductCard from "@/components/commom/product-card";
 import { db } from "@/db";
 import { categoriesTable, productsTable } from "@/db/schema";
@@ -29,17 +28,14 @@ const CategoryPage = async ({ params }: CategoryPageProps) => {
   });
 
   return (
-    <>
-      <Header />
-      <div className="p-4">
+    <div className="p-4">
       <h1 className="text-2xl font-semibold mb-4">{category.name}</h1>
-        <div className="grid grid-cols-2 gap-x-2 gap-y-6">
-          {products.map((product) => (
-            <ProductCard product={product} key={product.slug} />
-          ))}
-        </div>
+      <div className="grid grid-cols-2 gap-x-2 gap-y-6">
+        {products.map((product) => (
+          <ProductCard product={product} key={product.slug} />
+        ))}
       </div>
-    </>
+    </div>
   );
 };
 
