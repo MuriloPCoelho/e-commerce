@@ -1,4 +1,6 @@
-import { Menu, User, X } from "lucide-react";
+"use client";
+
+import { Menu, User, X, ChevronRight, ChevronLeft } from "lucide-react";
 import { Button, buttonVariants } from "../ui/button";
 import {
   Sheet,
@@ -10,12 +12,90 @@ import {
 } from "../ui/sheet";
 import Link from "next/link";
 import { authClient } from "@/lib/auth-client";
+import { useState } from "react";
+import { cn } from "@/lib/utils";
+import { MenuItem } from "@/actions/get-menus";
 
-const NavigationDrawer = () => {
-  const { data: session } = authClient.useSession();
+interface NavigationDrawerItemProps {
+  item: MenuItem;
+  onNavigateToSubmenu: (item: MenuItem) => void;
+}
+
+const NavigationDrawerItem = ({
+  item,
+  onNavigateToSubmenu,
+}: NavigationDrawerItemProps) => {
+  const hasChildren = item.children && item.children.length > 0;
+
+  const handleClick = (e: React.MouseEvent) => {
+    if (hasChildren) {
+      e.preventDefault();
+      onNavigateToSubmenu(item);
+    }
+  };
+
+  const content = (
+    <>
+      <div className="flex items-center gap-3">
+        <span>{item.name}</span>
+      </div>
+      {hasChildren && <ChevronRight className="size-5" />}
+    </>
+  );
 
   return (
-    <Sheet>
+    <div className="w-full">
+      {hasChildren ? (
+        <button
+          onClick={handleClick}
+          className={cn(
+            "flex items-center justify-between w-full p-4 text-xl hover:bg-zinc-100 transition-colors text-left",
+            !item.isActive && "opacity-50 pointer-events-none"
+          )}
+        >
+          {content}
+        </button>
+      ) : (
+        <SheetClose asChild>
+          <Link
+            href={item.href}
+            className={cn(
+              "flex items-center justify-between w-full p-4 text-xl hover:bg-zinc-100 transition-colors",
+              !item.isActive && "opacity-50 pointer-events-none"
+            )}
+          >
+            {content}
+          </Link>
+        </SheetClose>
+      )}
+    </div>
+  );
+};
+
+interface NavigationDrawerProps {
+  menus?: MenuItem[];
+}
+
+const NavigationDrawer = ({ menus = [] }: NavigationDrawerProps) => {
+  const { data: session } = authClient.useSession();
+  const [currentMenu, setCurrentMenu] = useState<MenuItem | null>(null);
+
+  const handleNavigateToSubmenu = (item: MenuItem) => {
+    setCurrentMenu(item);
+  };
+
+  const handleBackToMain = () => {
+    setCurrentMenu(null);
+  };
+
+  const handleSheetOpenChange = (open: boolean) => {
+    if (!open) {
+      setCurrentMenu(null);
+    }
+  };
+
+  return (
+    <Sheet onOpenChange={handleSheetOpenChange}>
       <SheetTrigger asChild>
         <Button variant="ghost" size="icon">
           <Menu className="size-6" />
@@ -23,7 +103,7 @@ const NavigationDrawer = () => {
       </SheetTrigger>
       <SheetContent
         side="left"
-        className="border-none [&>button]:hidden w-[90%]"
+        className="border-none [&>button]:hidden w-[90%] p-0 overflow-y-auto gap-0"
       >
         <SheetHeader className="bg-black px-4 flex items-end relative h-16">
           <SheetTitle className="text-white">
@@ -66,6 +146,47 @@ const NavigationDrawer = () => {
             )}
           </SheetTitle>
         </SheetHeader>
+
+        {currentMenu ? (
+          <div className="flex flex-col w-full">
+            <div>
+              <button
+                onClick={handleBackToMain}
+                className="flex items-center gap-3 w-full px-4 py-4 text-sm hover:bg-zinc-100 transition-colors"
+              >
+                <ChevronLeft className="size-4" />
+                <span className="font-medium">Voltar</span>
+              </button>
+            </div>
+            <div className="px-4 py-4 bg-white">
+              <h2 className="text-xl font-semibold">{currentMenu.name}</h2>
+            </div>
+            <nav className="flex flex-col w-full">
+              {currentMenu.children?.map((submenu) => (
+                <div key={submenu.id}>
+                  <SheetClose asChild>
+                    <Link
+                      href={submenu.href}
+                      className="flex items-center justify-between w-full px-4 py-3 hover:bg-zinc-100 transition-colors text-neutral-500"
+                    >
+                      <span>{submenu.name}</span>
+                    </Link>
+                  </SheetClose>
+                </div>
+              ))}
+            </nav>
+          </div>
+        ) : (
+          <nav className="flex flex-col w-full">
+            {menus.map((menu) => (
+              <NavigationDrawerItem
+                key={menu.id}
+                item={menu}
+                onNavigateToSubmenu={handleNavigateToSubmenu}
+              />
+            ))}
+          </nav>
+        )}
       </SheetContent>
     </Sheet>
   );
