@@ -271,3 +271,37 @@ export const bagItemsRelations = relations(bagItemsTable, ({ one }) => ({
     references: [productVariantSizesTable.id],
   }),
 }));
+
+export const menusTable = pgTable("tb_menus", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  slug: text("slug").notNull().unique(),
+  href: text("href"),
+  parentId: integer("parent_id"),
+  type: text("type", { enum: ["custom", "category", "brand"] })
+    .notNull()
+    .default("custom"),
+  referenceId: integer("reference_id"),
+  order: integer("order").notNull().default(0),
+  isActive: boolean("is_active").notNull().default(true),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+export const menusRelations = relations(menusTable, ({ one, many }) => ({
+  parent: one(menusTable, {
+    fields: [menusTable.parentId],
+    references: [menusTable.id],
+    relationName: "menuToSubmenu",
+  }),
+  children: many(menusTable, {
+    relationName: "menuToSubmenu",
+  }),
+  category: one(categoriesTable, {
+    fields: [menusTable.referenceId],
+    references: [categoriesTable.id],
+  }),
+  brand: one(brandsTable, {
+    fields: [menusTable.referenceId],
+    references: [brandsTable.id],
+  }),
+}));
