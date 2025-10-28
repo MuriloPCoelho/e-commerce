@@ -6,8 +6,8 @@ import { Input } from "../ui/input";
 const QuantitySelector = () => {
   return ( 
     <ButtonGroup>
-      <Button variant="outline" size="xs"><Minus /></Button>
-      <Input type="number" min="1" defaultValue={1}  size="xs" max="999" maxLength={3} className="w-16 text-center"/>
+      <Button variant="outline" size="xs" ><Minus /></Button>
+      <Input type="number" min="1" defaultValue={1}  size="xs" max="999" maxLength={3} className="w-10 text-center text-xs"/>
       <Button variant="outline" size="xs"><Plus /></Button>
     </ButtonGroup>
    );
