@@ -40,8 +40,15 @@ export const getBag = async () => {
     return {
       ...newBag,
       items: [],
+      totalPriceInCents: 0,
     };
   }
 
-  return bag;
+  return {
+    ...bag,
+    totalPriceInCents: bag.items.reduce((total, item) => {
+      const priceInCents = item.productVariantSize?.variant.priceInCents;
+      return total + (priceInCents ?? 0) * item.quantity;
+    }, 0),
+  };
 };

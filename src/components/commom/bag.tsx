@@ -13,7 +13,9 @@ import { Button, buttonVariants } from "../ui/button";
 import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
 import BagItem from "./bag-item";
+import BagItemSkeleton from "./bag-item-skeleton";
 import { getBag } from "@/actions/get-bag";
+import { centsToReais } from "@/lib/utils";
 
 const Bag = () => {
   const { data: bag, isPending: bagIsPending } = useQuery({
@@ -28,7 +30,7 @@ const Bag = () => {
           <ShoppingBag className="size-6" />
         </Button>
       </SheetTrigger>
-      <SheetContent side="right" className="border-none [&>button]:hidden w-[90%]">
+      <SheetContent side="right" className="border-none [&>button]:hidden w-[90%] gap-0">
         <SheetHeader className="bg-black px-4 flex relative h-16">
           <SheetTitle className="text-white">
             <div className="flex">
@@ -55,14 +57,30 @@ const Bag = () => {
             </SheetClose>
           </SheetTitle>
         </SheetHeader>
-        <div className="flex flex-col gap-3">
-          {bagIsPending && <div>Loading...</div>}
-          {bag?.items.map((item) => (
-            <BagItem
-              key={item.id}
-              item={item}
-            />
-          ))}
+        <div className="max-h-full px-4 pt-4 pb-52 relative">
+          <div className="flex flex-col gap-3 overflow-y-scroll h-full">
+            {bagIsPending && (
+              <>
+                <BagItemSkeleton />
+                <BagItemSkeleton />
+                <BagItemSkeleton />
+              </>
+            )}
+            {bag?.items.map((item) => (
+              <BagItem
+                key={item.id}
+                item={item}
+              />
+            ))}
+          </div>
+          <div className="flex flex-col gap-4 bg-white sticky bottom-0 w-full left-0 pt-4">
+            <hr />
+            <div className="flex justify-between">
+              <span className="text-neutral-600">Subtotal:</span>
+              <span className="font-semibold">{centsToReais(bag?.totalPriceInCents ?? 0)}</span>
+            </div>
+            <Button className="w-full" size="lg">Finalizar Compra</Button>
+          </div>
         </div>
       </SheetContent>
     </Sheet>
