@@ -2,6 +2,20 @@
 
 Este projeto é um e-commerce desenvolvido com [Next.js](https://nextjs.org), banco de dados PostgreSQL via Docker, e utiliza o ORM [Drizzle](https://orm.drizzle.team/).
 
+## 📚 Documentação
+
+**📖 [Acesse a documentação completa em `/docs`](./docs/README.md)**
+
+### Links Rápidos
+
+- **🚀 [Guia de Instalação](./docs/getting-started/installation.md)** - Configure o ambiente completo
+- **⚡ [Quick Start (5 minutos)](./docs/getting-started/quick-start.md)** - Comece rapidamente
+- **📱 [Sistema de Menus](./docs/features/menus-system.md)** - Navegação hierárquica
+- **🗂️ [Padrão Repository](./docs/architecture/repository-pattern.md)** - Data Access Layer
+- **📁 [Estrutura de Pastas](./docs/architecture/folder-structure.md)** - Organização do projeto
+
+---
+
 ## E-commerce (Next.js + Drizzle + PostgreSQL)
 
 Este repositório contém um e-commerce construído com Next.js (App Router), usando PostgreSQL como banco de dados e Drizzle ORM para mapeamento. O projeto inclui scripts para seed do banco, autenticação via `better-auth` e um conjunto inicial de páginas/components.
@@ -107,6 +121,52 @@ As tabelas para autenticação são gerenciadas pelo schema do Drizzle (`user`, 
 - `src/components/` — componentes UI e comuns (header, cards, forms)
 - `src/db/` — conexão, schema e seed
 - `src/lib/` — utilitários, auth client, helpers
+- `src/repositories/` — Data Access Layer com padrão Repository
+
+## 📚 Documentação Adicional
+
+Este projeto possui documentação detalhada em arquivos separados:
+
+### � [Documentação Completa em `/docs`](./docs/)
+
+A documentação está organizada em:
+- **Getting Started** - Instalação, configuração e quick start
+- **Features** - Funcionalidades do sistema (menus, auth, produtos)
+- **Architecture** - Estrutura técnica e padrões de design
+- **Guides** - Tutoriais práticos e exemplos
+- **Testing** - Estratégias e ferramentas de teste
+
+**Links diretos:**
+- [📱 Sistema de Menus](./docs/features/menus-system.md) - Navegação hierárquica completa
+- [🗂️ Padrão Repository](./docs/architecture/repository-pattern.md) - Data Access Layer
+- [📁 Estrutura de Pastas](./docs/architecture/folder-structure.md) - Organização do código
+- [🧪 Estratégia de Testes](./docs/testing/strategy.md) - Como testar o projeto
+
+### Destaques das Funcionalidades
+
+#### 🎯 Sistema de Menus Dinâmico
+- Menus configuráveis via banco de dados
+- Suporte a hierarquia (menus e submenus ilimitados)
+- 3 tipos: Custom, Categoria e Marca
+- Navegação por níveis similar a Amazon/Magazine Luiza
+- Ícones dinâmicos do Lucide React
+
+#### 🗂️ Padrão Repository (DAL)
+- Acesso a dados centralizado e reutilizável
+- Controle granular de quais colunas buscar
+- Type-safety com TypeScript
+- Fácil manutenção e teste
+
+**Exemplo:**
+```typescript
+import { getCurrentUserBagWithItems, addProductToBag } from "@/repositories";
+
+// Busca sacola com todos os itens e relações
+const bag = await getCurrentUserBagWithItems();
+
+// Adiciona produto à sacola
+await addProductToBag(productVariantSizeId);
+```
 
 ## Desenvolvimento e dicas
 
