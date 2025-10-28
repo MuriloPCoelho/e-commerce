@@ -12,8 +12,8 @@ import {
 import { Button, buttonVariants } from "../ui/button";
 import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
-import { getBag } from "@/actions/get-bag";
 import BagItem from "./bag-item";
+import { getBag } from "@/actions/get-bag";
 
 const Bag = () => {
   const { data: bag, isPending: bagIsPending } = useQuery({
@@ -60,11 +60,7 @@ const Bag = () => {
           {bag?.items.map((item) => (
             <BagItem
               key={item.id}
-              imageUrl={item.productVariantSize?.variant.imageUrl ?? ""}
-              productName={item.productVariantSize?.variant.product.name ?? ""}
-              color={item.productVariantSize?.variant.name ?? ""}
-              size={item.productVariantSize?.size.name ?? ""}
-              priceInCents={item.productVariantSize?.variant?.priceInCents ?? 0}
+              item={item}
             />
           ))}
         </div>
