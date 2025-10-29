@@ -32,7 +32,7 @@ const BagItem = ({ item }: BagItemProps) => {
   }
 
   return (
-    <div className="grid grid-cols-[80px_1fr] gap-2 px-4">
+    <div className="grid grid-cols-[80px_1fr] gap-2 pr-2">
       <div className="aspect-square relative rounded-xs">
         <Image
           src={item.productVariantSize.variant.imageUrl}
@@ -41,23 +41,26 @@ const BagItem = ({ item }: BagItemProps) => {
           className="object-top rounded-xs te"
         />
       </div>
-      <div className="grid grid-cols-2 grid-rows-[auto_auto_1fr] text-xs">
-        <div className="font-medium truncate text-ellipsis col-span-2 flex justify-between">
+      <div className="grid grid-cols-2 grid-rows-[auto_auto_1fr] text-xs py-0.5">
+        <div className="font-semibold truncate text-ellipsis col-span-2 flex justify-between">
           <Link
             href={`/p/${item.productVariantSize.variant.product.id}`}
-            className="hover:underline"
-          >{`${item.productVariantSize.variant.product.name} - ${item.productVariantSize.variant.name}`}</Link>
-          <Button variant="ghost" size="xs" className="w-7">
-            <Trash size={16} color={colors.red[600]} />
-          </Button>
+            className="hover:underline underline-offset-2 mb-1"
+          >
+            <span className="text-neutral-400">{`${item.quantity > 1 ? `${item.quantity}x ` : ""}`}</span>
+            {`${item.productVariantSize.variant.product.name} - ${item.productVariantSize.variant.name}`}</Link>
         </div>
         <div className="text-neutral-600 text-xs col-span-2 ">
-          Tamanho: {item.productVariantSize.variant.name}
+          Tamanho: {item.productVariantSize.size.name}
         </div>
-        <div className="content-center">
-          <div className="font-semibold">
-            {centsToReais(item.productVariantSize.variant.priceInCents)}
+        <div className="flex items-end justify-between col-span-2">
+          <div className="font-bold">
+            {centsToReais(item.productVariantSize.variant.priceInCents * item.quantity)}
           </div>
+          <Button variant="link" size="xs" className="underline h-4">
+            Remover
+          </Button>
+
         </div>
         {/* <div className="place-self-end">
           <QuantitySelector />
