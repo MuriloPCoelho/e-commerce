@@ -57,8 +57,8 @@ const Bag = () => {
             </SheetClose>
           </SheetTitle>
         </SheetHeader>
-        <div className="max-h-full px-4 pt-4 pb-52 relative">
-          <div className="flex flex-col gap-3 overflow-y-scroll h-full">
+        <div className="h-full px-4 pt-4 relative flex flex-col gap-4">
+          <div className="flex flex-col gap-3 overflow-y-auto grow mb-16">
             {bagIsPending && (
               <>
                 <BagItemSkeleton />
@@ -73,7 +73,7 @@ const Bag = () => {
               />
             ))}
           </div>
-          <div className="flex flex-col gap-4 bg-white sticky bottom-0 w-full left-0 pt-4">
+          <div className="flex flex-col gap-4 bg-white sticky bottom-0 w-full left-0 pb-8">
             <hr />
             <div className="flex justify-between">
               <span className="text-neutral-600">Subtotal:</span>
