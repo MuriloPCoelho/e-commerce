@@ -1,9 +1,8 @@
+"use client";
+
 import Image from "next/image";
-import QuantitySelector from "./quantity-selector";
 import { centsToReais } from "@/lib/utils";
 import { Button } from "../ui/button";
-import { Trash } from "lucide-react";
-import colors from "tailwindcss/colors";
 import Link from "next/link";
 import {
   bagItemsTable,
@@ -12,6 +11,9 @@ import {
   productVariantsTable,
   sizesTable,
 } from "@/db/schema";
+import { removeBagProduct } from "@/actions/remove-bag-product";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { Spinner } from "../ui/spinner";
 
 interface BagItemProps {
   item: typeof bagItemsTable.$inferSelect & {
@@ -27,6 +29,21 @@ interface BagItemProps {
 }
 
 const BagItem = ({ item }: BagItemProps) => {
+  const queryClient = useQueryClient();
+
+  const { mutate: removeItem, isPending } = useMutation({
+    mutationKey: ["removeBagProduct", item.id],
+    mutationFn: async () => {
+      return removeBagProduct(item.id);
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["bag"] });
+    },
+    onError: (err) => {
+      console.error("Failed to remove item from bag", err);
+    },
+  });
+
   if (!item.productVariantSize) {
     return null;
   }
@@ -57,8 +74,14 @@ const BagItem = ({ item }: BagItemProps) => {
           <div className="font-bold">
             {centsToReais(item.productVariantSize.variant.priceInCents * item.quantity)}
           </div>
-          <Button variant="link" size="xs" className="underline h-4">
-            Remover
+          <Button 
+            variant="link" 
+            size="xs" 
+            className="underline h-4" 
+            onClick={() => removeItem()}
+            disabled={isPending}
+          >
+            {isPending ? <Spinner className="size-3" /> : "Remover"}
           </Button>
 
         </div>
