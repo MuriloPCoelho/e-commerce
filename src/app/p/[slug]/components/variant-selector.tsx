@@ -14,13 +14,13 @@ const VariantSelector = ({ variants }: VariantSelectorProps) => {
   const currentVariantSlug = params.slug;
   
   return (
-    <div className="flex gap-1.5 w-full flex-wrap">
+    <div className="flex gap-2 w-full flex-wrap">
       {variants.map((variant) => (
         <Link
           scroll={false}
           href={`/p/${variant.slug}`}
           className={twJoin(
-            "outline outline-neutral-300 size-12 aspect-square relative ",
+            "outline outline-neutral-300 size-16 aspect-square relative ",
             currentVariantSlug === variant.slug && "ring-2 ring-amber-400"
           )}
           key={variant.id}
