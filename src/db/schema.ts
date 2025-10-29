@@ -254,8 +254,10 @@ export const bagsRelations = relations(bagsTable, ({ one, many }) => ({
 export const bagItemsTable = pgTable("tb_bag_items", {
   id: uuid("id").primaryKey().defaultRandom(),
   bagId: uuid("bag_id")
+    .notNull()
     .references(() => bagsTable.id),
   productVariantSizeId: integer("product_variant_size_id")
+    .notNull()
     .references(() => productVariantSizesTable.id),
   quantity: integer("quantity").notNull().default(1),
   createdAt: timestamp("created_at").notNull().defaultNow(),
