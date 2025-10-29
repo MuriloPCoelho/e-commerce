@@ -35,7 +35,7 @@ const AddToBagButton = ({ productVariantSizeId }: AddToBagButtonProps) => {
       disabled={!productVariantSizeId || isPending}
     >
       {
-        !isPending ? <ShoppingBag /> : <Spinner />
+        !isPending ? <ShoppingBag className="size-5" /> : <Spinner className="size-5" />
       }
       
       Adicionar a sacola
