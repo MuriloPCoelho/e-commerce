@@ -49,7 +49,7 @@ const BagItem = ({ item }: BagItemProps) => {
   }
 
   return (
-    <div className="grid grid-cols-[80px_1fr] gap-2 pr-2">
+    <div className="grid grid-cols-[96px_1fr] gap-2 pr-2">
       <div className="aspect-square relative rounded-xs">
         <Image
           src={item.productVariantSize.variant.imageUrl}
@@ -65,10 +65,11 @@ const BagItem = ({ item }: BagItemProps) => {
             className="hover:underline underline-offset-2 mb-1"
           >
             <span className="text-neutral-400">{`${item.quantity > 1 ? `${item.quantity}x ` : ""}`}</span>
-            {`${item.productVariantSize.variant.product.name} - ${item.productVariantSize.variant.name}`}</Link>
+            {item.productVariantSize.variant.product.name}</Link>
         </div>
-        <div className="text-neutral-600 text-xs col-span-2 ">
-          Tamanho: {item.productVariantSize.size.name}
+        <div className="text-neutral-600 text-xs font-light col-span-2 ">
+          <div>Tamanho: {item.productVariantSize.size.name}</div>
+          <div>Cor: {item.productVariantSize.variant.name}</div>
         </div>
         <div className="flex items-end justify-between col-span-2">
           <div className="font-bold">
