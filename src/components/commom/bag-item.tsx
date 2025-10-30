@@ -61,7 +61,7 @@ const BagItem = ({ item }: BagItemProps) => {
       <div className="grid grid-cols-2 grid-rows-[auto_auto_1fr] text-xs py-0.5">
         <div className="font-semibold truncate text-ellipsis col-span-2 flex justify-between">
           <Link
-            href={`/p/${item.productVariantSize.variant.product.id}`}
+            href={`/p/${item.productVariantSize.variant.slug}`}
             className="hover:underline underline-offset-2 mb-1"
           >
             <span className="text-neutral-400">{`${item.quantity > 1 ? `${item.quantity}x ` : ""}`}</span>
