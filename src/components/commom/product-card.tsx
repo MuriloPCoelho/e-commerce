@@ -35,7 +35,9 @@ const ProductCard = ({ product, textContainerClassName }: ProductCardProps) => {
         )}
       >
         <span className="font-medium">{product.name}</span>
-        <ProductRating rating={3.5}/>
+        <div>
+          <ProductRating rating={3.5}/>
+        </div>
         <div className="flex flex-col">
           <div className="text-sm text-neutral-600 leading-4">A partir de</div>
           <span className="font-semibold">
