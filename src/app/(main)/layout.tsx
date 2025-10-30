@@ -10,7 +10,7 @@ export default function MainLayout({
     <>
       <Header />
       <StickyBar />
-      {children}
+      <main>{children}</main>
     </>
   );
 }
