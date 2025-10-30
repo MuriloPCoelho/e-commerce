@@ -32,5 +32,4 @@ export const removeBagProduct = async (bagItemId: string) => {
     eq(bagItemsTable.id, bagItemId)
   );
 
-  // await db.delete(bagItemsTable).where(bagItemsTable.id.equals(bagItemId)).execute();
 }
