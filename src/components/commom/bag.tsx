@@ -37,7 +37,7 @@ const Bag = () => {
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
       <SheetTrigger asChild>
         <div className="relative">
-          <Button variant="ghost" size="icon">
+          <Button variant="ghost">
             <ShoppingBag className="size-6" />
           </Button>
           {totalItems > 0 && (
@@ -68,7 +68,6 @@ const Bag = () => {
             </div>
             <SheetClose asChild>
               <Button
-                size="icon"
                 variant="ghost"
                 className="absolute top-3 right-4 hover:bg-zinc-800"
               >

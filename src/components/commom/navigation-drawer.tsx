@@ -97,7 +97,7 @@ const NavigationDrawer = ({ menus = [] }: NavigationDrawerProps) => {
   return (
     <Sheet onOpenChange={handleSheetOpenChange}>
       <SheetTrigger asChild>
-        <Button variant="ghost" size="icon">
+        <Button variant="ghost">
           <Menu className="size-6" />
         </Button>
       </SheetTrigger>
@@ -110,7 +110,6 @@ const NavigationDrawer = ({ menus = [] }: NavigationDrawerProps) => {
             <SheetClose asChild>
               <Button
                 variant="ghost"
-                size="icon"
                 className="absolute top-3 left-4 hover:bg-zinc-800"
               >
                 <X className="size-6 text-white" />
