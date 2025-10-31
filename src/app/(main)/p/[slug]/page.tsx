@@ -4,7 +4,6 @@ import {
   AccordionContent,
   AccordionItem,
 } from "@/components/ui/accordion";
-import { Button } from "@/components/ui/button";
 import { db } from "@/db";
 import { eq } from "drizzle-orm";
 import { PlusIcon } from "lucide-react";
@@ -13,6 +12,7 @@ import { Accordion as AccordionPrimitive } from "radix-ui";
 import VariantSelector from "./components/variant-selector";
 import SizeSelector from "./components/size-selector";
 import AddToBagButton from "./components/add-to-bag-button";
+import ProductActionsWrapper from "./components/product-actions-wrapper";
 
 interface ProductPageProps {
   params: Promise<{ slug: string }>;
@@ -60,49 +60,54 @@ const ProductPage = async ({ params, searchParams }: ProductPageProps) => {
   console.log({ variantSizes });
 
   return (
-    <div className="flex flex-col">
-      <div className="relative aspect-square mb-8">
-        <Image
-          src={variant.imageUrl}
-          alt={variant.name}
-          fill
-          priority
-          className="object-cover"
-        />
-      </div>
-      <div className="p-4">
-        <h1 className="text-2xl font-semibold mb-2">{`${variant.product.name} - ${variant.name}`}</h1>
-        <ProductRating rating={4.5} size="lg" link="#reviews-accordion" />
-        <p className="mt-4 text-[28px] font-bold">{`R$ ${(
-          variant.priceInCents / 100
-        )
-          .toFixed(2)
-          .replace(".", ",")}`}</p>
-        <span>
-          ou 12x de R${" "}
-          {(variant.priceInCents / 100 / 12).toFixed(2).replace(".", ",")}
-        </span>
-      </div>
-      <div className="p-4">
-        <VariantSelector variants={variant.product.variants} />
-      </div>
-      <div>
+    <ProductActionsWrapper productVariantSizeId={selectedProductVariantSizeId}>
+      <div className="flex flex-col">
+        <div className="relative aspect-square mb-8">
+          <Image
+            src={variant.imageUrl}
+            alt={variant.name}
+            fill
+            priority
+            className="object-cover"
+          />
+        </div>
         <div className="p-4">
-          <h2 className="text-lg mb-2">Selecione o tamanho</h2>
-          <div className="flex gap-1.5 w-full flex-wrap">
-            <SizeSelector sizes={variantSizes} />
+          <h1 className="text-2xl font-semibold mb-2">{`${variant.product.name} - ${variant.name}`}</h1>
+          <ProductRating rating={4.5} size="lg" link="#reviews-accordion" />
+          <p className="mt-4 text-[28px] font-bold">{`R$ ${(
+            variant.priceInCents / 100
+          )
+            .toFixed(2)
+            .replace(".", ",")}`}</p>
+          <span>
+            ou 12x de R${" "}
+            {(variant.priceInCents / 100 / 12).toFixed(2).replace(".", ",")}
+          </span>
+        </div>
+        <div className="p-4">
+          <VariantSelector variants={variant.product.variants} />
+        </div>
+        <div>
+          <div className="p-4">
+            <h2 className="text-lg mb-2">Selecione o tamanho</h2>
+            <div className="flex gap-1.5 w-full flex-wrap">
+              <SizeSelector sizes={variantSizes} />
+            </div>
           </div>
         </div>
-      </div>
-      <div className="flex flex-col gap-4 p-4">
-        <Button className="w-full" size="lg">
-          Comprar agora
-        </Button>
-        <AddToBagButton productVariantSizeId={selectedProductVariantSizeId} />
-      </div>
-      <div></div>
-      <div className="p-4">
-        <Accordion type="multiple" className="w-full" defaultValue={["3"]} id="reviews-accordion">
+        <div className="flex flex-col gap-4 p-4" id="product-action-buttons">
+          <AddToBagButton
+            productVariantSizeId={selectedProductVariantSizeId}
+            variant="default"
+            redirectToCheckout
+          >
+            Comprar agora
+          </AddToBagButton>
+          <AddToBagButton productVariantSizeId={selectedProductVariantSizeId} />
+        </div>
+        <div></div>
+        <div className="p-4">
+          <Accordion type="multiple" className="w-full" defaultValue={["3"]} id="reviews-accordion">
           <AccordionItem value="1">
             <AccordionPrimitive.Header className="flex">
               <AccordionPrimitive.Trigger className="flex flex-1 items-center justify-between gap-4 rounded-md py-4 text-left text-lg leading-6 font-semibold transition-all outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 [&>svg>path:last-child]:origin-center [&>svg>path:last-child]:transition-all [&>svg>path:last-child]:duration-200 [&[data-state=open]>svg]:rotate-180 [&[data-state=open]>svg>path:last-child]:rotate-90 [&[data-state=open]>svg>path:last-child]:opacity-0">
@@ -163,6 +168,7 @@ const ProductPage = async ({ params, searchParams }: ProductPageProps) => {
         </Accordion>
       </div>
     </div>
+    </ProductActionsWrapper>
   );
 };
 
