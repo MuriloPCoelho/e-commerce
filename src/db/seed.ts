@@ -299,6 +299,7 @@ type ProductSeed = {
   description: string;
   categoryName: string;
   brand?: string;
+  gender?: "masculino" | "feminino" | "unissex";
   variants: VariantSeed[];
 };
 
@@ -309,6 +310,7 @@ const products: ProductSeed[] = [
     description:
       "Mochila resistente e confortável, ideal para o dia a dia e viagens.",
     categoryName: "Acessórios",
+    gender: "unissex",
     variants: [
       { color: "Preta", price: 12999 },
       { color: "Branca", price: 12999 },
@@ -318,6 +320,7 @@ const products: ProductSeed[] = [
     name: "Meia Alta",
     description: "Meia alta de algodão, confortável e durável.",
     categoryName: "Acessórios",
+    gender: "unissex",
     variants: [
       { color: "Branca", price: 1999 },
       { color: "Preta", price: 1999 },
@@ -327,6 +330,7 @@ const products: ProductSeed[] = [
     name: "Boné Nocta",
     description: "Boné Nocta com design moderno e ajuste confortável.",
     categoryName: "Acessórios",
+    gender: "masculino",
     variants: [
       { color: "Preto", price: 8999 },
       { color: "Vinho", price: 8999 },
@@ -667,6 +671,7 @@ async function main() {
         description: productData.description,
         categoryId: categoryId,
         brandId: brandId,
+        gender: productData.gender || "unissex",
       });
 
       // Inserir variantes do produto
