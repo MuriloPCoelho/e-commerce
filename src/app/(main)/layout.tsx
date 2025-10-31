@@ -1,5 +1,6 @@
 import Header from "@/components/commom/header";
 import StickyBar from "@/components/commom/sticky-bar";
+import Footer from "@/components/commom/footer";
 
 export default function MainLayout({
   children,
@@ -11,6 +12,7 @@ export default function MainLayout({
       <Header />
       <StickyBar />
       <main>{children}</main>
+      <Footer />
     </>
   );
 }
