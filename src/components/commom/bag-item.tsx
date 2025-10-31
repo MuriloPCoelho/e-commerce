@@ -68,8 +68,8 @@ const BagItem = ({ item }: BagItemProps) => {
             {item.productVariantSize.variant.product.name}</Link>
         </div>
         <div className="text-neutral-600 text-xs font-light col-span-2 ">
-          <div>Tamanho: {item.productVariantSize.size.name}</div>
-          <div>Cor: {item.productVariantSize.variant.name}</div>
+          <div>Tamanho: <span className="font-medium">{item.productVariantSize.size.name}</span></div>
+          <div>Cor: <span className="font-medium">{item.productVariantSize.variant.name}</span></div>
         </div>
         <div className="flex items-end justify-between col-span-2">
           <div className="font-bold">
