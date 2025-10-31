@@ -20,12 +20,11 @@ const buttonVariants = cva(
         link: "text-primary underline-offset-4 hover:underline",
       },
       size: {
-        xs: "h-7 rounded-full gap-1.5 px-3 has-[>svg]:px-2.5", 
-        sm: "h-9 rounded-full px-4 py-1.5 has-[>svg]:px-3", 
-        md: "h-10 rounded-full px-6 has-[>svg]:px-4", 
-        icon: "size-10", 
-        lg: "h-12 rounded-full px-8 has-[>svg]:px-6", 
-        xl: "h-14 rounded-full px-10 has-[>svg]:px-8", 
+        xs: "h-7 rounded-full gap-1.5 px-3 has-[>svg]:px-2.5 has-[>svg:only-child]:aspect-square has-[>svg:only-child]:px-0", 
+        sm: "h-9 rounded-full px-4 py-1.5 has-[>svg]:px-3 has-[>svg:only-child]:aspect-square has-[>svg:only-child]:px-0", 
+        md: "h-10 rounded-full px-6 has-[>svg]:px-4 has-[>svg:only-child]:aspect-square has-[>svg:only-child]:px-0", 
+        lg: "h-12 rounded-full px-8 has-[>svg]:px-6 has-[>svg:only-child]:aspect-square has-[>svg:only-child]:px-0", 
+        xl: "h-14 rounded-full px-10 has-[>svg]:px-8 has-[>svg:only-child]:aspect-square has-[>svg:only-child]:px-0", 
       },
     },
     compoundVariants: [
