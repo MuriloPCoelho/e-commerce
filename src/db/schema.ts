@@ -81,11 +81,21 @@ export const categoriesTable = pgTable("tb_categories", {
   id: serial("id").primaryKey(),
   name: text("name").notNull(),
   slug: text("slug").notNull().unique(),
+  parentId: integer("parent_id"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
-export const categoriesRelations = relations(categoriesTable, ({ many }) => ({
-  products: many(productsTable),
+export const categoriesRelations = relations(categoriesTable, ({ many, one }) => ({
+  products: many(productsTable, { relationName: "categoryToProduct" }),
+  subcategoryProducts: many(productsTable, { relationName: "subcategoryToProduct" }),
+  parent: one(categoriesTable, {
+    fields: [categoriesTable.parentId],
+    references: [categoriesTable.id],
+    relationName: "categoryToSubcategory",
+  }),
+  subcategories: many(categoriesTable, {
+    relationName: "categoryToSubcategory",
+  }),
 }));
 
 export const productsTable = pgTable("tb_products", {
@@ -93,6 +103,9 @@ export const productsTable = pgTable("tb_products", {
   categoryId: integer("category_id")
     .references(() => categoriesTable.id)
     .notNull(),
+
+  subcategoryId: integer("subcategory_id")
+    .references(() => categoriesTable.id),
 
   brandId: integer("brand_id")
     .references(() => brandsTable.id)
@@ -154,16 +167,47 @@ export const brandsTable = pgTable("tb_brands", {
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
+export const collectionsTable = pgTable("tb_collections", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  slug: text("slug").notNull().unique(),
+  type: text("type", { enum: ["sport", "lifestyle", "promotion"] })
+    .notNull()
+    .default("sport"),
+  description: text("description"),
+  imageUrl: text("image_url"),
+  isActive: boolean("is_active").notNull().default(true),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+export const productCollectionsTable = pgTable("tb_product_collections", {
+  id: serial("id").primaryKey(),
+  productId: uuid("product_id")
+    .references(() => productsTable.id, { onDelete: "cascade" })
+    .notNull(),
+  collectionId: integer("collection_id")
+    .references(() => collectionsTable.id, { onDelete: "cascade" })
+    .notNull(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
 export const productsRelations = relations(productsTable, ({ one, many }) => ({
   category: one(categoriesTable, {
     fields: [productsTable.categoryId],
     references: [categoriesTable.id],
+    relationName: "categoryToProduct",
+  }),
+  subcategory: one(categoriesTable, {
+    fields: [productsTable.subcategoryId],
+    references: [categoriesTable.id],
+    relationName: "subcategoryToProduct",
   }),
   variants: many(productVariantsTable),
   brand: one(brandsTable, {
     fields: [productsTable.brandId],
     references: [brandsTable.id],
   }),
+  productCollections: many(productCollectionsTable),
 }));
 
 export const productVariantsRelations = relations(
@@ -283,7 +327,7 @@ export const menusTable = pgTable("tb_menus", {
   slug: text("slug").notNull().unique(),
   href: text("href"),
   parentId: integer("parent_id"),
-  type: text("type", { enum: ["custom", "category", "brand"] })
+  type: text("type", { enum: ["custom", "category", "brand", "collection"] })
     .notNull()
     .default("custom"),
   referenceId: integer("reference_id"),
@@ -309,4 +353,26 @@ export const menusRelations = relations(menusTable, ({ one, many }) => ({
     fields: [menusTable.referenceId],
     references: [brandsTable.id],
   }),
+  collection: one(collectionsTable, {
+    fields: [menusTable.referenceId],
+    references: [collectionsTable.id],
+  }),
 }));
+
+export const collectionsRelations = relations(collectionsTable, ({ many }) => ({
+  productCollections: many(productCollectionsTable),
+}));
+
+export const productCollectionsRelations = relations(
+  productCollectionsTable,
+  ({ one }) => ({
+    product: one(productsTable, {
+      fields: [productCollectionsTable.productId],
+      references: [productsTable.id],
+    }),
+    collection: one(collectionsTable, {
+      fields: [productCollectionsTable.collectionId],
+      references: [collectionsTable.id],
+    }),
+  })
+);

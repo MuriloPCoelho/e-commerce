@@ -20,6 +20,7 @@ export async function getMenus(): Promise<MenuItem[]> {
       with: {
         category: true,
         brand: true,
+        collection: true,
       },
       orderBy: [asc(menusTable.order)],
     });
@@ -30,6 +31,8 @@ export async function getMenus(): Promise<MenuItem[]> {
           return menu.category ? `/w/${menu.category.slug}` : "#";
         case "brand":
           return menu.brand ? `/b/${menu.brand.slug}` : "#";
+        case "collection":
+          return menu.collection ? `/c/${menu.collection.slug}` : "#";
         case "custom":
         default:
           return menu.href || "#";
