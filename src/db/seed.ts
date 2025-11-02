@@ -1,15 +1,21 @@
+import "dotenv/config";
 import crypto from "crypto";
-
-import { db } from ".";
+import { drizzle } from "drizzle-orm/node-postgres";
+import { Pool } from "pg";
 import {
-  categoriesTable,
   productsTable,
   productVariantsTable,
   colorsTable,
   sizesTable,
-  brandsTable,
   productVariantSizesTable,
 } from "./schema";
+import * as schema from "./schema";
+
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+});
+
+const db = drizzle(pool, { schema });
 
 const productImages = {
   Mochila: {
@@ -571,98 +577,118 @@ async function main() {
   console.log("🌱 Iniciando o seeding do banco de dados...");
 
   try {
-  // Limpar dados existentes
-  console.log("🧹 Limpando dados existentes...");
-  // apagar na ordem das dependências
-  await db.delete(productVariantSizesTable);
-  await db.delete(productVariantsTable);
-  await db.delete(productsTable);
-  await db.delete(brandsTable);
-  await db.delete(colorsTable);
-  await db.delete(sizesTable);
-  await db.delete(categoriesTable);
-    console.log("✅ Dados limpos com sucesso!");
+    // Limpar apenas produtos e suas dependências (manter categorias)
+    console.log("🧹 Limpando produtos existentes...");
+    await db.delete(productVariantSizesTable);
+    await db.delete(productVariantsTable);
+    await db.delete(productsTable);
+    console.log("✅ Produtos limpos com sucesso!");
+
+    // Buscar categorias existentes
+    console.log("📂 Buscando categorias existentes...");
+    const existingCategories = await db.query.categoriesTable.findMany();
+    const categoryMap = new Map<string, { id: number; parentId: number | null }>();
+    
+    existingCategories.forEach(cat => {
+      categoryMap.set(cat.name, { id: cat.id, parentId: cat.parentId });
+    });
+
+    // Mapeamento de nomes antigos para novos
+    const categoryMapping: Record<string, string> = {
+      "Acessórios": "Acessórios",
+      "Bermuda & Shorts": "Shorts",
+      "Calças": "Calças",
+      "Camisetas": "Camisetas",
+      "Jaquetas & Moletons": "Jaquetas & Casacos",
+      "Tênis": "Tênis",
+    };
 
     // Inserir cores, tamanhos e marcas padrão
-  const colorMap = new Map<string, number>();
-  const sizeMap = new Map<string, number>();
-  const brandMap = new Map<string, number>();
+    const colorMap = new Map<string, number>();
+    const sizeMap = new Map<string, number>();
+    const brandMap = new Map<string, number>();
 
-    console.log("🎨 Criando cores padrão...");
+    console.log("🎨 Criando/Atualizando cores padrão...");
     const defaultColors = [
       { name: "Preto", hex: "#000000" },
+      { name: "Preta", hex: "#000000" },
       { name: "Branco", hex: "#FFFFFF" },
+      { name: "Branca", hex: "#FFFFFF" },
       { name: "Azul", hex: "#1E90FF" },
       { name: "Verde", hex: "#228B22" },
       { name: "Bege", hex: "#F5F5DC" },
       { name: "Marrom", hex: "#8B4513" },
       { name: "Vinho", hex: "#800000" },
+      { name: "Amarela", hex: "#FFD700" },
+      { name: "Cinza", hex: "#808080" },
     ];
 
     for (const c of defaultColors) {
       const [inserted] = await db
         .insert(colorsTable)
         .values({ name: c.name, hex: c.hex })
+        .onConflictDoNothing()
         .returning({ id: colorsTable.id });
 
-      colorMap.set(c.name, Number(inserted.id));
+      if (inserted) {
+        colorMap.set(c.name, Number(inserted.id));
+      } else {
+        // Buscar cor existente
+        const existing = await db.query.colorsTable.findFirst({
+          where: (colors, { eq }) => eq(colors.name, c.name),
+        });
+        if (existing) colorMap.set(c.name, existing.id);
+      }
     }
 
-    console.log("📏 Criando tamanhos padrão...");
+    console.log("📏 Criando/Atualizando tamanhos padrão...");
     const defaultSizes = ["P", "M", "G", "GG", "U"];
     for (const s of defaultSizes) {
       const [inserted] = await db
         .insert(sizesTable)
         .values({ name: s })
+        .onConflictDoNothing()
         .returning({ id: sizesTable.id });
 
-      sizeMap.set(s, Number(inserted.id));
+      if (inserted) {
+        sizeMap.set(s, Number(inserted.id));
+      } else {
+        // Buscar tamanho existente
+        const existing = await db.query.sizesTable.findFirst({
+          where: (sizes, { eq }) => eq(sizes.name, s),
+        });
+        if (existing) sizeMap.set(s, existing.id);
+      }
     }
 
-    console.log("🏷️ Criando marcas padrão...");
-    const defaultBrands = ["Nike", "Puma", "New Balance", "Jordan", "Adidas"];
-    for (const b of defaultBrands) {
-      const [inserted] = await db
-        .insert(brandsTable)
-        .values({ name: b, slug: generateSlug(b) })
-        .returning({ id: brandsTable.id });
-
-      brandMap.set(b, Number(inserted.id));
-    }
-
-    // Inserir categorias
-  const categoryMap = new Map<string, number>();
-
-    console.log("📂 Criando categorias...");
-    for (const categoryData of categories) {
-      const categorySlug = generateSlug(categoryData.name);
-
-      console.log(`  📁 Criando categoria: ${categoryData.name}`);
-
-      const [inserted] = await db
-        .insert(categoriesTable)
-        .values({ name: categoryData.name, slug: categorySlug })
-        .returning({ id: categoriesTable.id });
-
-      categoryMap.set(categoryData.name, Number(inserted.id));
-    }
+    console.log("🏷️ Buscando marcas existentes...");
+    const existingBrands = await db.query.brandsTable.findMany();
+    existingBrands.forEach(brand => {
+      brandMap.set(brand.name, brand.id);
+    });
 
     // Inserir produtos
     for (const productData of products) {
       const productId = crypto.randomUUID();
       const productSlug = generateSlug(productData.name);
-      const categoryId = categoryMap.get(productData.categoryName);
+      
+      // Mapear nome antigo da categoria para o novo
+      const newCategoryName = categoryMapping[productData.categoryName] || productData.categoryName;
+      const categoryInfo = categoryMap.get(newCategoryName);
 
-      // escolher ou criar uma marca aleatória para o produto
-      const brandId =
-        brandMap.get(productData.brand ?? defaultBrands[0]) ??
-        Array.from(brandMap.values())[0];
-
-      if (!categoryId) {
-        throw new Error(`Categoria "${productData.categoryName}" não encontrada`);
+      if (!categoryInfo) {
+        console.log(`⚠️  Categoria "${newCategoryName}" não encontrada, pulando produto ${productData.name}`);
+        continue;
       }
 
-      console.log(`📦 Criando produto: ${productData.name}`);
+      // Determinar category e subcategory
+      const isSubcategory = categoryInfo.parentId !== null;
+      const categoryId = isSubcategory ? categoryInfo.parentId! : categoryInfo.id;
+      const subcategoryId = isSubcategory ? categoryInfo.id : null;
+
+      const brandId = brandMap.get("Nike") ?? Array.from(brandMap.values())[0];
+
+      console.log(`📦 Criando produto: ${productData.name} (Cat: ${categoryId}, Subcat: ${subcategoryId})`);
 
       await db.insert(productsTable).values({
         id: productId,
@@ -670,6 +696,7 @@ async function main() {
         slug: productSlug,
         description: productData.description,
         categoryId: categoryId,
+        subcategoryId: subcategoryId,
         brandId: brandId,
         gender: productData.gender || "unissex",
       });
@@ -723,7 +750,7 @@ async function main() {
 
     console.log("✅ Seeding concluído com sucesso!");
     console.log(
-      `📊 Foram criadas ${categories.length} categorias, ${
+      `📊 Foram criados ${
         products.length
       } produtos com ${products.reduce(
         (acc, p) => acc + p.variants.length,
@@ -733,7 +760,11 @@ async function main() {
   } catch (error) {
     console.error("❌ Erro durante o seeding:", error);
     throw error;
+  } finally {
+    await pool.end();
   }
 }
 
-main().catch(console.error);
+main()
+  .catch(console.error)
+  .finally(() => process.exit(0));

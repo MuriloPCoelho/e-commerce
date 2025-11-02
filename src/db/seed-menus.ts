@@ -1,254 +1,217 @@
 import "dotenv/config";
-import { db } from ".";
+import { drizzle } from "drizzle-orm/node-postgres";
+import { Pool } from "pg";
 import { menusTable } from "./schema";
+import * as schema from "./schema";
 
-async function seedMenusWithSubmenus() {
-  console.log("🌱 Criando menus com submenus...");
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+});
 
-  try {
-    // 1. Menu Principal: Calçados (com submenus)
-    const [calcadosMenu] = await db
-      .insert(menusTable)
-      .values({
-        name: "Calçados",
-        slug: "calcados",
-        type: "custom",
-        order: 1,
-        isActive: true,
-      })
-      .returning();
-    console.log("✅ Menu 'Calçados' criado");
+const db = drizzle(pool, { schema });
 
-    // Submenus de Calçados
-    await db.insert(menusTable).values([
-      {
-        name: "Tênis",
-        slug: "calcados-tenis",
-        href: "/calcados/tenis",
-        type: "custom",
-        parentId: calcadosMenu.id,
-        order: 1,
-        isActive: true,
-      },
-      {
-        name: "Casual",
-        slug: "calcados-casual",
-        href: "/calcados/casual",
-        type: "custom",
-        parentId: calcadosMenu.id,
-        order: 2,
-        isActive: true,
-      },
-      {
-        name: "Corrida",
-        slug: "calcados-corrida",
-        href: "/calcados/corrida",
-        type: "custom",
-        parentId: calcadosMenu.id,
-        order: 3,
-        isActive: true,
-      },
-      {
-        name: "Chuteiras",
-        slug: "calcados-chuteiras",
-        href: "/calcados/chuteiras",
-        type: "custom",
-        parentId: calcadosMenu.id,
-        order: 4,
-        isActive: true,
-      },
-      {
-        name: "Academia",
-        slug: "calcados-academia",
-        href: "/calcados/academia",
-        type: "custom",
-        parentId: calcadosMenu.id,
-        order: 5,
-        isActive: true,
-      },
-      {
-        name: "Skate",
-        slug: "calcados-skate",
-        href: "/calcados/skate",
-        type: "custom",
-        parentId: calcadosMenu.id,
-        order: 6,
-        isActive: true,
-      },
-      {
-        name: "Basquete",
-        slug: "calcados-basquete",
-        href: "/calcados/basquete",
-        type: "custom",
-        parentId: calcadosMenu.id,
-        order: 7,
-        isActive: true,
-      },
-      {
-        name: "Vôlei",
-        slug: "calcados-volei",
-        href: "/calcados/volei",
-        type: "custom",
-        parentId: calcadosMenu.id,
-        order: 8,
-        isActive: true,
-      },
-    ]);
-    console.log("✅ 8 submenus de 'Calçados' criados");
-
-    // 2. Menu Principal: Roupas (com submenus)
-    const [roupasMenu] = await db
-      .insert(menusTable)
-      .values({
-        name: "Roupas",
-        slug: "roupas",
-        type: "custom",
-        order: 2,
-        isActive: true,
-      })
-      .returning();
-    console.log("✅ Menu 'Roupas' criado");
-
-    // Submenus de Roupas
-    await db.insert(menusTable).values([
-      {
-        name: "Camisetas",
-        slug: "roupas-camisetas",
-        href: "/roupas/camisetas",
-        type: "custom",
-        parentId: roupasMenu.id,
-        order: 1,
-        isActive: true,
-      },
-      {
-        name: "Calças",
-        slug: "roupas-calcas",
-        href: "/roupas/calcas",
-        type: "custom",
-        parentId: roupasMenu.id,
-        order: 2,
-        isActive: true,
-      },
-      {
-        name: "Shorts",
-        slug: "roupas-shorts",
-        href: "/roupas/shorts",
-        type: "custom",
-        parentId: roupasMenu.id,
-        order: 3,
-        isActive: true,
-      },
-      {
-        name: "Jaquetas",
-        slug: "roupas-jaquetas",
-        href: "/roupas/jaquetas",
-        type: "custom",
-        parentId: roupasMenu.id,
-        order: 4,
-        isActive: true,
-      },
-    ]);
-    console.log("✅ 4 submenus de 'Roupas' criados");
-
-    // 3. Menu Principal: Acessórios (com submenus)
-    const [acessoriosMenu] = await db
-      .insert(menusTable)
-      .values({
-        name: "Acessórios",
-        slug: "acessorios",
-        type: "custom",
-        order: 3,
-        isActive: true,
-      })
-      .returning();
-    console.log("✅ Menu 'Acessórios' criado");
-
-    // Submenus de Acessórios
-    await db.insert(menusTable).values([
-      {
-        name: "Mochilas",
-        slug: "acessorios-mochilas",
-        href: "/acessorios/mochilas",
-        type: "custom",
-        parentId: acessoriosMenu.id,
-        order: 1,
-        isActive: true,
-      },
-      {
-        name: "Bonés",
-        slug: "acessorios-bones",
-        href: "/acessorios/bones",
-        type: "custom",
-        parentId: acessoriosMenu.id,
-        order: 2,
-        isActive: true,
-      },
-      {
-        name: "Meias",
-        slug: "acessorios-meias",
-        href: "/acessorios/meias",
-        type: "custom",
-        parentId: acessoriosMenu.id,
-        order: 3,
-        isActive: true,
-      },
-      {
-        name: "Relógios",
-        slug: "acessorios-relogios",
-        href: "/acessorios/relogios",
-        type: "custom",
-        parentId: acessoriosMenu.id,
-        order: 4,
-        isActive: true,
-      },
-    ]);
-    console.log("✅ 4 submenus de 'Acessórios' criados");
-
-    // 4. Menus simples (sem submenus)
-    await db.insert(menusTable).values([
-      {
-        name: "Novidades",
-        slug: "novidades",
-        href: "/novidades",
-        type: "custom",
-        order: 4,
-        isActive: true,
-      },
-      {
-        name: "Promoções",
-        slug: "promocoes",
-        href: "/promocoes",
-        type: "custom",
-        order: 5,
-        isActive: true,
-      },
-    ]);
-    console.log("✅ Menus 'Novidades' e 'Promoções' criados");
-
-    console.log("\n🎉 Todos os menus foram criados com sucesso!");
-    console.log("\n📊 Resumo:");
-    console.log("  - 1 menu: Calçados (com 8 submenus)");
-    console.log("  - 1 menu: Roupas (com 4 submenus)");
-    console.log("  - 1 menu: Acessórios (com 4 submenus)");
-    console.log("  - 2 menus: Novidades e Promoções");
-    console.log("\n  Total: 5 menus principais + 16 submenus = 21 itens");
-  } catch (error) {
-    console.error("❌ Erro ao criar menus:", error);
-    throw error;
+async function createSubmenus(parentId: number, subcatSlugs: string[], categories: any[], prefix: string, categoryPrefix: string) {
+  for (let i = 0; i < subcatSlugs.length; i++) {
+    const subcat = categories.find(c => c.slug === subcatSlugs[i]);
+    if (subcat) {
+      await db.insert(menusTable).values({
+        name: subcat.name,
+        slug: `${prefix}-${subcat.slug}`,
+        href: `/${categoryPrefix}/${subcat.slug}`,
+        parentId,
+        type: "category",
+        referenceId: subcat.id,
+        order: i,
+      });
+    }
   }
 }
 
-// Execute o seed se este arquivo for rodado diretamente
-if (require.main === module) {
-  seedMenusWithSubmenus()
-    .then(() => {
-      console.log("\n✅ Seed completado com sucesso!");
-      process.exit(0);
-    })
-    .catch((error) => {
-      console.error("\n❌ Seed falhou:", error);
-      process.exit(1);
+async function seedMenus() {
+  console.log("🌱 Seeding menus...");
+  await db.delete(menusTable);
+  
+  const categories = await db.query.categoriesTable.findMany();
+  const collections = await db.query.collectionsTable.findMany();
+  
+  const findCat = (slug: string) => categories.find(c => c.slug === slug);
+  
+  let order = 0;
+  
+  // MASCULINO
+  const [masc] = await db.insert(menusTable).values({
+    name: "Masculino",
+    slug: "masculino",
+    href: "/masculino",
+    type: "custom",
+    order: order++,
+  }).returning();
+  
+  const [mascCalc] = await db.insert(menusTable).values({
+    name: "Calçados",
+    slug: "masculino-calcados",
+    href: "/masculino/calcados",
+    parentId: masc.id,
+    type: "custom",
+    order: 0,
+  }).returning();
+  
+  await createSubmenus(mascCalc.id, ["botas", "chinelos", "chuteiras", "sapatenis", "tenis", "tenis-de-corrida"], categories, "masculino", "masculino/calcados");
+  
+  const [mascRoup] = await db.insert(menusTable).values({
+    name: "Roupas",
+    slug: "masculino-roupas",
+    href: "/masculino/roupas",
+    parentId: masc.id,
+    type: "custom",
+    order: 1,
+  }).returning();
+  
+  await createSubmenus(mascRoup.id, ["bermudas", "calcas", "camisetas-de-time", "camisetas", "jaquetas-casacos", "moletons-agasalhos", "regatas", "shorts"], categories, "masculino", "masculino/roupas");
+  
+  const [mascAcess] = await db.insert(menusTable).values({
+    name: "Acessórios",
+    slug: "masculino-acessorios",
+    href: "/masculino/acessorios",
+    parentId: masc.id,
+    type: "custom",
+    order: 2,
+  }).returning();
+  
+  await createSubmenus(mascAcess.id, ["bones", "bolsas-mochilas", "meias", "relogios"], categories, "masculino", "masculino/acessorios");
+  
+  console.log("✅ Menu Masculino criado");
+  
+  // FEMININO
+  const [fem] = await db.insert(menusTable).values({
+    name: "Feminino",
+    slug: "feminino",
+    href: "/feminino",
+    type: "custom",
+    order: order++,
+  }).returning();
+  
+  const [femCalc] = await db.insert(menusTable).values({
+    name: "Calçados",
+    slug: "feminino-calcados",
+    href: "/feminino/calcados",
+    parentId: fem.id,
+    type: "custom",
+    order: 0,
+  }).returning();
+  
+  await createSubmenus(femCalc.id, ["botas", "chinelos", "sapatilhas", "tenis", "tenis-de-corrida"], categories, "feminino", "feminino/calcados");
+  
+  const [femRoup] = await db.insert(menusTable).values({
+    name: "Roupas",
+    slug: "feminino-roupas",
+    href: "/feminino/roupas",
+    parentId: fem.id,
+    type: "custom",
+    order: 1,
+  }).returning();
+  
+  await createSubmenus(femRoup.id, ["bermudas", "calcas", "camisetas-de-time", "camisetas", "jaquetas-casacos", "moletons-agasalhos", "regatas", "shorts", "vestidos"], categories, "feminino", "feminino/roupas");
+  
+  const [femAcess] = await db.insert(menusTable).values({
+    name: "Acessórios",
+    slug: "feminino-acessorios",
+    href: "/feminino/acessorios",
+    parentId: fem.id,
+    type: "custom",
+    order: 2,
+  }).returning();
+  
+  await createSubmenus(femAcess.id, ["bones", "bolsas-mochilas", "meias", "relogios"], categories, "feminino", "feminino/acessorios");
+  
+  console.log("✅ Menu Feminino criado");
+  
+  // CALÇADOS
+  const [calc] = await db.insert(menusTable).values({
+    name: "Calçados",
+    slug: "calcados-menu",
+    href: "/calcados",
+    type: "custom",
+    order: order++,
+  }).returning();
+  
+  await createSubmenus(calc.id, ["botas", "chinelos", "chuteiras", "sapatilhas", "sapatenis", "tenis", "tenis-de-corrida"], categories, "calcados", "calcados");
+  
+  console.log("✅ Menu Calçados criado");
+  
+  // ROUPAS
+  const [roup] = await db.insert(menusTable).values({
+    name: "Roupas",
+    slug: "roupas-menu",
+    href: "/roupas",
+    type: "custom",
+    order: order++,
+  }).returning();
+  
+  await createSubmenus(roup.id, ["bermudas", "calcas", "camisetas-de-time", "camisetas", "jaquetas-casacos", "moletons-agasalhos", "regatas", "shorts", "tops", "vestidos"], categories, "roupas", "roupas");
+  
+  console.log("✅ Menu Roupas criado");
+  
+  // ACESSÓRIOS
+  const [acess] = await db.insert(menusTable).values({
+    name: "Acessórios",
+    slug: "acessorios-menu",
+    href: "/acessorios",
+    type: "custom",
+    order: order++,
+  }).returning();
+  
+  await createSubmenus(acess.id, ["bones", "bolsas-mochilas", "meias", "relogios"], categories, "acessorios", "acessorios");
+  
+  console.log("✅ Menu Acessórios criado");
+  
+  // ESPORTES
+  const [esp] = await db.insert(menusTable).values({
+    name: "Esportes",
+    slug: "esportes",
+    href: "/esportes",
+    type: "custom",
+    order: order++,
+  }).returning();
+  
+  const sports = collections.filter(c => c.type === "sport");
+  for (let i = 0; i < sports.length; i++) {
+    await db.insert(menusTable).values({
+      name: sports[i].name,
+      slug: `esportes-${sports[i].slug}`,
+      href: `/esportes/${sports[i].slug}`,
+      parentId: esp.id,
+      type: "collection",
+      referenceId: sports[i].id,
+      order: i,
     });
+  }
+  
+  console.log("✅ Menu Esportes criado");
+  
+  // PROMOÇÕES
+  const promo = collections.find(c => c.slug === "promocoes");
+  if (promo) {
+    await db.insert(menusTable).values({
+      name: "Promoções",
+      slug: "promocoes",
+      href: "/promocoes",
+      type: "collection",
+      referenceId: promo.id,
+      order: order++,
+    });
+    console.log("✅ Menu Promoções criado");
+  }
+  
+  console.log("\n✅ Menus seeded successfully!");
 }
 
-export { seedMenusWithSubmenus };
+seedMenus()
+  .catch(error => {
+    console.error("❌ Error:", error);
+    process.exit(1);
+  })
+  .finally(async () => {
+    await pool.end();
+    process.exit(0);
+  });
