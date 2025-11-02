@@ -7,9 +7,13 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "seed": "tsx --env-file=.env src/db/seed.ts src/db/seed-menus.ts",
-    "clear-db": "docker compose exec db psql -U postgres -c \"DROP SCHEMA public CASCADE; CREATE SCHEMA public;\" -d ecommerce",
-    "clear-menus": "tsx --env-file=.env src/db/clear-menus.ts"
+    "db:seed": "tsx --env-file=.env src/db/seed-all.ts",
+    "db:clear": "tsx --env-file=.env src/db/clear-db.ts",
+    "db:reset": "npm run db:clear && npm run db:seed",
+    "seed:categories": "tsx --env-file=.env src/db/seed-categories.ts",
+    "seed:collections": "tsx --env-file=.env src/db/seed-collections.ts",
+    "seed:menus": "tsx --env-file=.env src/db/seed-menus.ts",
+    "seed:products": "tsx --env-file=.env src/db/seed.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
