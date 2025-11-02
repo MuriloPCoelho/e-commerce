@@ -78,19 +78,21 @@ interface NavigationDrawerProps {
 
 const NavigationDrawer = ({ menus = [] }: NavigationDrawerProps) => {
   const { data: session } = authClient.useSession();
-  const [currentMenu, setCurrentMenu] = useState<MenuItem | null>(null);
+  const [menuStack, setMenuStack] = useState<MenuItem[]>([]);
+
+  const currentMenu = menuStack[menuStack.length - 1] || null;
 
   const handleNavigateToSubmenu = (item: MenuItem) => {
-    setCurrentMenu(item);
+    setMenuStack([...menuStack, item]);
   };
 
-  const handleBackToMain = () => {
-    setCurrentMenu(null);
+  const handleBack = () => {
+    setMenuStack(menuStack.slice(0, -1));
   };
 
   const handleSheetOpenChange = (open: boolean) => {
     if (!open) {
-      setCurrentMenu(null);
+      setMenuStack([]);
     }
   };
 
@@ -150,7 +152,7 @@ const NavigationDrawer = ({ menus = [] }: NavigationDrawerProps) => {
           <div className="flex flex-col w-full">
             <div>
               <button
-                onClick={handleBackToMain}
+                onClick={handleBack}
                 className="flex items-center gap-3 w-full px-4 py-4 text-sm hover:bg-zinc-100 transition-colors"
               >
                 <ChevronLeft className="size-4" />
@@ -161,18 +163,32 @@ const NavigationDrawer = ({ menus = [] }: NavigationDrawerProps) => {
               <h2 className="text-xl font-semibold">{currentMenu.name}</h2>
             </div>
             <nav className="flex flex-col w-full">
-              {currentMenu.children?.map((submenu) => (
-                <div key={submenu.id}>
-                  <SheetClose asChild>
-                    <Link
-                      href={submenu.href}
-                      className="flex items-center justify-between w-full px-4 py-3 hover:bg-zinc-100 transition-colors text-neutral-500"
-                    >
-                      <span>{submenu.name}</span>
-                    </Link>
-                  </SheetClose>
-                </div>
-              ))}
+              {currentMenu.children?.map((submenu) => {
+                const hasChildren = submenu.children && submenu.children.length > 0;
+                
+                return (
+                  <div key={submenu.id}>
+                    {hasChildren ? (
+                      <button
+                        onClick={() => handleNavigateToSubmenu(submenu)}
+                        className="flex items-center justify-between w-full px-4 py-3 hover:bg-zinc-100 transition-colors text-neutral-600"
+                      >
+                        <span>{submenu.name}</span>
+                        <ChevronRight className="size-5" />
+                      </button>
+                    ) : (
+                      <SheetClose asChild>
+                        <Link
+                          href={submenu.href}
+                          className="flex items-center justify-between w-full px-4 py-3 hover:bg-zinc-100 transition-colors text-neutral-600"
+                        >
+                          <span>{submenu.name}</span>
+                        </Link>
+                      </SheetClose>
+                    )}
+                  </div>
+                );
+              })}
             </nav>
           </div>
         ) : (
