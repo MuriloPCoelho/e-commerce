@@ -642,7 +642,15 @@ async function main() {
     }
 
     console.log("📏 Criando/Atualizando tamanhos padrão...");
-    const defaultSizes = ["P", "M", "G", "GG", "U"];
+    // Tamanhos para diferentes tipos de produtos
+    const defaultSizes = [
+      // Roupas
+      "PP", "P", "M", "G", "GG", "XGG",
+      // Calçados
+      "34", "35", "36", "37", "38", "39", "40", "41", "42", "43", "44", "45",
+      // Acessórios
+      "U"
+    ];
     for (const s of defaultSizes) {
       const [inserted] = await db
         .insert(sizesTable)
@@ -732,17 +740,33 @@ async function main() {
 
         // Adicionar tamanhos para a variante inserida
         const defaultStockAmount = 10; // estoque padrão por tamanho
-        const clothingSizes = ["P", "M", "G", "GG"]; // para roupas
-        const accessorySizes = ["U"]; // para acessórios
-        const sizesToUse = productData.categoryName === "Acessórios" ? accessorySizes : clothingSizes;
+        
+        // Definir tamanhos baseado na categoria do produto
+        let sizesToUse: string[] = [];
+        
+        if (productData.categoryName === "Tênis") {
+          // Calçados: tamanhos numéricos
+          sizesToUse = ["38", "39", "40", "41", "42", "43", "44"];
+        } else if (productData.categoryName === "Acessórios") {
+          // Acessórios: tamanho único
+          sizesToUse = ["U"];
+        } else {
+          // Roupas: camisetas, calças, shorts, jaquetas
+          sizesToUse = ["PP", "P", "M", "G", "GG", "XGG"];
+        }
 
         for (const s of sizesToUse) {
           const sizeId = sizeMap.get(s);
           if (!sizeId) continue;
+          
+          // Gerar estoque: 70% chance de ter estoque normal, 30% chance de ter estoque zero
+          const hasStock = Math.random() > 0.3;
+          const stockAmount = hasStock ? defaultStockAmount : 0;
+          
           await db.insert(productVariantSizesTable).values({
             variantId: Number(insertedVariant.id),
             sizeId: sizeId,
-            stock: defaultStockAmount,
+            stock: stockAmount,
           });
         }
       }
