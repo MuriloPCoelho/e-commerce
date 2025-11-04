@@ -20,12 +20,12 @@ const VariantSelector = ({ variants }: VariantSelectorProps) => {
           scroll={false}
           href={`/p/${variant.slug}`}
           className={twJoin(
-            "outline outline-neutral-300 size-16 aspect-square relative ",
-            currentVariantSlug === variant.slug && "ring-2 ring-amber-400"
+            "outline outline-neutral-300 size-16 rounded-xs aspect-square relative overflow-hidden",
+            currentVariantSlug === variant.slug && "ring-1 ring-offset-1 ring-black"
           )}
           key={variant.id}
         >
-          <Image src={variant.imageUrl} alt={variant.name} fill className="object-cover" />
+          <Image src={variant.imageUrl} alt={variant.name} fill className="object-cover rounded-xs" />
         </Link>
       ))}
     </div>
