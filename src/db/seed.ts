@@ -744,14 +744,23 @@ async function main() {
         // Definir tamanhos baseado na categoria do produto
         let sizesToUse: string[] = [];
         
-        if (productData.categoryName === "Tênis") {
+        // Mapear nome da categoria para identificar o tipo de produto
+        const categoryNameLower = newCategoryName.toLowerCase();
+        const productCategoryLower = productData.categoryName.toLowerCase();
+        
+        if (categoryNameLower.includes("tênis") || categoryNameLower.includes("tenis") || 
+            categoryNameLower.includes("sapato") || categoryNameLower.includes("chuteira") ||
+            productCategoryLower.includes("sneakers") || productCategoryLower.includes("shoes")) {
           // Calçados: tamanhos numéricos
           sizesToUse = ["38", "39", "40", "41", "42", "43", "44"];
-        } else if (productData.categoryName === "Acessórios") {
+        } else if (categoryNameLower.includes("acessório") || categoryNameLower.includes("acessorio") ||
+                   categoryNameLower.includes("boné") || categoryNameLower.includes("bone") ||
+                   categoryNameLower.includes("meia") || categoryNameLower.includes("mochila") ||
+                   productCategoryLower.includes("accessories")) {
           // Acessórios: tamanho único
           sizesToUse = ["U"];
         } else {
-          // Roupas: camisetas, calças, shorts, jaquetas
+          // Roupas: camisetas, calças, shorts, jaquetas, bermudas
           sizesToUse = ["PP", "P", "M", "G", "GG", "XGG"];
         }
 
