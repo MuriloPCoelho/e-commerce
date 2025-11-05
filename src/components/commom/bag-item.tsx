@@ -14,6 +14,7 @@ import {
 import { removeBagProduct } from "@/actions/remove-bag-product";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Spinner } from "../ui/spinner";
+import { toast } from "sonner";
 
 interface BagItemProps {
   item: typeof bagItemsTable.$inferSelect & {
@@ -33,20 +34,14 @@ const BagItem = ({ item }: BagItemProps) => {
 
   const { mutate: removeItem, isPending } = useMutation({
     mutationKey: ["removeBagProduct", item.id],
-    mutationFn: async () => {
-      return removeBagProduct(item.id);
-    },
+    mutationFn: async () => removeBagProduct(item.id),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["bag"] });
     },
-    onError: (err) => {
-      console.error("Failed to remove item from bag", err);
-    },
+    onError: (err) => toast.error((err as Error).message),
   });
 
-  if (!item.productVariantSize) {
-    return null;
-  }
+  if (!item.productVariantSize) return null;
 
   return (
     <div className="grid grid-cols-[96px_1fr] gap-2 pr-2">
@@ -64,27 +59,41 @@ const BagItem = ({ item }: BagItemProps) => {
             href={`/p/${item.productVariantSize.variant.slug}`}
             className="hover:underline underline-offset-2 mb-1"
           >
-            <span className="text-neutral-400">{`${item.quantity > 1 ? `${item.quantity}x ` : ""}`}</span>
-            {item.productVariantSize.variant.product.name}</Link>
+            <span className="text-neutral-400">{`${
+              item.quantity > 1 ? `${item.quantity}x ` : ""
+            }`}</span>
+            {item.productVariantSize.variant.product.name}
+          </Link>
         </div>
         <div className="text-neutral-600 text-xs font-light col-span-2 ">
-          <div>Tamanho: <span className="font-medium">{item.productVariantSize.size.name}</span></div>
-          <div>Cor: <span className="font-medium">{item.productVariantSize.variant.name}</span></div>
+          <div>
+            Tamanho:{" "}
+            <span className="font-medium">
+              {item.productVariantSize.size.name}
+            </span>
+          </div>
+          <div>
+            Cor:{" "}
+            <span className="font-medium">
+              {item.productVariantSize.variant.name}
+            </span>
+          </div>
         </div>
         <div className="flex items-end justify-between col-span-2">
           <div className="font-bold">
-            {centsToReais(item.productVariantSize.variant.priceInCents * item.quantity)}
+            {centsToReais(
+              item.productVariantSize.variant.priceInCents * item.quantity
+            )}
           </div>
-          <Button 
-            variant="link" 
-            size="xs" 
-            className="underline h-4" 
+          <Button
+            variant="link"
+            size="xs"
+            className="underline h-4"
             onClick={() => removeItem()}
             disabled={isPending}
           >
             {isPending ? <Spinner className="size-3" /> : "Remover"}
           </Button>
-
         </div>
         {/* <div className="place-self-end">
           <QuantitySelector />
