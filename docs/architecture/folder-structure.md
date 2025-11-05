@@ -110,19 +110,44 @@ src/components/
 src/db/
 ├── index.ts                   # Conexão com o banco
 ├── schema.ts                  # Schema completo (Drizzle)
+├── clear-db.ts                # Limpar banco de dados
+├── seed-all.ts                # Seed completo (orquestrador)
 ├── seed.ts                    # Seed de produtos
-├── seed-menus.ts             # Seed de menus
-└── clear-menus.ts            # Limpar menus
+├── seed-categories.ts         # Seed de categorias
+├── seed-collections.ts        # Seed de coleções
+└── seed-menus.ts              # Seed de menus
 ```
 
 **Tabelas do Schema:**
-- `user`, `session`, `account`, `verification` (Better Auth)
-- `tb_categories`, `tb_brands` (Catálogo)
-- `tb_products`, `tb_product_variants`, `tb_product_variant_sizes`
-- `tb_colors`, `tb_sizes`
-- `tb_bags`, `tb_bag_items` (Carrinho)
-- `tb_menus` (Navegação)
-- `tb_user_addresses` (Endereços)
+
+**Autenticação (Better Auth):**
+- `user` - Usuários
+- `session` - Sessões
+- `account` - Contas OAuth
+- `verification` - Tokens de verificação
+
+**Catálogo:**
+- `tb_categories` - Categorias e subcategorias
+- `tb_brands` - Marcas
+- `tb_products` - Produtos principais
+- `tb_product_variants` - Variantes (cores)
+- `tb_product_variant_sizes` - Tamanhos por variante
+- `tb_colors` - Cores disponíveis
+- `tb_sizes` - Tamanhos disponíveis
+
+**Coleções:**
+- `tb_collections` - Coleções (Sport, Lifestyle, Promotion)
+- `tb_product_collections` - Relação N:N produtos ↔ coleções
+
+**Navegação:**
+- `tb_menus` - Sistema de menus hierárquicos
+
+**Carrinho:**
+- `tb_bags` - Sacolas de compras
+- `tb_bag_items` - Itens da sacola
+
+**Endereços:**
+- `tb_user_addresses` - Endereços de entrega
 
 #### `/src/actions` - Server Actions
 
@@ -133,11 +158,19 @@ src/actions/
 │   └── schema.ts             # Validação Zod
 ├── get-bag/
 │   └── index.ts              # Action para buscar sacola
-└── get-menus/
-    └── index.ts              # Action para buscar menus
+├── get-filtered-products/
+│   └── index.ts              # Action para buscar produtos com filtros
+├── get-menus/
+│   └── index.ts              # Action para buscar menus
+└── remove-bag-product/
+    └── index.ts              # Action para remover item da sacola
 ```
 
-**Nota:** Estamos migrando para o padrão Repository. Veja `/src/repositories`.
+**Padrão:**
+- Cada action em sua própria pasta
+- `index.ts` contém a lógica
+- `schema.ts` contém validações Zod (quando aplicável)
+- Sempre com `"use server"` no topo
 
 #### `/src/repositories` - Data Access Layer
 
@@ -161,11 +194,135 @@ src/repositories/
 
 ```
 src/lib/
-├── auth.ts                    # Configuração Better Auth
-├── auth-client.ts             # Cliente de autenticação
-├── getCurrentUser.ts          # Helper para usuário atual
-└── utils.ts                   # Funções utilitárias
+├── auth.ts                    # Configuração Better Auth (servidor)
+├── auth-client.ts             # Cliente de autenticação (browser)
+├── filters.ts                 # Helpers para filtros de produtos
+└── utils.ts                   # Funções utilitárias gerais (cn, etc)
 ```
+
+**Principais funções:**
+- `auth` - Instância do Better Auth
+- `authClient` - Cliente para uso no navegador
+- `parseFilters()` - Parse de filtros de URL
+- `cn()` - Merge de classes CSS (clsx + tailwind-merge)
+
+#### `/src/providers` - Context Providers
+
+```
+src/providers/
+└── react-query.tsx            # Provider do React Query (TanStack Query)
+```
+
+**Providers implementados:**
+- React Query para cache e state management
+- Configurações de retry, stale time, etc.
+
+---
+
+## 📄 Arquivos na Raiz
+
+### Configuração
+
+#### `next.config.ts`
+Configurações do Next.js:
+- Imagens externas permitidas
+- Redirects e rewrites
+- Variáveis de ambiente públicas
+
+#### `drizzle.config.ts`
+Configurações do Drizzle ORM:
+```typescript
+export default {
+  schema: "./src/db/schema.ts",
+  out: "./migrations",
+  dialect: "postgresql",
+  dbCredentials: {
+    url: process.env.DATABASE_URL!,
+  },
+};
+```
+
+#### `tsconfig.json`
+Configurações do TypeScript:
+- Path aliases (`@/*`)
+- Strict mode habilitado
+- JSX para React
+
+#### `tailwind.config.ts`
+Configurações do Tailwind CSS:
+- Tema customizado
+- Plugins (como shadcn/ui)
+- Cores e espaçamentos
+
+#### `components.json`
+Configurações do shadcn/ui:
+```json
+{
+  "style": "default",
+  "tailwind": {
+    "config": "tailwind.config.ts",
+    "css": "src/app/globals.css"
+  },
+  "aliases": {
+    "components": "@/components",
+    "utils": "@/lib/utils"
+  }
+}
+```
+
+### Docker
+
+#### `docker-compose.yml`
+Configuração do PostgreSQL:
+```yaml
+services:
+  db:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: ecommerce
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+```
+
+#### `Dockerfile`
+Imagem Docker para produção (Next.js)
+
+---
+
+## 📚 Pasta `/docs`
+
+```
+docs/
+├── README.md                      # Índice da documentação
+├── getting-started/               # Primeiros passos
+│   ├── installation.md
+│   ├── quick-start.md
+│   └── environment.md
+├── features/                      # Funcionalidades
+│   ├── menus-system.md
+│   ├── collections.md
+│   ├── shopping-bag.md
+│   ├── authentication.md
+│   └── products.md
+├── architecture/                  # Arquitetura
+│   ├── folder-structure.md        # Este arquivo
+│   ├── database-schema.md
+│   └── repository-pattern.md
+├── guides/                        # Guias práticos
+│   ├── creating-menus.md
+│   ├── adding-products.md
+│   ├── collections-setup.md
+│   ├── seeding-data.md
+│   └── customization.md
+└── testing/
+    └── strategy.md
+```
+
+---
 
 #### `/src/providers` - Providers React
 
