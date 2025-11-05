@@ -23,6 +23,8 @@ export const addProductToBag = async (data: AddProductToBagSchema) => {
 
   if (!productVariantSize) throw new Error("Product variant size not found");
 
+  if (productVariantSize.stock <= 0) throw new Error("Product out of stock");
+
   const bag = await db.query.bagsTable.findFirst({
     where: (bag, { eq }) => eq(bag.userId, session.user.id),
   });
