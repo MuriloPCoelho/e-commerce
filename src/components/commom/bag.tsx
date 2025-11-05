@@ -16,22 +16,29 @@ import BagItem from "./bag-item";
 import BagItemSkeleton from "./bag-item-skeleton";
 import { getBag } from "@/actions/get-bag";
 import { centsToReais } from "@/lib/utils";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Badge } from "../ui/badge";
+import { usePathname } from "next/navigation";
 
 const Bag = () => {
+  const [isOpen, setIsOpen] = useState(false);
+  const path = usePathname();
   const { data: bag, isPending: bagIsPending } = useQuery({
     queryKey: ["bag"],
     queryFn: () => getBag(),
   });
 
-  const totalItems = bag?.items
-    .map((item) => {
-      return item.quantity;
-    })
-    .reduce((acc, curr) => acc + curr, 0) ?? 0;
+  const totalItems =
+    bag?.items
+      .map((item) => {
+        return item.quantity;
+      })
+      .reduce((acc, curr) => acc + curr, 0) ?? 0;
 
-  const [isOpen, setIsOpen] = useState(false);
+
+  useEffect(() => {
+    setIsOpen(false);
+  }, [path]);
 
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
@@ -101,9 +108,6 @@ const Bag = () => {
               <Button
                 className="w-full"
                 size="lg"
-                onClick={() => {
-                  setIsOpen(false);
-                }}
               >
                 Finalizar Compra
               </Button>
