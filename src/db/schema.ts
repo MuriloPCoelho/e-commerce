@@ -114,9 +114,9 @@ export const productsTable = pgTable("tb_products", {
   name: text("name").notNull(),
   slug: text("slug").notNull().unique(),
   description: text("description").notNull(),
-  gender: text("gender", { enum: ["masculino", "feminino", "unissex"] })
+  gender: text("gender", { enum: ["men", "women", "unisex"] })
     .notNull()
-    .default("unissex"),
+    .default("unisex"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 

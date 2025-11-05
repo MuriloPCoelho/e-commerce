@@ -305,7 +305,7 @@ type ProductSeed = {
   description: string;
   categoryName: string;
   brand?: string;
-  gender?: "masculino" | "feminino" | "unissex";
+  gender?: "men" | "women" | "unisex";
   variants: VariantSeed[];
 };
 
@@ -315,8 +315,8 @@ const products: ProductSeed[] = [
     name: "Mochila",
     description:
       "Mochila resistente e confortável, ideal para o dia a dia e viagens.",
-    categoryName: "Acessórios",
-    gender: "unissex",
+    categoryName: "Accessories",
+    gender: "unisex",
     variants: [
       { color: "Preta", price: 12999 },
       { color: "Branca", price: 12999 },
@@ -325,8 +325,8 @@ const products: ProductSeed[] = [
   {
     name: "Meia Alta",
     description: "Meia alta de algodão, confortável e durável.",
-    categoryName: "Acessórios",
-    gender: "unissex",
+    categoryName: "Accessories",
+    gender: "unisex",
     variants: [
       { color: "Branca", price: 1999 },
       { color: "Preta", price: 1999 },
@@ -335,8 +335,8 @@ const products: ProductSeed[] = [
   {
     name: "Boné Nocta",
     description: "Boné Nocta com design moderno e ajuste confortável.",
-    categoryName: "Acessórios",
-    gender: "masculino",
+    categoryName: "Accessories",
+    gender: "men",
     variants: [
       { color: "Preto", price: 8999 },
       { color: "Vinho", price: 8999 },
@@ -346,7 +346,7 @@ const products: ProductSeed[] = [
   {
     name: "Boné Curvo",
     description: "Boné com aba curva, estilo clássico e versátil.",
-    categoryName: "Acessórios",
+    categoryName: "Accessories",
     variants: [
       { color: "Azul", price: 7999 },
       { color: "Bege", price: 7999 },
@@ -359,7 +359,7 @@ const products: ProductSeed[] = [
     name: "Shorts Active",
     description:
       "Shorts esportivo para atividades físicas, com tecido que absorve o suor.",
-    categoryName: "Bermuda & Shorts",
+    categoryName: "Shorts",
     variants: [
       { color: "Preto", price: 6999 },
       { color: "Azul", price: 6999 },
@@ -369,7 +369,7 @@ const products: ProductSeed[] = [
   {
     name: "Shorts Core",
     description: "Shorts casual confortável, perfeito para o dia a dia.",
-    categoryName: "Bermuda & Shorts",
+    categoryName: "Shorts",
     variants: [
       { color: "Verde", price: 5999 },
       { color: "Preto", price: 5999 },
@@ -380,7 +380,7 @@ const products: ProductSeed[] = [
     name: "Shorts Challenger",
     description:
       "Shorts com design moderno e confortável, ideal para diversas ocasiões.",
-    categoryName: "Bermuda & Shorts",
+    categoryName: "Shorts",
     variants: [
       { color: "Marrom", price: 7499 },
       { color: "Preto", price: 7499 },
@@ -391,7 +391,7 @@ const products: ProductSeed[] = [
     name: "Bermuda Premier",
     description:
       "Bermuda premium com qualidade superior e design diferenciado.",
-    categoryName: "Bermuda & Shorts",
+    categoryName: "Shorts",
     variants: [
       { color: "Verde", price: 8999 },
       { color: "Preta", price: 8999 },
@@ -404,7 +404,7 @@ const products: ProductSeed[] = [
     name: "Calça Nike Club",
     description:
       "Calça esportiva Nike Club, confortável e versátil para treinos e uso casual.",
-    categoryName: "Calças",
+    categoryName: "Pants",
     variants: [
       { color: "Bege", price: 15999 },
       { color: "Preta", price: 15999 },
@@ -415,7 +415,7 @@ const products: ProductSeed[] = [
     name: "Calça Knit",
     description:
       "Calça de malha com tecido macio e confortável, ideal para relaxar.",
-    categoryName: "Calças",
+    categoryName: "Pants",
     variants: [
       { color: "Preta", price: 12999 },
       { color: "Branca", price: 12999 },
@@ -426,7 +426,7 @@ const products: ProductSeed[] = [
     name: "Calça Brooklin",
     description:
       "Calça com design urbano e moderno, perfeita para o street style.",
-    categoryName: "Calças",
+    categoryName: "Pants",
     variants: [
       { color: "Bege", price: 13999 },
       { color: "Branca", price: 13999 },
@@ -437,7 +437,7 @@ const products: ProductSeed[] = [
     name: "Calça Jordan",
     description:
       "Calça Jordan com qualidade premium e design icônico da marca.",
-    categoryName: "Calças",
+    categoryName: "Pants",
     variants: [
       { color: "Verde", price: 18999 },
       { color: "Preta", price: 18999 },
@@ -450,7 +450,7 @@ const products: ProductSeed[] = [
     name: "Camiseta ACG",
     description:
       "Camiseta ACG com design técnico e material de alta qualidade.",
-    categoryName: "Camisetas",
+    categoryName: "T-Shirts",
     variants: [
       { color: "Bege", price: 6999 },
       { color: "Preta", price: 6999 },
@@ -461,7 +461,7 @@ const products: ProductSeed[] = [
     name: "Camiseta Run",
     description:
       "Camiseta para corrida com tecido respirável e conforto superior.",
-    categoryName: "Camisetas",
+    categoryName: "T-Shirts",
     variants: [
       { color: "Preta", price: 5999 },
       { color: "Azul", price: 5999 },
@@ -471,7 +471,7 @@ const products: ProductSeed[] = [
     name: "Camiseta Active",
     description:
       "Camiseta esportiva para atividades físicas com tecnologia Dri-FIT.",
-    categoryName: "Camisetas",
+    categoryName: "T-Shirts",
     variants: [
       { color: "Branca", price: 5499 },
       { color: "Preta", price: 5499 },
@@ -481,7 +481,7 @@ const products: ProductSeed[] = [
     name: "Camiseta Nature",
     description:
       "Camiseta com estampa inspirada na natureza, confortável e estilosa.",
-    categoryName: "Camisetas",
+    categoryName: "T-Shirts",
     variants: [
       { color: "Preta", price: 6499 },
       { color: "Azul", price: 6499 },
@@ -493,7 +493,7 @@ const products: ProductSeed[] = [
     name: "Corta Vento",
     description:
       "Jaqueta corta-vento leve e resistente, ideal para atividades ao ar livre.",
-    categoryName: "Jaquetas & Moletons",
+    categoryName: "Jackets & Coats",
     variants: [
       { color: "Preto", price: 19999 },
       { color: "Branco", price: 19999 },
@@ -503,7 +503,7 @@ const products: ProductSeed[] = [
     name: "Jaqueta Windrunner",
     description:
       "Jaqueta Windrunner com design clássico e proteção contra o vento.",
-    categoryName: "Jaquetas & Moletons",
+    categoryName: "Jackets & Coats",
     variants: [
       { color: "Azul", price: 22999 },
       { color: "Bege", price: 22999 },
@@ -513,7 +513,7 @@ const products: ProductSeed[] = [
     name: "Jaqueta Style",
     description:
       "Jaqueta com estilo urbano e moderno, perfeita para compor looks casuais.",
-    categoryName: "Jaquetas & Moletons",
+    categoryName: "Jackets & Coats",
     variants: [
       { color: "Marrom", price: 17999 },
       { color: "Cinza", price: 17999 },
@@ -522,7 +522,7 @@ const products: ProductSeed[] = [
   {
     name: "Jaqueta Nike Club",
     description: "Jaqueta Nike Club com qualidade premium e design atemporal.",
-    categoryName: "Jaquetas & Moletons",
+    categoryName: "Jackets & Coats",
     variants: [
       { color: "Azul", price: 25999 },
       { color: "Amarela", price: 25999 },
@@ -534,7 +534,7 @@ const products: ProductSeed[] = [
     name: "Tênis Nike Vomero",
     description:
       "Tênis Nike Vomero com tecnologia de amortecimento superior para corridas.",
-    categoryName: "Tênis",
+    categoryName: "Sneakers",
     variants: [
       { color: "Preto", price: 79999 },
       { color: "Branco", price: 79999 },
@@ -544,7 +544,7 @@ const products: ProductSeed[] = [
   {
     name: "Tênis Nike Panda",
     description: "Tênis Nike com design Panda icônico, confortável e estiloso.",
-    categoryName: "Tênis",
+    categoryName: "Sneakers",
     variants: [
       { color: "Verde", price: 69999 },
       { color: "Azul", price: 69999 },
@@ -555,7 +555,7 @@ const products: ProductSeed[] = [
     name: "Tênis Nike Air Force",
     description:
       "Tênis Nike Air Force 1, um clássico atemporal com design icônico.",
-    categoryName: "Tênis",
+    categoryName: "Sneakers",
     variants: [
       { color: "Preto", price: 89999 },
       { color: "Branco", price: 89999 },
@@ -564,7 +564,7 @@ const products: ProductSeed[] = [
   {
     name: "Tênis Nike Dunk Low",
     description: "Tênis Nike Dunk Low com design retrô e conforto moderno.",
-    categoryName: "Tênis",
+    categoryName: "Sneakers",
     variants: [
       { color: "Branco", price: 75999 },
       { color: "Preto", price: 75999 },
@@ -706,7 +706,7 @@ async function main() {
         categoryId: categoryId,
         subcategoryId: subcategoryId,
         brandId: brandId,
-        gender: productData.gender || "unissex",
+        gender: productData.gender || "unisex",
       });
 
       // Inserir variantes do produto
@@ -792,3 +792,4 @@ async function main() {
 main()
   .catch(console.error)
   .finally(() => process.exit(0));
+

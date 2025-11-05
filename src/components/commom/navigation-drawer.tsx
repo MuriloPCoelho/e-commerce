@@ -128,7 +128,7 @@ const NavigationDrawer = ({ menus = [] }: NavigationDrawerProps) => {
                   })}
                 >
                   <User />
-                  <span>Olá, {session.user.name}</span>
+                  <span>Hello, {session.user.name}</span>
                 </Link>
               </div>
             ) : (
@@ -141,7 +141,7 @@ const NavigationDrawer = ({ menus = [] }: NavigationDrawerProps) => {
                     className: "text-white",
                   })}
                 >
-                  Entrar
+                  Sign in
                 </Link>
               </div>
             )}
@@ -156,10 +156,10 @@ const NavigationDrawer = ({ menus = [] }: NavigationDrawerProps) => {
                 className="flex items-center gap-3 w-full px-4 py-4 text-sm hover:bg-zinc-100 transition-colors"
               >
                 <ChevronLeft className="size-4" />
-                <span className="font-medium">Voltar</span>
+                <span className="font-medium">Back</span>
               </button>
             </div>
-            <div className="px-4 py-4 bg-white">
+            <div className="px-4 py-4 bg-white border-b">
               <h2 className="text-xl font-semibold">{currentMenu.name}</h2>
             </div>
             <nav className="flex flex-col w-full">
@@ -189,6 +189,18 @@ const NavigationDrawer = ({ menus = [] }: NavigationDrawerProps) => {
                   </div>
                 );
               })}
+              {currentMenu.children && currentMenu.children.length > 0 && (
+                <div className="px-4 py-3">
+                  <SheetClose asChild>
+                    <Link
+                      href={currentMenu.href}
+                      className="text-black underline hover:no-underline transition-all"
+                    >
+                      View all
+                    </Link>
+                  </SheetClose>
+                </div>
+              )}
             </nav>
           </div>
         ) : (

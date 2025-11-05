@@ -13,121 +13,121 @@ const db = drizzle(pool, { schema });
 async function seedCollections() {
   console.log("🌱 Seeding collections...");
 
-  // Verificar se já existem collections
+  // Check if collections already exist
   const existing = await db.query.collectionsTable.findMany();
   if (existing.length > 0) {
-    console.log("⚠️  Collections já existem. Pulando seed...");
-    console.log("💡 Se quiser re-seed, delete as collections manualmente primeiro.");
+    console.log("⚠️  Collections already exist. Skipping seed...");
+    console.log("💡 If you want to re-seed, delete the collections manually first.");
     return;
   }
 
-  // Inserir collections de esportes
+  // Insert sports collections
   const sportsCollections = [
     {
       name: "Skateboarding",
       slug: "skateboarding",
       type: "sport" as const,
-      description: "Produtos para skateboarding e street culture",
+      description: "Products for skateboarding and street culture",
     },
     {
-      name: "Basquete",
-      slug: "basquete",
+      name: "Basketball",
+      slug: "basketball",
       type: "sport" as const,
-      description: "Produtos para basquete",
+      description: "Basketball products",
     },
     {
-      name: "Futebol",
-      slug: "futebol",
+      name: "Soccer",
+      slug: "soccer",
       type: "sport" as const,
-      description: "Produtos para futebol",
+      description: "Soccer products",
     },
     {
       name: "Surf",
       slug: "surf",
       type: "sport" as const,
-      description: "Produtos para surf e cultura de praia",
+      description: "Products for surfing and beach culture",
     },
     {
-      name: "Tênis",
-      slug: "tenis-esporte",
+      name: "Tennis",
+      slug: "tennis-sport",
       type: "sport" as const,
-      description: "Produtos para tênis (esporte)",
+      description: "Tennis sport products",
     },
     {
-      name: "Corrida",
-      slug: "corrida",
+      name: "Running",
+      slug: "running",
       type: "sport" as const,
-      description: "Produtos para corrida e running",
+      description: "Running products",
     },
     {
-      name: "Vôlei",
-      slug: "volei",
+      name: "Volleyball",
+      slug: "volleyball",
       type: "sport" as const,
-      description: "Produtos para vôlei",
+      description: "Volleyball products",
     },
     {
-      name: "Natação",
-      slug: "natacao",
+      name: "Swimming",
+      slug: "swimming",
       type: "sport" as const,
-      description: "Produtos para natação",
+      description: "Swimming products",
     },
     {
-      name: "Treino & Academia",
-      slug: "treino-academia",
+      name: "Training & Gym",
+      slug: "training-gym",
       type: "sport" as const,
-      description: "Produtos para treino e academia",
+      description: "Products for training and gym",
     },
   ];
 
   await db.insert(collectionsTable).values(sportsCollections);
-  console.log("✅ Collections de esportes criadas");
+  console.log("✅ Sports collections created");
 
-  // Inserir collections de lifestyle
+  // Insert lifestyle collections
   const lifestyleCollections = [
     {
       name: "Casual",
       slug: "casual",
       type: "lifestyle" as const,
-      description: "Produtos para uso casual e dia a dia",
+      description: "Products for casual and everyday wear",
     },
     {
       name: "Streetwear",
       slug: "streetwear",
       type: "lifestyle" as const,
-      description: "Moda urbana e street style",
+      description: "Urban fashion and street style",
     },
     {
       name: "Outdoor",
       slug: "outdoor",
       type: "lifestyle" as const,
-      description: "Produtos para aventura e outdoor",
+      description: "Products for adventure and outdoor",
     },
   ];
 
   await db.insert(collectionsTable).values(lifestyleCollections);
-  console.log("✅ Collections de lifestyle criadas");
+  console.log("✅ Lifestyle collections created");
 
-  // Inserir collection de promoções
+  // Insert promotion collection
   await db.insert(collectionsTable).values({
-    name: "Promoções",
-    slug: "promocoes",
+    name: "Sale",
+    slug: "sale",
     type: "promotion",
-    description: "Produtos em promoção",
+    description: "Products on sale",
   });
-  console.log("✅ Collection de promoções criada");
+  console.log("✅ Promotion collection created");
 
-  // Verificar resultado
+  // Check result
   const allCollections = await db.query.collectionsTable.findMany({
     orderBy: (collections, { asc }) => [asc(collections.type), asc(collections.name)],
   });
 
-  console.log("\n📊 Resultado:");
+  console.log("\n📊 Results:");
   
   const sports = allCollections.filter((c) => c.type === "sport");
   const lifestyles = allCollections.filter((c) => c.type === "lifestyle");
   const promotions = allCollections.filter((c) => c.type === "promotion");
 
-  console.log("\n🏃 Esportes:");
+  console.log("\n🏃 Sports:");
   sports.forEach((c) => {
     console.log(`  - ${c.name} (${c.slug})`);
   });
@@ -137,12 +137,12 @@ async function seedCollections() {
     console.log(`  - ${c.name} (${c.slug})`);
   });
 
-  console.log("\n🎁 Promoções:");
+  console.log("\n🎁 Promotions:");
   promotions.forEach((c) => {
     console.log(`  - ${c.name} (${c.slug})`);
   });
 
-  console.log(`\n✅ Total: ${allCollections.length} collections criadas!`);
+  console.log(`\n✅ Total: ${allCollections.length} collections created!`);
 }
 
 seedCollections()

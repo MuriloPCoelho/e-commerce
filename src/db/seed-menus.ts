@@ -10,12 +10,44 @@ const pool = new Pool({
 
 const db = drizzle(pool, { schema });
 
+// Mapping from category slugs to English menu names
+const categoryNameMap: Record<string, string> = {
+  // Footwear
+  "boots": "Boots",
+  "sandals-slides": "Sandals & Slides",
+  "soccer-cleats": "Soccer Cleats",
+  "casual-shoes": "Casual Shoes",
+  "flats": "Flats",
+  "sneakers": "Sneakers",
+  "running-shoes": "Running Shoes",
+  
+  // Clothing
+  "shorts": "Shorts",
+  "pants": "Pants",
+  "t-shirts": "T-Shirts",
+  "team-jerseys": "Team Jerseys",
+  "jackets-coats": "Jackets & Coats",
+  "hoodies-sweatshirts": "Hoodies & Sweatshirts",
+  "tank-tops": "Tank Tops",
+  "shorts-alt": "Shorts",
+  "tops": "Tops",
+  "dresses": "Dresses",
+  
+  // Accessories
+  "caps": "Caps",
+  "bags-backpacks": "Bags & Backpacks",
+  "socks": "Socks",
+  "watches": "Watches",
+};
+
 async function createSubmenus(parentId: number, subcatSlugs: string[], categories: any[], prefix: string, categoryPrefix: string) {
   for (let i = 0; i < subcatSlugs.length; i++) {
     const subcat = categories.find(c => c.slug === subcatSlugs[i]);
     if (subcat) {
+      const englishName = categoryNameMap[subcat.slug] || subcat.name;
+      
       await db.insert(menusTable).values({
-        name: subcat.name,
+        name: englishName,
         slug: `${prefix}-${subcat.slug}`,
         href: `/${categoryPrefix}/${subcat.slug}`,
         parentId,
@@ -38,172 +70,172 @@ async function seedMenus() {
   
   let order = 0;
   
-  // MASCULINO
-  const [masc] = await db.insert(menusTable).values({
-    name: "Masculino",
-    slug: "masculino",
-    href: "/masculino",
+  // MEN
+  const [men] = await db.insert(menusTable).values({
+    name: "Men",
+    slug: "men",
+    href: "/men",
     type: "custom",
     order: order++,
   }).returning();
   
-  const [mascCalc] = await db.insert(menusTable).values({
-    name: "Calçados",
-    slug: "masculino-calcados",
-    href: "/masculino/calcados",
-    parentId: masc.id,
+  const [menShoes] = await db.insert(menusTable).values({
+    name: "Shoes",
+    slug: "men-shoes",
+    href: "/men/shoes",
+    parentId: men.id,
     type: "custom",
     order: 0,
   }).returning();
   
-  await createSubmenus(mascCalc.id, ["botas", "chinelos", "chuteiras", "sapatenis", "tenis", "tenis-de-corrida"], categories, "masculino", "masculino/calcados");
+  await createSubmenus(menShoes.id, ["boots", "sandals-slides", "soccer-cleats", "casual-shoes", "sneakers", "running-shoes"], categories, "men", "men/shoes");
   
-  const [mascRoup] = await db.insert(menusTable).values({
-    name: "Roupas",
-    slug: "masculino-roupas",
-    href: "/masculino/roupas",
-    parentId: masc.id,
+  const [menClothing] = await db.insert(menusTable).values({
+    name: "Clothing",
+    slug: "men-clothing",
+    href: "/men/clothing",
+    parentId: men.id,
     type: "custom",
     order: 1,
   }).returning();
   
-  await createSubmenus(mascRoup.id, ["bermudas", "calcas", "camisetas-de-time", "camisetas", "jaquetas-casacos", "moletons-agasalhos", "regatas", "shorts"], categories, "masculino", "masculino/roupas");
+  await createSubmenus(menClothing.id, ["shorts", "pants", "team-jerseys", "t-shirts", "jackets-coats", "hoodies-sweatshirts", "tank-tops", "shorts-alt"], categories, "men", "men/clothing");
   
-  const [mascAcess] = await db.insert(menusTable).values({
-    name: "Acessórios",
-    slug: "masculino-acessorios",
-    href: "/masculino/acessorios",
-    parentId: masc.id,
+  const [menAccess] = await db.insert(menusTable).values({
+    name: "Accessories",
+    slug: "men-accessories",
+    href: "/men/accessories",
+    parentId: men.id,
     type: "custom",
     order: 2,
   }).returning();
   
-  await createSubmenus(mascAcess.id, ["bones", "bolsas-mochilas", "meias", "relogios"], categories, "masculino", "masculino/acessorios");
+  await createSubmenus(menAccess.id, ["caps", "bags-backpacks", "socks", "watches"], categories, "men", "men/accessories");
   
-  console.log("✅ Menu Masculino criado");
+  console.log("✅ Men menu created");
   
-  // FEMININO
-  const [fem] = await db.insert(menusTable).values({
-    name: "Feminino",
-    slug: "feminino",
-    href: "/feminino",
+  // WOMEN
+  const [women] = await db.insert(menusTable).values({
+    name: "Women",
+    slug: "women",
+    href: "/women",
     type: "custom",
     order: order++,
   }).returning();
   
-  const [femCalc] = await db.insert(menusTable).values({
-    name: "Calçados",
-    slug: "feminino-calcados",
-    href: "/feminino/calcados",
-    parentId: fem.id,
+  const [womenShoes] = await db.insert(menusTable).values({
+    name: "Shoes",
+    slug: "women-shoes",
+    href: "/women/shoes",
+    parentId: women.id,
     type: "custom",
     order: 0,
   }).returning();
   
-  await createSubmenus(femCalc.id, ["botas", "chinelos", "sapatilhas", "tenis", "tenis-de-corrida"], categories, "feminino", "feminino/calcados");
+  await createSubmenus(womenShoes.id, ["boots", "sandals-slides", "flats", "sneakers", "running-shoes"], categories, "women", "women/shoes");
   
-  const [femRoup] = await db.insert(menusTable).values({
-    name: "Roupas",
-    slug: "feminino-roupas",
-    href: "/feminino/roupas",
-    parentId: fem.id,
+  const [womenClothing] = await db.insert(menusTable).values({
+    name: "Clothing",
+    slug: "women-clothing",
+    href: "/women/clothing",
+    parentId: women.id,
     type: "custom",
     order: 1,
   }).returning();
   
-  await createSubmenus(femRoup.id, ["bermudas", "calcas", "camisetas-de-time", "camisetas", "jaquetas-casacos", "moletons-agasalhos", "regatas", "shorts", "vestidos"], categories, "feminino", "feminino/roupas");
+  await createSubmenus(womenClothing.id, ["shorts", "pants", "team-jerseys", "t-shirts", "jackets-coats", "hoodies-sweatshirts", "tank-tops", "shorts-alt", "dresses"], categories, "women", "women/clothing");
   
-  const [femAcess] = await db.insert(menusTable).values({
-    name: "Acessórios",
-    slug: "feminino-acessorios",
-    href: "/feminino/acessorios",
-    parentId: fem.id,
+  const [womenAccess] = await db.insert(menusTable).values({
+    name: "Accessories",
+    slug: "women-accessories",
+    href: "/women/accessories",
+    parentId: women.id,
     type: "custom",
     order: 2,
   }).returning();
   
-  await createSubmenus(femAcess.id, ["bones", "bolsas-mochilas", "meias", "relogios"], categories, "feminino", "feminino/acessorios");
+  await createSubmenus(womenAccess.id, ["caps", "bags-backpacks", "socks", "watches"], categories, "women", "women/accessories");
   
-  console.log("✅ Menu Feminino criado");
+  console.log("✅ Women menu created");
   
-  // CALÇADOS
-  const [calc] = await db.insert(menusTable).values({
-    name: "Calçados",
-    slug: "calcados-menu",
-    href: "/calcados",
+  // SHOES
+  const [shoes] = await db.insert(menusTable).values({
+    name: "Shoes",
+    slug: "shoes-menu",
+    href: "/shoes",
     type: "custom",
     order: order++,
   }).returning();
   
-  await createSubmenus(calc.id, ["botas", "chinelos", "chuteiras", "sapatilhas", "sapatenis", "tenis", "tenis-de-corrida"], categories, "calcados", "calcados");
+  await createSubmenus(shoes.id, ["boots", "sandals-slides", "soccer-cleats", "flats", "casual-shoes", "sneakers", "running-shoes"], categories, "shoes", "shoes");
   
-  console.log("✅ Menu Calçados criado");
+  console.log("✅ Shoes menu created");
   
-  // ROUPAS
-  const [roup] = await db.insert(menusTable).values({
-    name: "Roupas",
-    slug: "roupas-menu",
-    href: "/roupas",
+  // CLOTHING
+  const [clothing] = await db.insert(menusTable).values({
+    name: "Clothing",
+    slug: "clothing-menu",
+    href: "/clothing",
     type: "custom",
     order: order++,
   }).returning();
   
-  await createSubmenus(roup.id, ["bermudas", "calcas", "camisetas-de-time", "camisetas", "jaquetas-casacos", "moletons-agasalhos", "regatas", "shorts", "tops", "vestidos"], categories, "roupas", "roupas");
+  await createSubmenus(clothing.id, ["shorts", "pants", "team-jerseys", "t-shirts", "jackets-coats", "hoodies-sweatshirts", "tank-tops", "shorts-alt", "tops", "dresses"], categories, "clothing", "clothing");
   
-  console.log("✅ Menu Roupas criado");
+  console.log("✅ Clothing menu created");
   
-  // ACESSÓRIOS
-  const [acess] = await db.insert(menusTable).values({
-    name: "Acessórios",
-    slug: "acessorios-menu",
-    href: "/acessorios",
+  // ACCESSORIES
+  const [accessories] = await db.insert(menusTable).values({
+    name: "Accessories",
+    slug: "accessories-menu",
+    href: "/accessories",
     type: "custom",
     order: order++,
   }).returning();
   
-  await createSubmenus(acess.id, ["bones", "bolsas-mochilas", "meias", "relogios"], categories, "acessorios", "acessorios");
+  await createSubmenus(accessories.id, ["caps", "bags-backpacks", "socks", "watches"], categories, "accessories", "accessories");
   
-  console.log("✅ Menu Acessórios criado");
+  console.log("✅ Accessories menu created");
   
-  // ESPORTES
-  const [esp] = await db.insert(menusTable).values({
-    name: "Esportes",
-    slug: "esportes",
-    href: "/esportes",
+  // SPORTS
+  const [sports] = await db.insert(menusTable).values({
+    name: "Sports",
+    slug: "sports",
+    href: "/sports",
     type: "custom",
     order: order++,
   }).returning();
   
-  const sports = collections.filter(c => c.type === "sport");
-  for (let i = 0; i < sports.length; i++) {
+  const sportsCollections = collections.filter(c => c.type === "sport");
+  for (let i = 0; i < sportsCollections.length; i++) {
     await db.insert(menusTable).values({
-      name: sports[i].name,
-      slug: `esportes-${sports[i].slug}`,
-      href: `/esportes/${sports[i].slug}`,
-      parentId: esp.id,
+      name: sportsCollections[i].name,
+      slug: `sports-${sportsCollections[i].slug}`,
+      href: `/collections/${sportsCollections[i].slug}`,
+      parentId: sports.id,
       type: "collection",
-      referenceId: sports[i].id,
+      referenceId: sportsCollections[i].id,
       order: i,
     });
   }
   
-  console.log("✅ Menu Esportes criado");
+  console.log("✅ Sports menu created");
   
-  // PROMOÇÕES
-  const promo = collections.find(c => c.slug === "promocoes");
-  if (promo) {
+  // SALE
+  const sale = collections.find(c => c.slug === "promocoes");
+  if (sale) {
     await db.insert(menusTable).values({
-      name: "Promoções",
-      slug: "promocoes",
-      href: "/promocoes",
+      name: "Sale",
+      slug: "sale",
+      href: "/sale",
       type: "collection",
-      referenceId: promo.id,
+      referenceId: sale.id,
       order: order++,
     });
-    console.log("✅ Menu Promoções criado");
+    console.log("✅ Sale menu created");
   }
   
-  console.log("\n✅ Menus seeded successfully!");
+  console.log("\n✅ All menus seeded successfully!");
 }
 
 seedMenus()

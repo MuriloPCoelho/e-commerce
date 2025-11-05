@@ -13,57 +13,57 @@ const db = drizzle(pool, { schema });
 async function seedCategories() {
   console.log("🌱 Seeding categories...");
 
-  // Inserir categorias principais
-  const [calcados, roupas, acessorios] = await db
+  // Insert main categories
+  const [shoes, clothing, accessories] = await db
     .insert(categoriesTable)
     .values([
-      { name: "Calçados", slug: "calcados", parentId: null },
-      { name: "Roupas", slug: "roupas", parentId: null },
-      { name: "Acessórios", slug: "acessorios", parentId: null },
+      { name: "Shoes", slug: "shoes", parentId: null },
+      { name: "Clothing", slug: "clothing", parentId: null },
+      { name: "Accessories", slug: "accessories", parentId: null },
     ])
     .returning();
 
-  console.log("✅ Categorias principais criadas");
+  console.log("✅ Main categories created");
 
-  // Inserir subcategorias de Calçados
+  // Insert Shoes subcategories
   await db.insert(categoriesTable).values([
-    { name: "Botas", slug: "botas", parentId: calcados.id },
-    { name: "Chinelos", slug: "chinelos", parentId: calcados.id },
-    { name: "Chuteiras", slug: "chuteiras", parentId: calcados.id },
-    { name: "Sapatilhas", slug: "sapatilhas", parentId: calcados.id },
-    { name: "Sapatênis", slug: "sapatenis", parentId: calcados.id },
-    { name: "Tênis", slug: "tenis", parentId: calcados.id },
-    { name: "Tênis de Corrida", slug: "tenis-de-corrida", parentId: calcados.id },
+    { name: "Boots", slug: "boots", parentId: shoes.id },
+    { name: "Sandals & Slides", slug: "sandals-slides", parentId: shoes.id },
+    { name: "Soccer Cleats", slug: "soccer-cleats", parentId: shoes.id },
+    { name: "Flats", slug: "flats", parentId: shoes.id },
+    { name: "Casual Shoes", slug: "casual-shoes", parentId: shoes.id },
+    { name: "Sneakers", slug: "sneakers", parentId: shoes.id },
+    { name: "Running Shoes", slug: "running-shoes", parentId: shoes.id },
   ]);
 
-  console.log("✅ Subcategorias de Calçados criadas");
+  console.log("✅ Shoes subcategories created");
 
-  // Inserir subcategorias de Roupas
+  // Insert Clothing subcategories
   await db.insert(categoriesTable).values([
-    { name: "Bermudas", slug: "bermudas", parentId: roupas.id },
-    { name: "Calças", slug: "calcas", parentId: roupas.id },
-    { name: "Camisetas de Time", slug: "camisetas-de-time", parentId: roupas.id },
-    { name: "Camisetas", slug: "camisetas", parentId: roupas.id },
-    { name: "Jaquetas & Casacos", slug: "jaquetas-casacos", parentId: roupas.id },
-    { name: "Moletons & Agasalhos", slug: "moletons-agasalhos", parentId: roupas.id },
-    { name: "Regatas", slug: "regatas", parentId: roupas.id },
-    { name: "Shorts", slug: "shorts", parentId: roupas.id },
-    { name: "Tops", slug: "tops", parentId: roupas.id },
-    { name: "Vestidos", slug: "vestidos", parentId: roupas.id },
+    { name: "Shorts", slug: "shorts", parentId: clothing.id },
+    { name: "Pants", slug: "pants", parentId: clothing.id },
+    { name: "Team Jerseys", slug: "team-jerseys", parentId: clothing.id },
+    { name: "T-Shirts", slug: "t-shirts", parentId: clothing.id },
+    { name: "Jackets & Coats", slug: "jackets-coats", parentId: clothing.id },
+    { name: "Hoodies & Sweatshirts", slug: "hoodies-sweatshirts", parentId: clothing.id },
+    { name: "Tank Tops", slug: "tank-tops", parentId: clothing.id },
+    { name: "Shorts", slug: "shorts-alt", parentId: clothing.id },
+    { name: "Tops", slug: "tops", parentId: clothing.id },
+    { name: "Dresses", slug: "dresses", parentId: clothing.id },
   ]);
 
-  console.log("✅ Subcategorias de Roupas criadas");
+  console.log("✅ Clothing subcategories created");
 
-  // Inserir subcategorias de Acessórios
+  // Insert Accessories subcategories
   await db.insert(categoriesTable).values([
-    { name: "Bonés", slug: "bones", parentId: acessorios.id },
-    { name: "Bolsas & Mochilas", slug: "bolsas-mochilas", parentId: acessorios.id },
-    { name: "Meias", slug: "meias", parentId: acessorios.id },
-    { name: "Relógios", slug: "relogios", parentId: acessorios.id },
+    { name: "Caps", slug: "caps", parentId: accessories.id },
+    { name: "Bags & Backpacks", slug: "bags-backpacks", parentId: accessories.id },
+    { name: "Socks", slug: "socks", parentId: accessories.id },
+    { name: "Watches", slug: "watches", parentId: accessories.id },
   ]);
 
-  console.log("✅ Subcategorias de Acessórios criadas");
-  console.log("\n✅ Total: 3 categorias + 24 subcategorias criadas!");
+  console.log("✅ Accessories subcategories created");
+  console.log("\n✅ Total: 3 categories + 24 subcategories created!");
 }
 
 seedCategories()
