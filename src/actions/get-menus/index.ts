@@ -28,11 +28,11 @@ export async function getMenus(): Promise<MenuItem[]> {
     const buildHref = (menu: typeof allMenus[0]): string => {
       switch (menu.type) {
         case "category":
-          return menu.category ? `/w/${menu.category.slug}` : "#";
+          return menu.category ? `/categories/${menu.category.slug}` : "#";
         case "brand":
-          return menu.brand ? `/b/${menu.brand.slug}` : "#";
+          return menu.brand ? `/brands/${menu.brand.slug}` : "#";
         case "collection":
-          return menu.collection ? `/c/${menu.collection.slug}` : "#";
+          return menu.collection ? `/collections/${menu.collection.slug}` : "#";
         case "custom":
         default:
           return menu.href || "#";
