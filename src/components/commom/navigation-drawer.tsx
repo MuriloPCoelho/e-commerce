@@ -194,7 +194,7 @@ const NavigationDrawer = ({ menus = [] }: NavigationDrawerProps) => {
                   <SheetClose asChild>
                     <Link
                       href={currentMenu.href}
-                      className="text-black underline hover:no-underline transition-all"
+                      className="text-black underline hover:no-underline transition-all underline-offset-3"
                     >
                       View all
                     </Link>
