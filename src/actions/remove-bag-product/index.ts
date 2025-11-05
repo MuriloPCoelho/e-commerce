@@ -14,22 +14,22 @@ export const removeBagProduct = async (bagItemId: string) => {
   const userId = session.user.id;
 
   const bagItem = await db.query.bagItemsTable.findFirst({
-    where: (bagItem, { eq }) =>
-      eq(bagItem.id, bagItemId),
+    where: (bagItem, { eq }) => eq(bagItem.id, bagItemId),
+    with: {
+      bag: {
+        columns: {
+          userId: true,
+        },
+      },
+    },
   });
 
-  if (!bagItem) throw new Error("Bag item not found");
+  const cartDoesNotExist = !bagItem;
+  const userIsNotOwner = bagItem?.bag.userId !== userId;
 
-  const bag = await db.query.bagsTable.findFirst({
-    where: (bag, { eq }) =>
-      eq(bag.id, bagItem.bagId) &&
-      eq(bag.userId, userId),
-  });
+  if (cartDoesNotExist) throw new Error("Bag item not found");
 
-  if (!bag) throw new Error("Bag not found");
+  if (userIsNotOwner) throw new Error("Unauthorized");
 
-  await db.delete(bagItemsTable).where(
-    eq(bagItemsTable.id, bagItemId)
-  );
-
-}
+  await db.delete(bagItemsTable).where(eq(bagItemsTable.id, bagItemId));
+};
