@@ -33,9 +33,12 @@ export const getBag = async () => {
   });
 
   if (!bag) {
-    const [newBag] = await db.insert(bagsTable).values({
-      userId: session.user.id,
-    }).returning();
+    const [newBag] = await db
+      .insert(bagsTable)
+      .values({
+        userId: session.user.id,
+      })
+      .returning();
 
     return {
       ...newBag,
