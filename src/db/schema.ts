@@ -2,12 +2,14 @@ import { relations } from "drizzle-orm";
 import {
   boolean,
   integer,
+  jsonb,
   pgTable,
   serial,
   text,
   timestamp,
   uuid,
 } from "drizzle-orm/pg-core";
+import type { ProductSpecification } from "@/lib/product-specifications";
 
 export const usersTable = pgTable("user", {
   id: text("id").primaryKey(),
@@ -117,6 +119,7 @@ export const productsTable = pgTable("tb_products", {
   gender: text("gender", { enum: ["men", "women", "unisex"] })
     .notNull()
     .default("unisex"),
+  specifications: jsonb("specifications").$type<ProductSpecification>(),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
