@@ -10,6 +10,7 @@ import {
   productVariantSizesTable,
 } from "./schema";
 import * as schema from "./schema";
+import { getSpecificationByCategory } from "./specifications-examples";
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
@@ -698,6 +699,9 @@ async function main() {
 
       console.log(`📦 Criando produto: ${productData.name} (Cat: ${categoryId}, Subcat: ${subcategoryId})`);
 
+      // Obter especificações baseadas na categoria/nome do produto
+      const specifications = getSpecificationByCategory(newCategoryName, productData.name);
+
       await db.insert(productsTable).values({
         id: productId,
         name: productData.name,
@@ -707,6 +711,7 @@ async function main() {
         subcategoryId: subcategoryId,
         brandId: brandId,
         gender: productData.gender || "unisex",
+        specifications: specifications,
       });
 
       // Inserir variantes do produto
