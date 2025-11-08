@@ -28,19 +28,17 @@ export default function ProductSpecifications({
 
           return (
             <div key={groupName} className="">
-              {/* Título da Seção */}
-              <h3 className="text-xs font-medium text-gray-900 uppercase tracking-wide pb-1">
+              <h3 className="text-xs font-medium text-neutral-400 uppercase tracking-wide pb-1">
                 {groupName}
               </h3>
 
-              {/* Grid de Especificações */}
               <div className="grid">
                 {specs.map(({ key, label, value }) => (
                   <div
                     key={key}
                     className="grid grid-cols-[120px_1fr] sm:grid-cols-[140px_1fr] gap-4 py-1"
                   >
-                    <span className="text-xs font-semibold text-gray-600">
+                    <span className="text-xs font-bold">
                       {label}
                     </span>
                     <span className="text-xs text-gray-900 font-normal">
