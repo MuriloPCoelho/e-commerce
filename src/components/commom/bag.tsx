@@ -11,30 +11,72 @@ import {
 } from "../ui/sheet";
 import { Button, buttonVariants } from "../ui/button";
 import Link from "next/link";
-import { useQuery } from "@tanstack/react-query";
 import BagItem from "./bag-item";
 import BagItemSkeleton from "./bag-item-skeleton";
-import { getBag } from "@/actions/get-bag";
 import { centsToReais } from "@/lib/utils";
 import { useEffect, useState } from "react";
 import { Badge } from "../ui/badge";
 import { usePathname } from "next/navigation";
+import { useBag } from "@/providers/bag-provider";
+import { useQuery } from "@tanstack/react-query";
+import { getMultipleProductVariantSizeDetails } from "@/actions/get-product-variant-size-details";
 
 const Bag = () => {
   const [isOpen, setIsOpen] = useState(false);
   const path = usePathname();
-  const { data: bag, isPending: bagIsPending } = useQuery({
-    queryKey: ["bag"],
-    queryFn: () => getBag(),
+  const {
+    bag,
+    localBag,
+    totalItems,
+    totalPriceInCents,
+    isPending,
+    isAuthenticated,
+  } = useBag();
+
+  const { data: localBagDetails, isPending: localBagPending } = useQuery({
+    queryKey: [
+      "localBagDetails",
+      localBag.items.map((i) => i.productVariantSizeId).join(","),
+    ],
+    queryFn: async () => {
+      if (localBag.items.length === 0) return [];
+      const ids = localBag.items.map((item) => item.productVariantSizeId);
+      const details = await getMultipleProductVariantSizeDetails(ids);
+
+      return localBag.items
+        .map((localItem) => {
+          const detail = details.find(
+            (d) => d?.id === localItem.productVariantSizeId
+          );
+          if (!detail) return null;
+
+          return {
+            id: `local-${localItem.productVariantSizeId}`,
+            bagId: "local",
+            productVariantSizeId: localItem.productVariantSizeId,
+            quantity: localItem.quantity,
+            createdAt: new Date(),
+            productVariantSize: detail,
+          };
+        })
+        .filter(Boolean);
+    },
+    enabled: !isAuthenticated && localBag.items.length > 0,
   });
 
-  const totalItems =
-    bag?.items
-      .map((item) => {
-        return item.quantity;
-      })
-      .reduce((acc, curr) => acc + curr, 0) ?? 0;
+  const localBagTotalPrice =
+    localBagDetails?.reduce((total, item: any) => {
+      const priceInCents = item?.productVariantSize?.variant?.priceInCents ?? 0;
+      return total + priceInCents * item.quantity;
+    }, 0) ?? 0;
 
+  const isLoading = isAuthenticated 
+    ? isPending 
+    : (localBagPending && localBag.items.length > 0);
+
+  const itemsToDisplay = isAuthenticated ? bag?.items : localBagDetails;
+
+  const subtotal = isAuthenticated ? totalPriceInCents : localBagTotalPrice;
 
   useEffect(() => {
     setIsOpen(false);
@@ -85,32 +127,38 @@ const Bag = () => {
         </SheetHeader>
         <div className="h-full px-4 pt-4 relative flex flex-col gap-4">
           <div className="flex flex-col gap-3 overflow-y-auto grow mb-16">
-            {bagIsPending && (
+            {isLoading && (
               <>
                 <BagItemSkeleton />
                 <BagItemSkeleton />
                 <BagItemSkeleton />
               </>
             )}
-            {bag?.items.map((item) => (
-              <BagItem key={item.id} item={item} />
-            ))}
+
+            {!isLoading && totalItems === 0 && (
+              <p className="text-center text-neutral-500 mt-8">
+                Sua sacola está vazia.
+              </p>
+            )}
+
+            {!isLoading &&
+              itemsToDisplay?.map((item: any) => (
+                <BagItem key={item.id} item={item} />
+              ))}
           </div>
           <div className="flex flex-col gap-4 bg-white sticky bottom-0 w-full left-0 pb-8">
             <hr />
             <div className="flex justify-between">
               <span className="text-neutral-600">Subtotal:</span>
               <span className="font-semibold">
-                {centsToReais(bag?.totalPriceInCents ?? 0)}
+                {centsToReais(subtotal)}
               </span>
             </div>
-            <Link href="/checkout">
-              <Button
-                className="w-full"
-                size="lg"
-              >
-                Finalizar Compra
-              </Button>
+            <Link
+              href="/checkout"
+              className={buttonVariants({ className: "w-full", size: "lg" })}
+            >
+              Finalizar Compra
             </Link>
           </div>
         </div>

@@ -1,10 +1,10 @@
 "use client";
-import { addProductToBag } from "@/actions/add-bag-product";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { ShoppingBag } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useBag } from "@/providers/bag-provider";
+import { useState } from "react";
 
 interface AddToBagButtonProps {
   productVariantSizeId: number | null | undefined;
@@ -15,31 +15,6 @@ interface AddToBagButtonProps {
   className?: string;
 }
 
-export const useAddToBag = (
-  productVariantSizeId: number | null | undefined,
-  redirectToCheckout?: boolean
-) => {
-  const queryClient = useQueryClient();
-  const router = useRouter();
-
-  return useMutation({
-    mutationKey: ["addProductToBag", productVariantSizeId],
-    mutationFn: async () => {
-      if (!productVariantSizeId) throw new Error("No size selected");
-      return addProductToBag({ productVariantSizeId });
-    },
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ["bag"] });
-      if (redirectToCheckout) {
-        router.push("/checkout");
-      }
-    },
-    onError: (err) => {
-      console.error("Failed to add to bag", err);
-    },
-  });
-};
-
 const AddToBagButton = ({
   productVariantSizeId,
   variant = "outline",
@@ -48,10 +23,25 @@ const AddToBagButton = ({
   iconOnly = false,
   className,
 }: AddToBagButtonProps) => {
-  const { mutate, isPending } = useAddToBag(
-    productVariantSizeId,
-    redirectToCheckout
-  );
+  const router = useRouter();
+  const { addItem } = useBag();
+  const [isPending, setIsPending] = useState(false);
+
+  const handleAddToBag = async () => {
+    if (!productVariantSizeId) return;
+    
+    setIsPending(true);
+    try {
+      await addItem(productVariantSizeId);
+      if (redirectToCheckout) {
+        router.push("/checkout");
+      }
+    } catch (error) {
+      console.error("Failed to add to bag:", error);
+    } finally {
+      setIsPending(false);
+    }
+  };
 
   const showIcon = !redirectToCheckout || iconOnly;
   const buttonText = children || "Adicionar a sacola";
@@ -60,7 +50,7 @@ const AddToBagButton = ({
     <Button
       variant={variant}
       size="lg"
-      onClick={() => mutate()}
+      onClick={handleAddToBag}
       disabled={!productVariantSizeId || isPending}
       className={className}
     >

@@ -15,6 +15,7 @@ import { removeBagProduct } from "@/actions/remove-bag-product";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Spinner } from "../ui/spinner";
 import { toast } from "sonner";
+import { useBag } from "@/providers/bag-provider";
 
 interface BagItemProps {
   item: typeof bagItemsTable.$inferSelect & {
@@ -31,15 +32,29 @@ interface BagItemProps {
 
 const BagItem = ({ item }: BagItemProps) => {
   const queryClient = useQueryClient();
+  const { removeItem: removeFromBag, isAuthenticated } = useBag();
 
-  const { mutate: removeItem, isPending } = useMutation({
+  // Check if this is a local item (ID starts with 'local-')
+  const isLocalItem = typeof item.id === 'string' && item.id.startsWith('local-');
+
+  const { mutate: removeDbItem, isPending } = useMutation({
     mutationKey: ["removeBagProduct", item.id],
-    mutationFn: async () => removeBagProduct(item.id),
+    mutationFn: async () => removeBagProduct(item.id as string),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["bag"] });
     },
     onError: (err) => toast.error((err as Error).message),
   });
+
+  const handleRemove = async () => {
+    if (isLocalItem && item.productVariantSize) {
+      // Remove from local bag
+      await removeFromBag(item.productVariantSizeId);
+    } else {
+      // Remove from DB
+      removeDbItem();
+    }
+  };
 
   if (!item.productVariantSize) return null;
 
@@ -89,7 +104,7 @@ const BagItem = ({ item }: BagItemProps) => {
             variant="link"
             size="xs"
             className="underline h-4"
-            onClick={() => removeItem()}
+            onClick={handleRemove}
             disabled={isPending}
           >
             {isPending ? <Spinner className="size-3" /> : "Remover"}
