@@ -20,6 +20,7 @@ import { usePathname } from "next/navigation";
 import { useBag } from "@/providers/bag-provider";
 import { useQuery } from "@tanstack/react-query";
 import { getMultipleProductVariantSizeDetails } from "@/actions/get-product-variant-size-details";
+import FreeShippingProgress from "./free-shipping-progress";
 
 const Bag = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -125,7 +126,7 @@ const Bag = () => {
             </SheetClose>
           </SheetTitle>
         </SheetHeader>
-        <div className="h-full px-4 pt-4 relative flex flex-col gap-4">
+        <div className="h-full px-3 pt-4 relative flex flex-col gap-4">
           <div className="flex flex-col gap-3 overflow-y-auto grow mb-16">
             {isLoading && (
               <>
@@ -146,7 +147,10 @@ const Bag = () => {
                 <BagItem key={item.id} item={item} />
               ))}
           </div>
-          <div className="flex flex-col gap-4 bg-white sticky bottom-0 w-full left-0 pb-8">
+          <div className="bg-neutral-100 rounded px-2 py-3">
+            <FreeShippingProgress subtotal={subtotal} />
+          </div>
+          <div className="flex flex-col gap-4 bg-white sticky bottom-0 w-full left-0 pb-4">
             <hr />
             <div className="flex justify-between">
               <span className="text-neutral-600">Subtotal:</span>
@@ -154,12 +158,17 @@ const Bag = () => {
                 {centsToReais(subtotal)}
               </span>
             </div>
-            <Link
-              href="/checkout"
-              className={buttonVariants({ className: "w-full", size: "lg" })}
-            >
-              Finalizar Compra
-            </Link>
+            <div className="flex flex-col justify-center gap-2">
+              <Link
+                href="/checkout"
+                className={buttonVariants({ className: "w-full", size: "md" })}
+              >
+                Finalizar Compra
+              </Link>
+              <Button variant="link" className="underline">
+                Continuar Comprando
+              </Button>
+            </div>
           </div>
         </div>
       </SheetContent>

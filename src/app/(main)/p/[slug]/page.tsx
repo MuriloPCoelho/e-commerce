@@ -15,20 +15,21 @@ import SizeSelector from "./components/size-selector";
 import AddToBagButton from "./components/add-to-bag-button";
 import ProductActionsWrapper from "./components/product-actions-wrapper";
 import { Button } from "@/components/ui/button";
+import { Suspense } from "react";
+import { ProductDetailSkeleton } from "@/components/commom/product-detail-skeleton";
 
 interface ProductPageProps {
   params: Promise<{ slug: string }>;
   searchParams?: Promise<Record<string, string | string[] | undefined>>;
 }
 
-const ProductPage = async ({ params, searchParams }: ProductPageProps) => {
-  const { slug } = await params;
-  const resolvedSearchParams = await searchParams;
-  const size = resolvedSearchParams?.size;
-  const selectedSizeName = Array.isArray(size)
-    ? size[0]
-    : (size as string | undefined);
-
+async function ProductContent({
+  slug,
+  selectedSizeName,
+}: {
+  slug: string;
+  selectedSizeName?: string;
+}) {
   const variant = await db.query.productVariantsTable.findFirst({
     where: (productVariant) => eq(productVariant.slug, slug),
     with: {
@@ -207,6 +208,21 @@ const ProductPage = async ({ params, searchParams }: ProductPageProps) => {
     >
       {content}
     </ProductActionsWrapper>
+  );
+}
+
+const ProductPage = async ({ params, searchParams }: ProductPageProps) => {
+  const { slug } = await params;
+  const resolvedSearchParams = await searchParams;
+  const size = resolvedSearchParams?.size;
+  const selectedSizeName = Array.isArray(size)
+    ? size[0]
+    : (size as string | undefined);
+
+  return (
+    <Suspense fallback={<ProductDetailSkeleton />}>
+      <ProductContent slug={slug} selectedSizeName={selectedSizeName} />
+    </Suspense>
   );
 };
 
