@@ -14,7 +14,7 @@ export default function CheckoutLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <div className="min-h-screen">
+    <div className="h-dvh flex flex-col">
       <header className="bg-white border-b py-3 px-4 flex items-center">
         <Link
           href="/"
@@ -27,7 +27,7 @@ export default function CheckoutLayout({
           <span className="text-lg font-semibold">Voltar</span>
         </Link>
       </header>
-      <main>{children}</main>
+      <main className="bg-neutral-100 h-full">{children}</main>
     </div>
   );
 }
