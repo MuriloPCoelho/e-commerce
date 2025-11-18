@@ -53,6 +53,7 @@ const AddToBagButton = ({
       onClick={handleAddToBag}
       disabled={!productVariantSizeId || isPending}
       className={className}
+      title={iconOnly ? "Add to shopping bag" : undefined}
     >
       {!isPending ? (
         <>
