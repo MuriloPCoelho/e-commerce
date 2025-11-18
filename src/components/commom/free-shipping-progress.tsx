@@ -21,12 +21,16 @@ const FreeShippingProgress = ({ subtotal }: { subtotal: number }) => {
         )}
       />
       <p className="text-center text-xs">
-        {subtotal < freeShippingThresholdInCents
-          ? `Faltam ${centsToReais(
-              freeShippingThresholdInCents - subtotal
-            )} para
-          frete grátis!`
-          : "Você ganhou frete grátis! 🎉"}
+        {subtotal < freeShippingThresholdInCents ? (
+          <>
+            {centsToReais(freeShippingThresholdInCents - subtotal)} away from{" "}
+            <b>free shipping</b>!
+          </>
+        ) : (
+          <>
+            You got <b>free shipping!</b> 🎉
+          </>
+        )}
       </p>
     </div>
   );

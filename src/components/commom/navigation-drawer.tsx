@@ -1,6 +1,15 @@
 "use client";
 
-import { Menu, User, X, ChevronRight, ChevronLeft } from "lucide-react";
+import {
+  Menu,
+  User,
+  X,
+  ChevronRight,
+  ChevronLeft,
+  Truck,
+  Heart,
+  Package,
+} from "lucide-react";
 import { Button, buttonVariants } from "../ui/button";
 import {
   Sheet,
@@ -127,8 +136,20 @@ const NavigationDrawer = ({ menus = [] }: NavigationDrawerProps) => {
                     className: "text-white",
                   })}
                 >
-                  <User />
-                  <span>Hello, {session.user.name}</span>
+                  
+                  <span>{session.user.name?.split(" ")[0]}'s Account</span>
+                </Link>
+                | 
+                <Link
+                  href="/orders"
+                  className={buttonVariants({
+                    variant: "link",
+                    size: "xs",
+                    className: "text-white",
+                  })}
+                >
+                  
+                  Orders
                 </Link>
               </div>
             ) : (
@@ -164,8 +185,9 @@ const NavigationDrawer = ({ menus = [] }: NavigationDrawerProps) => {
             </div>
             <nav className="flex flex-col w-full">
               {currentMenu.children?.map((submenu) => {
-                const hasChildren = submenu.children && submenu.children.length > 0;
-                
+                const hasChildren =
+                  submenu.children && submenu.children.length > 0;
+
                 return (
                   <div key={submenu.id}>
                     {hasChildren ? (

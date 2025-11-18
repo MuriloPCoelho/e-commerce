@@ -26,7 +26,7 @@ const ProductRating = ({ rating, size = "md", link }: ProductRatingProps) => {
           "text-neutral-500",
           link ? "group-hover:underline underline-offset-3" : ""
         )}
-      >{`(${Math.floor(Math.random() * 1000)} avaliações)`}</span>
+      >{`(${Math.floor(Math.random() * 1000)} reviews)`}</span>
     </div>
   );
 

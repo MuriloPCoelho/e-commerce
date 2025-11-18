@@ -89,13 +89,13 @@ async function ProductContent({
       </div>
       <div className="p-4">
         <div className=" mb-1">
-          Cor: <span className="lowercase">{variant.name}</span>
+          Color: <span className="lowercase">{variant.name}</span>
         </div>
         <VariantSelector variants={variant.product.variants} />
       </div>
       <div>
         <div className="p-4">
-          <div className="mb-1">Selecione o tamanho</div>
+          <div className="mb-1">Select size</div>
           <div className="flex gap-1.5 w-full flex-wrap">
             <SizeSelector sizes={variantSizes} />
           </div>
@@ -108,7 +108,7 @@ async function ProductContent({
             variant="default"
             redirectToCheckout
           >
-            Comprar agora
+            Buy now
           </AddToBagButton>
           <AddToBagButton
             productVariantSizeId={selectedProductVariantSize.id}
@@ -116,18 +116,18 @@ async function ProductContent({
           <div className="grid grid-cols-[1fr_auto_1fr]">
             <Button variant="link" size="xs" className="place-self-center">
               <Heart className="size-5" />
-              Favoritar
+              Favorite
             </Button>
             <div className="w-[1px] h-6 bg-neutral-300"></div>
             <Button variant="link" size="xs" className="place-self-center">
               <Share2 className="size-5" />
-              Compartilhar
+              Share
             </Button>
           </div>
         </div>
       ) : (
         <div className="p-4 text-red-600 font-semibold">
-          Produto indisponível no momento
+          Product currently unavailable
         </div>
       )}
       <div></div>
@@ -141,7 +141,7 @@ async function ProductContent({
           <AccordionItem value="1">
             <AccordionPrimitive.Header className="flex">
               <AccordionPrimitive.Trigger className="flex flex-1 items-center justify-between gap-4 rounded-md py-4 text-left text-lg leading-6 font-semibold transition-all outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 [&>svg>path:last-child]:origin-center [&>svg>path:last-child]:transition-all [&>svg>path:last-child]:duration-200 [&[data-state=open]>svg]:rotate-180 [&[data-state=open]>svg>path:last-child]:rotate-90 [&[data-state=open]>svg>path:last-child]:opacity-0">
-                Descrição
+                Description
                 <PlusIcon
                   size={20}
                   className="pointer-events-none shrink-0 opacity-60 transition-transform duration-200"
@@ -158,7 +158,7 @@ async function ProductContent({
           <AccordionItem value="2">
             <AccordionPrimitive.Header className="flex">
               <AccordionPrimitive.Trigger className="flex flex-1 items-center justify-between gap-4 rounded-md py-4 text-left text-lg leading-6 font-semibold transition-all outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 [&>svg>path:last-child]:origin-center [&>svg>path:last-child]:transition-all [&>svg>path:last-child]:duration-200 [&[data-state=open]>svg]:rotate-180 [&[data-state=open]>svg>path:last-child]:rotate-90 [&[data-state=open]>svg>path:last-child]:opacity-0">
-                Informações técnicas
+                Technical Information
                 <PlusIcon
                   size={20}
                   className="pointer-events-none shrink-0 opacity-60 transition-transform duration-200"
@@ -173,7 +173,7 @@ async function ProductContent({
                 />
               ) : (
                 <p className="text-neutral-600 leading-6">
-                  Informações técnicas não disponíveis.
+                  Technical information not available.
                 </p>
               )}
             </AccordionContent>
@@ -181,7 +181,7 @@ async function ProductContent({
           <AccordionItem value="3">
             <AccordionPrimitive.Header className="flex">
               <AccordionPrimitive.Trigger className="flex flex-1 items-center justify-between gap-4 rounded-md py-4 text-left text-lg leading-6 font-semibold transition-all outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 [&>svg>path:last-child]:origin-center [&>svg>path:last-child]:transition-all [&>svg>path:last-child]:duration-200 [&[data-state=open]>svg]:rotate-180 [&[data-state=open]>svg>path:last-child]:rotate-90 [&[data-state=open]>svg>path:last-child]:opacity-0">
-                Avaliações ()
+                Reviews ()
                 <PlusIcon
                   size={20}
                   className="pointer-events-none shrink-0 opacity-60 transition-transform duration-200"
@@ -191,7 +191,7 @@ async function ProductContent({
             </AccordionPrimitive.Header>
             <AccordionContent>
               <p className="text-neutral-600 leading-6">
-                Nenhuma avaliação ainda.
+                No reviews yet.
               </p>
             </AccordionContent>
           </AccordionItem>

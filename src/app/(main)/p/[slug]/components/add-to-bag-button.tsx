@@ -44,7 +44,7 @@ const AddToBagButton = ({
   };
 
   const showIcon = !redirectToCheckout || iconOnly;
-  const buttonText = children || "Adicionar a sacola";
+  const buttonText = children || "Add to bag";
 
   return (
     <Button

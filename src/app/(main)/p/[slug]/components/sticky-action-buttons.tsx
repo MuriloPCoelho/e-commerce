@@ -46,7 +46,7 @@ const StickyActionButtons = ({
           redirectToCheckout
           className="w-full"
         >
-          Comprar agora
+          Buy now
         </AddToBagButton>
         <AddToBagButton
           productVariantSizeId={productVariantSizeId}

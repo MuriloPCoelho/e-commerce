@@ -27,7 +27,7 @@ import {
 } from "lucide-react";
 
 const formSchema = z.object({
-  email: z.email("Email inválido"),
+  email: z.email("Invalid email"),
   password: z.string(),
 });
 
@@ -50,7 +50,7 @@ export default function SignIn() {
       rememberMe: true,
       fetchOptions: {
         onSuccess: () => {
-          toast.success("Login realizado com sucesso!");
+          toast.success("Login successful!");
           router.push("/");
         },
         onError: (error) => {
@@ -58,13 +58,13 @@ export default function SignIn() {
           if (error.error.code === "INVALID_EMAIL_OR_PASSWORD") {
             form.setError("email", {
               type: "manual",
-              message: "Email ou senha inválidos.",
+              message: "Invalid email or password.",
             });
             form.setError("password", {
               type: "manual",
-              message: "Email ou senha inválidos.",
+              message: "Invalid email or password.",
             });
-            toast.error("Email ou senha inválidos.");
+            toast.error("Invalid email or password.");
           }
         },
       },
@@ -85,8 +85,8 @@ export default function SignIn() {
   return (
     <div className="h-dvh">
       <div className="flex justify-center flex-col items-center px-12 gap-4 pt-32">
-        <h1 className="text-2xl font-bold">Entrar</h1>
-        <p className="text-neutral-500">Faça login para continuar</p>
+        <h1 className="text-2xl font-bold">Sign In</h1>
+        <p className="text-neutral-500">Log in to continue</p>
 
         <Form {...form}>
           <form
@@ -101,7 +101,7 @@ export default function SignIn() {
                   <FormLabel>Email</FormLabel>
                   <FormControl>
                     <Input
-                      placeholder="Digite seu email"
+                      placeholder="Enter your email"
                       type="email"
                       {...field}
                     />
@@ -116,10 +116,10 @@ export default function SignIn() {
               render={({ field }) => (
                 <>
                   <FormItem>
-                    <FormLabel>Senha</FormLabel>
+                    <FormLabel>Password</FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="Digite sua senha"
+                        placeholder="Enter your password"
                         type="password"
                         {...field}
                       />
@@ -131,13 +131,13 @@ export default function SignIn() {
             />
             <div>
               <Link href="#" className="text-sm underline">
-                Esqueci minha senha
+                Forgot my password
               </Link>
             </div>
 
             <div className="flex flex-col w-full gap-2 items-center">
               <Button className="mt-4 w-full" type="submit">
-                Entrar
+                Sign In
               </Button>
               <span>ou</span>
               <Button
@@ -170,7 +170,7 @@ export default function SignIn() {
                   ></path>
                   <path fill="none" d="M0 0h48v48H0z"></path>
                 </svg>
-                <span className="leading-none">Entrar com Google</span>
+                <span className="leading-none">Sign in with Google</span>
               </Button>
             </div>
           </form>
@@ -178,7 +178,7 @@ export default function SignIn() {
 
         <div>
           <Link href="/sign-up" className="underline text-sm">
-            Não possui uma conta? Crie uma conta
+            Don't have an account? Create one
           </Link>
         </div>
 
@@ -186,38 +186,38 @@ export default function SignIn() {
 
         <div className="flex flex-col gap-4 w-full pb-6">
           <h2 className="w-full text-2xl font-semibold">
-            Vantagens de ter uma conta
+            Benefits of having an account
           </h2>
           <ul className="w-full flex flex-col gap-4">
             <li className="flex gap-2 items-center">
-              <Truck size={40} strokeWidth={1} /> Rastrear seus pedidos
+              <Truck size={40} strokeWidth={1} /> Track your orders
             </li>
             <li className="flex gap-2 items-center">
               <Heart size={40} strokeWidth={1} />
-              Criar uma lista de desejos
+              Create a wishlist
             </li>
             <li className="flex gap-2 items-center">
               <ShoppingCart size={40} strokeWidth={1} />
-              Acelerar o processo de compra
+              Speed up checkout
             </li>
             <li className="flex gap-2 items-center">
               <History size={40} strokeWidth={1} />
-              Visualizar histórico de compras
+              View purchase history
             </li>
             <li className="flex gap-2 items-center">
               <CreditCard size={40} strokeWidth={1} />
-              Salvar meios de pagamento
+              Save payment methods
             </li>
             <li className="flex gap-2 items-center">
               <TicketPercent size={40} strokeWidth={1} />
-              Receber cupons de desconto
+              Receive discount coupons
             </li>
           </ul>
           <Link
             href="/sign-up"
             className={buttonVariants({ variant: "default" })}
           >
-            Criar conta
+            Create account
           </Link>
         </div>
       </div>

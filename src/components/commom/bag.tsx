@@ -101,7 +101,7 @@ const Bag = () => {
         side="right"
         className="border-none [&>button]:hidden w-[90%] gap-0"
       >
-        <SheetHeader className="bg-black px-4 flex relative h-16">
+        <SheetHeader className="bg-black px-4 flex justify-center relative min-h-16">
           <SheetTitle className="text-white">
             <div className="flex">
               <Link
@@ -111,9 +111,9 @@ const Bag = () => {
                   size: "xs",
                   className: "text-white",
                 })}
-                title="Ir para sacola"
+                title="Go to bag"
               >
-                Sua sacola
+                Your Bag
               </Link>
             </div>
             <SheetClose asChild>
@@ -138,7 +138,7 @@ const Bag = () => {
 
             {!isLoading && totalItems === 0 && (
               <p className="text-center text-neutral-500 mt-8">
-                Sua sacola está vazia.
+                Your bag is empty.
               </p>
             )}
 
@@ -163,10 +163,10 @@ const Bag = () => {
                 href="/checkout"
                 className={buttonVariants({ className: "w-full", size: "md" })}
               >
-                Finalizar Compra
+                Checkout
               </Link>
               <Button variant="link" className="underline">
-                Continuar Comprando
+                Continue Shopping
               </Button>
             </div>
           </div>

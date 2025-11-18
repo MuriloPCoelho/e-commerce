@@ -21,18 +21,18 @@ import z from "zod";
 const formSchema = z
   .object({
     name: z
-      .string("Nome inválido.")
-      .min(2, "Nome inválido.")
-      .max(100, "Nome muito longo."),
-    email: z.email("Email inválido."),
+      .string("Invalid name.")
+      .min(2, "Invalid name.")
+      .max(100, "Name too long."),
+    email: z.email("Invalid email."),
     password: z
-      .string("Senha inválida.")
-      .min(8, "Senha precisa ter no mínimo 8 caracteres.")
-      .max(100, "Senha muito longa."),
+      .string("Invalid password.")
+      .min(8, "Password must be at least 8 characters.")
+      .max(100, "Password too long."),
     confirmPassword: z.string(),
   })
   .refine((data) => data.password === data.confirmPassword, {
-    message: "As senhas não coincidem.",
+    message: "Passwords don't match.",
     path: ["confirmPassword"],
   });
 
@@ -57,16 +57,16 @@ export default function SignUp() {
       password: password,
       fetchOptions: {
         onSuccess: () => {
-          toast.success("Conta criada com sucesso!");
+          toast.success("Account created successfully!");
           router.push("/sign-in");
         },
         onError: (error) => {
           console.log(error);
           if (error.error.code === "USER_ALREADY_EXISTS_USE_ANOTHER_EMAIL") {
-            toast.error("Um usuário com esse e-mail já existe.");
+            toast.error("A user with this email already exists.");
             form.setError("email", {
               type: "manual",
-              message: "E-mail já cadastrado.",
+              message: "Email already registered.",
             });
             return;
           }
@@ -79,9 +79,9 @@ export default function SignUp() {
   return (
     <div className="h-dvh flex flex-col">
       <div className="flex justify-center flex-col items-center px-12 gap-4 pt-32">
-        <h1 className="text-2xl font-bold">Criar conta</h1>
+        <h1 className="text-2xl font-bold">Create Account</h1>
         <p className="text-neutral-500">
-          Por favor, preencha os dados para criar sua conta.
+          Please fill in the details to create your account.
         </p>
         <Form {...form}>
           <form
@@ -93,9 +93,9 @@ export default function SignUp() {
               name="name"
               render={({ field }) => (
                 <FormItem className="w-full">
-                  <FormLabel>Nome</FormLabel>
+                  <FormLabel>Name</FormLabel>
                   <FormControl>
-                    <Input placeholder="Digite seu nome" {...field} />
+                    <Input placeholder="Enter your name" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -108,7 +108,7 @@ export default function SignUp() {
                 <FormItem className="w-full">
                   <FormLabel>Email</FormLabel>
                   <FormControl>
-                    <Input placeholder="Digite seu email" {...field} />
+                    <Input placeholder="Enter your email" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -119,10 +119,10 @@ export default function SignUp() {
               name="password"
               render={({ field }) => (
                 <FormItem className="w-full">
-                  <FormLabel>Senha</FormLabel>
+                  <FormLabel>Password</FormLabel>
                   <FormControl>
                     <Input
-                      placeholder="Digite sua senha"
+                      placeholder="Enter your password"
                       type="password"
                       {...field}
                     />
@@ -136,10 +136,10 @@ export default function SignUp() {
               name="confirmPassword"
               render={({ field }) => (
                 <FormItem className="w-full">
-                  <FormLabel>Confirme a Senha</FormLabel>
+                  <FormLabel>Confirm Password</FormLabel>
                   <FormControl>
                     <Input
-                      placeholder="Confirme a senha"
+                      placeholder="Confirm your password"
                       type="password"
                       {...field}
                     />
@@ -149,13 +149,13 @@ export default function SignUp() {
               )}
             />
             <Button className="mt-4" type="submit">
-              Criar conta
+              Create Account
             </Button>
           </form>
         </Form>
         <div>
           <Link href="/sign-in" className="underline text-sm">
-            Já possui uma conta? Entre
+            Already have an account? Sign in
           </Link>
         </div>
       </div>

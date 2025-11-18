@@ -75,7 +75,7 @@ export function BagProvider({ children, isAuthenticated }: BagProviderProps) {
     },
     onError: (error) => {
       console.error("Failed to merge bag:", error);
-      toast.error("Erro ao sincronizar carrinho");
+      toast.error("Error syncing cart");
     },
   });
 
@@ -100,7 +100,7 @@ export function BagProvider({ children, isAuthenticated }: BagProviderProps) {
     setLocalBag(currentBag);
     setLocalBagState(currentBag);
     queryClient.invalidateQueries({ queryKey: ["localBagDetails"] });
-    toast.success("Produto adicionado à sacola");
+    toast.success("Product added to bag");
   }, [queryClient]);
 
   const removeFromLocalBag = useCallback((productVariantSizeId: number) => {
@@ -112,7 +112,7 @@ export function BagProvider({ children, isAuthenticated }: BagProviderProps) {
     setLocalBag(currentBag);
     setLocalBagState(currentBag);
     queryClient.invalidateQueries({ queryKey: ["localBagDetails"] });
-    toast.success("Produto removido da sacola");
+    toast.success("Product removed from bag");
   }, [queryClient]);
 
   const updateLocalQuantity = useCallback(
@@ -143,10 +143,10 @@ export function BagProvider({ children, isAuthenticated }: BagProviderProps) {
         try {
           await addProductToBag({ productVariantSizeId });
           queryClient.invalidateQueries({ queryKey: ["bag"] });
-          toast.success("Produto adicionado à sacola");
+          toast.success("Product added to bag");
         } catch (error) {
           console.error("Failed to add to bag:", error);
-          toast.error("Erro ao adicionar produto");
+          toast.error("Error adding product");
         }
       } else {
         addToLocalBag(productVariantSizeId);
@@ -159,11 +159,11 @@ export function BagProvider({ children, isAuthenticated }: BagProviderProps) {
     async (productVariantSizeId: number) => {
       if (isAuthenticated) {
         try {
-          toast.info("Remover do DB em desenvolvimento");
+          toast.info("Remove from DB in development");
           queryClient.invalidateQueries({ queryKey: ["bag"] });
         } catch (error) {
           console.error("Failed to remove from bag:", error);
-          toast.error("Erro ao remover produto");
+          toast.error("Error removing product");
         }
       } else {
         removeFromLocalBag(productVariantSizeId);
@@ -175,7 +175,7 @@ export function BagProvider({ children, isAuthenticated }: BagProviderProps) {
   const updateQuantity = useCallback(
     async (productVariantSizeId: number, quantity: number) => {
       if (isAuthenticated) {
-        toast.info("Funcionalidade em desenvolvimento");
+        toast.info("Feature in development");
       } else {
         updateLocalQuantity(productVariantSizeId, quantity);
       }
@@ -185,11 +185,11 @@ export function BagProvider({ children, isAuthenticated }: BagProviderProps) {
 
   const clearBag = useCallback(async () => {
     if (isAuthenticated) {
-      toast.info("Funcionalidade em desenvolvimento");
+      toast.info("Feature in development");
     } else {
       clearLocalBag();
       setLocalBagState({ items: [] });
-      toast.success("Sacola limpa");
+      toast.success("Bag cleared");
     }
   }, [isAuthenticated]);
 

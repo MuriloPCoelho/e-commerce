@@ -11,9 +11,9 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
           {/* About Section */}
           <div>
-            <h3 className="text-lg font-semibold mb-4">Sobre Nós</h3>
+            <h3 className="text-lg font-semibold mb-4">About Us</h3>
             <p className="text-gray-400 text-sm leading-relaxed mb-4">
-              Sua loja online de confiança com os melhores produtos e atendimento de qualidade.
+              Your trusted online store with the best products and quality service.
             </p>
             <div className="flex gap-3">
               <Link
@@ -48,31 +48,31 @@ const Footer = () => {
 
           {/* Customer Service */}
           <div>
-            <h3 className="text-lg font-semibold mb-4">Atendimento</h3>
+            <h3 className="text-lg font-semibold mb-4">Customer Service</h3>
             <ul className="space-y-2 text-sm">
               <li>
                 <Link href="/ajuda" className="text-gray-400 hover:text-white transition-colors">
-                  Central de Ajuda
+                  Help Center
                 </Link>
               </li>
               <li>
                 <Link href="/trocas-devolucoes" className="text-gray-400 hover:text-white transition-colors">
-                  Trocas e Devoluções
+                  Returns & Exchanges
                 </Link>
               </li>
               <li>
                 <Link href="/rastreamento" className="text-gray-400 hover:text-white transition-colors">
-                  Rastrear Pedido
+                  Track Order
                 </Link>
               </li>
               <li>
                 <Link href="/faq" className="text-gray-400 hover:text-white transition-colors">
-                  Perguntas Frequentes
+                  FAQ
                 </Link>
               </li>
               <li>
                 <Link href="/contato" className="text-gray-400 hover:text-white transition-colors">
-                  Fale Conosco
+                  Contact Us
                 </Link>
               </li>
             </ul>
@@ -80,31 +80,31 @@ const Footer = () => {
 
           {/* Institutional */}
           <div>
-            <h3 className="text-lg font-semibold mb-4">Institucional</h3>
+            <h3 className="text-lg font-semibold mb-4">Company</h3>
             <ul className="space-y-2 text-sm">
               <li>
                 <Link href="/sobre" className="text-gray-400 hover:text-white transition-colors">
-                  Sobre a Empresa
+                  About the Company
                 </Link>
               </li>
               <li>
                 <Link href="/politica-privacidade" className="text-gray-400 hover:text-white transition-colors">
-                  Política de Privacidade
+                  Privacy Policy
                 </Link>
               </li>
               <li>
                 <Link href="/termos-uso" className="text-gray-400 hover:text-white transition-colors">
-                  Termos de Uso
+                  Terms of Use
                 </Link>
               </li>
               <li>
                 <Link href="/trabalhe-conosco" className="text-gray-400 hover:text-white transition-colors">
-                  Trabalhe Conosco
+                  Careers
                 </Link>
               </li>
               <li>
                 <Link href="/programa-afiliados" className="text-gray-400 hover:text-white transition-colors">
-                  Programa de Afiliados
+                  Affiliate Program
                 </Link>
               </li>
             </ul>
@@ -112,7 +112,7 @@ const Footer = () => {
 
           {/* Contact */}
           <div>
-            <h3 className="text-lg font-semibold mb-4">Contato</h3>
+            <h3 className="text-lg font-semibold mb-4">Contact</h3>
             <ul className="space-y-3 text-sm">
               <li className="flex items-start gap-2 text-gray-400">
                 <Mail className="size-5 shrink-0 mt-0.5" />
@@ -142,7 +142,7 @@ const Footer = () => {
         <div className="border-t border-gray-800 pt-8 mb-8">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <h4 className="text-sm font-semibold mb-3">Formas de Pagamento</h4>
+              <h4 className="text-sm font-semibold mb-3">Payment Methods</h4>
               <div className="flex flex-wrap gap-2">
                 <div className="bg-white rounded px-3 py-1.5 text-xs text-black font-medium">
                   Visa
@@ -162,9 +162,9 @@ const Footer = () => {
               </div>
             </div>
             <div>
-              <h4 className="text-sm font-semibold mb-3">Segurança</h4>
+              <h4 className="text-sm font-semibold mb-3">Security</h4>
               <p className="text-gray-400 text-xs leading-relaxed">
-                Seus dados estão protegidos com certificado SSL. Ambiente 100% seguro para suas compras.
+                Your data is protected with SSL certificate. 100% secure environment for your purchases.
               </p>
             </div>
           </div>
@@ -173,7 +173,7 @@ const Footer = () => {
         {/* Bottom Bar */}
         <div className="border-t border-gray-800 pt-10">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-gray-400">
-            <p>© {currentYear} E-commerce. Todos os direitos reservados.</p>
+            <p>© {currentYear} E-commerce. All rights reserved.</p>
             <p className="text-xs">
               CNPJ: 00.000.000/0001-00
             </p>

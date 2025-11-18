@@ -39,7 +39,7 @@ const ProductCard = ({ product, textContainerClassName }: ProductCardProps) => {
           <ProductRating rating={3.5}/>
         </div>
         <div className="flex flex-col">
-          <div className="text-sm text-neutral-600 leading-4">A partir de</div>
+          <div className="text-sm text-neutral-600 leading-4">From</div>
           <span className="font-semibold">
             {centsToReais(firstVariant.priceInCents)}
           </span>

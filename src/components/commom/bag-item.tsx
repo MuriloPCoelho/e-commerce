@@ -82,13 +82,13 @@ const BagItem = ({ item }: BagItemProps) => {
         </div>
         <div className="text-neutral-600 text-xs font-light col-span-2 ">
           <div>
-            Tamanho:{" "}
+            Size:{" "}
             <span className="font-medium">
               {item.productVariantSize.size.name}
             </span>
           </div>
           <div>
-            Cor:{" "}
+            Color:{" "}
             <span className="font-medium">
               {item.productVariantSize.variant.name}
             </span>
@@ -107,7 +107,7 @@ const BagItem = ({ item }: BagItemProps) => {
             onClick={handleRemove}
             disabled={isPending}
           >
-            {isPending ? <Spinner className="size-3" /> : "Remover"}
+            {isPending ? <Spinner className="size-3" /> : "Remove"}
           </Button>
         </div>
         {/* <div className="place-self-end">

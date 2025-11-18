@@ -7,9 +7,9 @@ const CheckoutPage = async () => {
     <div className="grid p-4 gap-4">
       <div className="bg-white p-4 rounded-xs">
         <div className="flex justify-between mb-3">
-          <h4 className="font-semibold text-lg">Endereços</h4>
+          <h4 className="font-semibold text-lg">Addresses</h4>
           <Button variant="link" size="xs" className="underline">
-            Alterar
+            Change
           </Button>
         </div>
         <div className="text-xs">
@@ -25,25 +25,25 @@ const CheckoutPage = async () => {
       </div>
       <div className="bg-white p-4 rounded-xs">
         <div className="flex justify-between mb-3">
-          <h4 className="font-semibold text-lg">Pagamento</h4>
+          <h4 className="font-semibold text-lg">Payment</h4>
           <Button variant="link" size="xs" className="underline">
-            Alterar
+            Change
           </Button>
         </div>
         <div>
           <RadioGroup>
             <div className="flex">
               <RadioGroupItem value="credit-card" id="credit-card"/>
-              <Label htmlFor="credit-card">Cartão de Crédito</Label>
+              <Label htmlFor="credit-card">Credit Card</Label>
             </div>
           </RadioGroup>
         </div>
       </div>
       <div className="bg-white p-4 rounded-xs">
-        <h4 className="font-semibold text-lg mb-3">Entrega</h4>
+        <h4 className="font-semibold text-lg mb-3">Delivery</h4>
       </div>
       <div className="bg-white p-4 rounded-xs">
-        <h4 className="font-semibold text-lg mb-3">Resumo</h4>
+        <h4 className="font-semibold text-lg mb-3">Summary</h4>
       </div>
     </div>
   );
