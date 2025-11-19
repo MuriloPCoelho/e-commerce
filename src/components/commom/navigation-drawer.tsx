@@ -130,7 +130,7 @@ const NavigationDrawer = ({ menus = [] }: NavigationDrawerProps) => {
             {session?.user ? (
               <div className="flex gap-1">
                 <Link
-                  href="#"
+                  href="/user"
                   className={buttonVariants({
                     variant: "link",
                     size: "xs",
@@ -142,7 +142,7 @@ const NavigationDrawer = ({ menus = [] }: NavigationDrawerProps) => {
                 </Link>
                 | 
                 <Link
-                  href="/orders"
+                  href="/user/orders"
                   className={buttonVariants({
                     variant: "link",
                     size: "xs",
