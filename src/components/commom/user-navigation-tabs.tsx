@@ -19,37 +19,37 @@ const menuItems = [
   {
     value: "orders",
     href: "/user/orders",
-    label: "Pedidos",
+    label: "Orders",
     icon: Package,
   },
   {
     value: "favorites",
     href: "/user/favorites",
-    label: "Favoritos",
+    label: "Favorites",
     icon: Heart,
   },
   {
     value: "adresses",
     href: "/user/adresses",
-    label: "Endereços",
+    label: "Addresses",
     icon: MapPin,
   },
   {
     value: "cards",
     href: "/user/cards",
-    label: "Cartões",
+    label: "Cards",
     icon: CreditCard,
   },
   {
     value: "rma",
     href: "/user/rma",
-    label: "Devoluções",
+    label: "Returns",
     icon: RefreshCcw,
   },
   {
     value: "preferences",
     href: "/user/preferences",
-    label: "Preferências",
+    label: "Preferences",
     icon: Star,
   }
 ];
