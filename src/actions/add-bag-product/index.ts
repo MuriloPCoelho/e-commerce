@@ -44,17 +44,25 @@ export const addProductToBag = async (data: AddProductToBagSchema) => {
   if (!bagId) throw new Error("Bag ID is required");
 
   const bagItem = await db.query.bagItemsTable.findFirst({
-    where: (bagItem, { eq }) =>
-      eq(bagItem.bagId, bagId) &&
-      eq(bagItem.productVariantSizeId, data.productVariantSizeId),
+    where: (bagItem, { eq, and }) =>
+      and(
+        eq(bagItem.bagId, bagId),
+        eq(bagItem.productVariantSizeId, data.productVariantSizeId)
+      ),
+    with: {
+      bag: {
+        columns: { userId: true },
+      },
+    },
   });
 
-  if (bagItem) {
-    await db.update(bagItemsTable).set({
-      quantity: bagItem.quantity + 1,
-    }).where(
-      eq(bagItemsTable.id, bagItem.id)
-    );
+  if (bagItem && bagItem.bag.userId === session.user.id) {
+    await db
+      .update(bagItemsTable)
+      .set({
+        quantity: bagItem.quantity + 1,
+      })
+      .where(eq(bagItemsTable.id, bagItem.id));
 
     return;
   }
