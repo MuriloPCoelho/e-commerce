@@ -22,6 +22,7 @@ export const usersTable = pgTable("user", {
     .defaultNow()
     .$onUpdate(() => /* @__PURE__ */ new Date())
     .notNull(),
+  stripeCustomerId: text("stripe_customer_id").unique(),
 });
 
 export const usersRelations = relations(usersTable, ({ many, one }) => ({
@@ -282,6 +283,7 @@ export const bagsTable = pgTable("tb_bags", {
   userAddressId: uuid("user_address_id")
     .references(() => userAddressesTable.id),
   status: boolean("status").notNull().default(false),
+  paymentIntentId: text("payment_intent_id"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
