@@ -1,7 +1,10 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+@variant dark (&:where(.dark, .dark *));
+
 @theme inline {
+  --color-scheme: light;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);

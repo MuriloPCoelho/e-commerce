@@ -1,10 +1,15 @@
-import * as React from "react"
+import * as React from "react";
 
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/utils";
 
-type InputSize = "default" | "xs" | "sm" | "icon" | "lg" | "xl"
+type InputSize = "default" | "xs" | "sm" | "icon" | "lg" | "xl";
 
-function Input({ className, type = "text", size = "default", ...props }: Omit<React.ComponentProps<"input">, "size"> & { size?: InputSize }) {
+function Input({
+  className,
+  type = "text",
+  size = "default",
+  ...props
+}: Omit<React.ComponentProps<"input">, "size"> & { size?: InputSize }) {
   const sizeClasses: Record<InputSize, string> = {
     default: "h-10 px-3 py-1 text-base md:text-sm",
     xs: "h-7 px-3 py-0.5 text-sm",
@@ -12,7 +17,7 @@ function Input({ className, type = "text", size = "default", ...props }: Omit<Re
     icon: "h-10 px-3 py-1 text-sm",
     lg: "h-12 px-4 py-1 text-base",
     xl: "h-14 px-4 py-1 text-base",
-  }
+  };
 
   return (
     <input
@@ -27,7 +32,7 @@ function Input({ className, type = "text", size = "default", ...props }: Omit<Re
       )}
       {...props}
     />
-  )
+  );
 }
 
-export { Input }
+export { Input };
