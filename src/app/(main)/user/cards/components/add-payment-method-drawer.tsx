@@ -13,6 +13,7 @@ import {
 import { CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
 import { createSetupIntent } from "@/actions/stripe/create-setup-intent";
 import { Loader2 } from "lucide-react";
+import CardInput from "./card-input";
 
 interface AddPaymentMethodDrawerProps {
   isOpen: boolean;
@@ -30,8 +31,6 @@ const AddPaymentMethodDrawer = ({
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [cardholderName, setCardholderName] = useState("");
-  const [isCardFocused, setIsCardFocused] = useState(false);
-  const [cardError, setCardError] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -111,37 +110,8 @@ const AddPaymentMethodDrawer = ({
             <label className="block text-sm font-medium mb-2">
               Card Information
             </label>
-            <div 
-              className={`flex items-center h-10 w-full rounded-md border bg-transparent dark:bg-input/30 px-3 py-1 shadow-xs transition-[color,box-shadow] ${
-                isCardFocused 
-                  ? 'border-ring ring-ring/50 ring-[3px]' 
-                  : cardError
-                  ? 'border-destructive ring-destructive/20 ring-[3px]'
-                  : 'border-input'
-              }`}
-            >
-              <CardElement
-                onFocus={() => setIsCardFocused(true)}
-                onBlur={() => setIsCardFocused(false)}
-                onChange={(e) => setCardError(!e.complete && e.error !== undefined)}
-                options={{
-                  style: {
-                    base: {
-                      fontSize: "16px",
-                      color: "#0a0a0a", 
-                      fontFamily: "inherit",
-                      "::placeholder": {
-                        color: "#737373", 
-                      },
-                    },
-                    invalid: {
-                      color: "#dc2626",
-                    },
-                  },
-                }}
-                className="w-full"
-              />
-            </div>
+            <CardInput />
+
             <p className="text-xs text-gray-500 mt-2">
               Your card will be validated with 3D Secure authentication
             </p>
