@@ -8,26 +8,26 @@ const PaymentSection = () => {
         <h4 className="font-semibold text-lg">Payment</h4>
       </div>
       <div>
-        <form>
-          <PaymentElement 
-            options={{
-              layout: {
-                type: 'accordion',
+        <PaymentElement
+          options={{
+            layout: {
+              type: "accordion",
+              radios: true,
+              spacedAccordionItems: false,
+            },
+            fields: {
+              billingDetails: {
+                address: {
+                  country: "never",
+                },
+                name: "auto",
               },
-              fields: {
-                billingDetails: {
-                  address: {
-                    country: 'never',
-                  },
-                  name: "auto"
-                }
-              },
-              terms: {
-                card: 'never',
-              },
-            }}
-          />
-        </form>
+            },
+            terms: {
+              card: "auto",
+            },
+          }}
+        />
       </div>
     </div>
   );

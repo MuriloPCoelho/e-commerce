@@ -7,6 +7,7 @@ import PaymentSection from "./components/payment-section";
 import StickyAdvanceButton from "./components/sticky-advance-button";
 import { loadStripe } from "@stripe/stripe-js";
 import { createPaymentIntent } from "@/actions/stripe/create-payment-intent";
+import { createCustomerSession } from "@/actions/stripe/create-customer-session";
 import { useBag } from "@/providers/bag-provider";
 import { useEffect, useState } from "react";
 import Loading from "./loading";
@@ -17,18 +18,24 @@ const stripePromise = loadStripe(
 
 const CheckoutPage = () => {
   const [clientSecret, setClientSecret] = useState<string | null>("");
+  const [customerSessionSecret, setCustomerSessionSecret] = useState<string | null>("");
   const { bag } = useBag();
 
   useEffect(() => {
     if (!bag) return;
     
     const initiatePayment = async () => {
-      const paymentIntent = await createPaymentIntent(
-        bag.id,
-        bag.totalPriceInCents,
-        `Payment of the user ${"Murilo"}`
-      );
+      const [paymentIntent, customerSession] = await Promise.all([
+        createPaymentIntent(
+          bag.id,
+          bag.totalPriceInCents,
+          `Payment of the user ${"Murilo"}`
+        ),
+        createCustomerSession(),
+      ]);
+      
       setClientSecret(paymentIntent.client_secret);
+      setCustomerSessionSecret(customerSession.client_secret);
     };
 
     initiatePayment();
@@ -40,11 +47,12 @@ const CheckoutPage = () => {
     <>
       <div className="grid p-4 gap-4 pb-24">
         <OrderSummary />
-        {clientSecret && (
+        {clientSecret && customerSessionSecret && (
           <Elements
             stripe={stripePromise}
             options={{ 
             clientSecret: clientSecret,
+            customerSessionClientSecret: customerSessionSecret,
             appearance: {
               theme: 'stripe',
               variables: {
@@ -89,6 +97,9 @@ const CheckoutPage = () => {
                   fontSize: '14px',
                   color: '#dc2626', 
                 },
+                '.RadioIcon': {
+                  width: '16px'
+                }
               }
             }
           }}

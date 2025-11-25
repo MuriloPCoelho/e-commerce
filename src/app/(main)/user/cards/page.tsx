@@ -10,6 +10,7 @@ import PaymentMethodCard from "./components/payment-method-card";
 import { getMyPaymentMethods } from "@/actions/stripe/get-customer-payment-methods";
 import { setDefaultPaymentMethod } from "@/actions/stripe/set-default-payment-method";
 import { removePaymentMethod } from "@/actions/stripe/remove-payment-method";
+import { createCustomerSession } from "@/actions/stripe/create-customer-session";
 
 const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!
@@ -19,6 +20,7 @@ export default function CardsPage() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [paymentMethods, setPaymentMethods] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [customerSessionSecret, setCustomerSessionSecret] = useState<string | null>(null);
 
   const loadPaymentMethods = async () => {
     try {
@@ -33,8 +35,18 @@ export default function CardsPage() {
     }
   };
 
+  const loadCustomerSession = async () => {
+    try {
+      const { client_secret } = await createCustomerSession();
+      setCustomerSessionSecret(client_secret);
+    } catch (error) {
+      console.error("Error loading customer session:", error);
+    }
+  };
+
   useEffect(() => {
     loadPaymentMethods();
+    loadCustomerSession();
   }, []);
 
   const handleSetDefault = async (paymentMethodId: string) => {
@@ -97,13 +109,20 @@ export default function CardsPage() {
         </div>
       )}
 
-      <Elements stripe={stripePromise}>
-        <AddPaymentMethodDrawer
-          isOpen={isDrawerOpen}
-          onOpenChange={setIsDrawerOpen}
-          onSuccess={loadPaymentMethods}
-        />
-      </Elements>
+      {customerSessionSecret && (
+        <Elements
+          stripe={stripePromise}
+          options={{
+            customerSessionClientSecret: customerSessionSecret,
+          }}
+        >
+          <AddPaymentMethodDrawer
+            isOpen={isDrawerOpen}
+            onOpenChange={setIsDrawerOpen}
+            onSuccess={loadPaymentMethods}
+          />
+        </Elements>
+      )}
     </div>
   );
 }
