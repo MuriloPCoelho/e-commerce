@@ -1,15 +1,27 @@
 "use server";
 
-import { stripe } from "@/lib/stripe";
+import { stripe, getOrCreateStripeCustomer } from "@/lib/stripe";
 import { db } from "@/db";
 import { bagsTable } from "@/db/schema";
 import { eq } from "drizzle-orm";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
 
 export const createPaymentIntent = async (
   bagId: string,
   amount: number,
   description: string
 ) => {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  if (!session?.user?.id) {
+    throw new Error("Usuário não autenticado");
+  }
+
+  const customerId = await getOrCreateStripeCustomer(session.user.id);
+
   const bag = await db.query.bagsTable.findFirst({
     where: eq(bagsTable.id, bagId),
   });
@@ -53,6 +65,11 @@ export const createPaymentIntent = async (
       amount,
       currency: "BRL",
       description,
+      customer: customerId,
+      setup_future_usage: "off_session",
+      automatic_payment_methods: {
+        enabled: true,
+      },
       metadata: {
         bagId,
       },
