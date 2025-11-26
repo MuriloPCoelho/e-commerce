@@ -6,11 +6,13 @@ import { Plus, Loader2 } from "lucide-react";
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import AddPaymentMethodDrawer from "./components/add-payment-method-drawer";
-import PaymentMethodCard from "./components/payment-method-card";
+import PaymentCard from "./components/payment-card";
 import { getMyPaymentMethods } from "@/actions/stripe/get-customer-payment-methods";
 import { setDefaultPaymentMethod } from "@/actions/stripe/set-default-payment-method";
 import { removePaymentMethod } from "@/actions/stripe/remove-payment-method";
 import { createCustomerSession } from "@/actions/stripe/create-customer-session";
+import { authClient } from "@/lib/auth-client";
+import { getCustomer } from "@/actions/stripe/get-customer";
 
 const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!
@@ -20,12 +22,23 @@ export default function CardsPage() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [paymentMethods, setPaymentMethods] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [customerSessionSecret, setCustomerSessionSecret] = useState<string | null>(null);
+  const [customerSessionSecret, setCustomerSessionSecret] = useState<
+    string | null
+  >(null);
+  const { data: session } = authClient.useSession();
+  const [defaultPaymentMethodId, setDefaultPaymentMethodId] = useState<
+    string | null
+  >(null);
 
   const loadPaymentMethods = async () => {
     try {
       setIsLoading(true);
       const methods = await getMyPaymentMethods();
+      const customer = await getCustomer(session?.user.stripeCustomerId!);
+
+      setDefaultPaymentMethodId(
+        customer.invoice_settings.default_payment_method || null
+      );
       setPaymentMethods(methods);
     } catch (error) {
       console.error("Error loading cards:", error);
@@ -45,38 +58,22 @@ export default function CardsPage() {
   };
 
   useEffect(() => {
-    loadPaymentMethods();
-    loadCustomerSession();
-  }, []);
-
-  const handleSetDefault = async (paymentMethodId: string) => {
-    try {
-      await setDefaultPaymentMethod(paymentMethodId);
-      await loadPaymentMethods();
-    } catch (error) {
-      console.error("Error setting default card:", error);
+    if (session?.user?.stripeCustomerId) {
+      loadPaymentMethods();
+      loadCustomerSession();
     }
-  };
-
-  const handleRemove = async (paymentMethodId: string) => {
-    if (!confirm("Are you sure you want to remove this card?")) {
-      return;
-    }
-
-    try {
-      await removePaymentMethod(paymentMethodId);
-      await loadPaymentMethods();
-    } catch (error) {
-      console.error("Error removing card:", error);
-    }
-  };
+  }, [session?.user?.stripeCustomerId]);
 
   return (
-    <div className="bg-white rounded-lg shadow p-6">
+    <div className="py-1">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">My Cards</h1>
-        <Button onClick={() => setIsDrawerOpen(true)}>
-          <Plus />
+        <Button
+          onClick={() => setIsDrawerOpen(true)}
+          variant="link"
+          className="underline"
+          size="xs"
+        >
           <span>Add Card</span>
         </Button>
       </div>
@@ -98,12 +95,11 @@ export default function CardsPage() {
       ) : (
         <div className="space-y-4">
           {paymentMethods.map((method) => (
-            <PaymentMethodCard
+            <PaymentCard
               key={method.id}
               paymentMethod={method}
-              isDefault={false}
-              onSetDefault={handleSetDefault}
-              onRemove={handleRemove}
+              isDefault={method.id === defaultPaymentMethodId}
+              ownerName={method.billing_details.name}
             />
           ))}
         </div>
