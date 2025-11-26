@@ -14,23 +14,25 @@ import { CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
 import { createSetupIntent } from "@/actions/stripe/create-setup-intent";
 import { Loader2 } from "lucide-react";
 import CardInput from "./card-input";
+import { useQueryClient } from "@tanstack/react-query";
+import { authClient } from "@/lib/auth-client";
 
 interface AddPaymentMethodDrawerProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
-  onSuccess?: () => void;
 }
 
 const AddPaymentMethodDrawer = ({
   isOpen,
   onOpenChange,
-  onSuccess,
 }: AddPaymentMethodDrawerProps) => {
   const stripe = useStripe();
   const elements = useElements();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [cardholderName, setCardholderName] = useState("");
+  const queryClient = useQueryClient();
+  const { data: session } = authClient.useSession();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -72,7 +74,11 @@ const AddPaymentMethodDrawer = ({
         return;
       }
 
-      onSuccess?.();
+      // Invalida a query para recarregar os métodos de pagamento
+      queryClient.invalidateQueries({
+        queryKey: ["payment-methods", session?.user?.stripeCustomerId],
+      });
+      
       onOpenChange(false);
       
       elements.getElement(CardElement)?.clear();

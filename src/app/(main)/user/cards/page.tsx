@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Plus, Loader2 } from "lucide-react";
 import { Elements } from "@stripe/react-stripe-js";
@@ -8,11 +8,10 @@ import { loadStripe } from "@stripe/stripe-js";
 import AddPaymentMethodDrawer from "./components/add-payment-method-drawer";
 import PaymentCard from "./components/payment-card";
 import { getMyPaymentMethods } from "@/actions/stripe/get-customer-payment-methods";
-import { setDefaultPaymentMethod } from "@/actions/stripe/set-default-payment-method";
-import { removePaymentMethod } from "@/actions/stripe/remove-payment-method";
 import { createCustomerSession } from "@/actions/stripe/create-customer-session";
 import { authClient } from "@/lib/auth-client";
 import { getCustomer } from "@/actions/stripe/get-customer";
+import { useQuery } from "@tanstack/react-query";
 
 const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!
@@ -20,49 +19,30 @@ const stripePromise = loadStripe(
 
 export default function CardsPage() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const [paymentMethods, setPaymentMethods] = useState<any[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [customerSessionSecret, setCustomerSessionSecret] = useState<
-    string | null
-  >(null);
   const { data: session } = authClient.useSession();
-  const [defaultPaymentMethodId, setDefaultPaymentMethodId] = useState<
-    string | null
-  >(null);
 
-  const loadPaymentMethods = async () => {
-    try {
-      setIsLoading(true);
+  const { data: paymentData, isLoading } = useQuery({
+    queryKey: ["payment-methods", session?.user?.stripeCustomerId],
+    queryFn: async () => {
       const methods = await getMyPaymentMethods();
       const customer = await getCustomer(session?.user.stripeCustomerId!);
+      return {
+        methods,
+        defaultPaymentMethodId:
+          customer.invoice_settings.default_payment_method || null,
+      };
+    },
+    enabled: !!session?.user?.stripeCustomerId,
+  });
 
-      setDefaultPaymentMethodId(
-        customer.invoice_settings.default_payment_method || null
-      );
-      setPaymentMethods(methods);
-    } catch (error) {
-      console.error("Error loading cards:", error);
-      setPaymentMethods([]);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const loadCustomerSession = async () => {
-    try {
+  const { data: customerSessionSecret } = useQuery({
+    queryKey: ["customer-session", session?.user?.stripeCustomerId],
+    queryFn: async () => {
       const { client_secret } = await createCustomerSession();
-      setCustomerSessionSecret(client_secret);
-    } catch (error) {
-      console.error("Error loading customer session:", error);
-    }
-  };
-
-  useEffect(() => {
-    if (session?.user?.stripeCustomerId) {
-      loadPaymentMethods();
-      loadCustomerSession();
-    }
-  }, [session?.user?.stripeCustomerId]);
+      return client_secret;
+    },
+    enabled: !!session?.user?.stripeCustomerId,
+  });
 
   return (
     <div className="py-1">
@@ -82,7 +62,7 @@ export default function CardsPage() {
         <div className="flex justify-center items-center py-12">
           <Loader2 className="w-8 h-8 animate-spin text-gray-400" />
         </div>
-      ) : paymentMethods.length === 0 ? (
+      ) : !paymentData?.methods || paymentData.methods.length === 0 ? (
         <div className="text-center py-12">
           <p className="text-gray-600 mb-4">
             You don't have any saved cards yet.
@@ -94,12 +74,12 @@ export default function CardsPage() {
         </div>
       ) : (
         <div className="space-y-4">
-          {paymentMethods.map((method) => (
+          {paymentData.methods.map((method) => (
             <PaymentCard
               key={method.id}
               paymentMethod={method}
-              isDefault={method.id === defaultPaymentMethodId}
-              ownerName={method.billing_details.name}
+              isDefault={method.id === paymentData.defaultPaymentMethodId}
+              ownerName={method.billing_details.name || session?.user?.name || ""}
             />
           ))}
         </div>
@@ -115,7 +95,6 @@ export default function CardsPage() {
           <AddPaymentMethodDrawer
             isOpen={isDrawerOpen}
             onOpenChange={setIsDrawerOpen}
-            onSuccess={loadPaymentMethods}
           />
         </Elements>
       )}
