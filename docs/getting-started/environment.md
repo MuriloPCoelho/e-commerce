@@ -51,6 +51,12 @@ GOOGLE_CLIENT_SECRET=your-google-client-secret
 # GitHub OAuth
 GITHUB_CLIENT_ID=your-github-client-id
 GITHUB_CLIENT_SECRET=your-github-client-secret
+
+# ==========================================
+# STRIPE (Pagamentos)
+# ==========================================
+STRIPE_SECRET_KEY=sk_test_your_stripe_secret_key
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_your_stripe_publishable_key
 ```
 
 ---
@@ -98,6 +104,38 @@ BETTER_AUTH_URL=http://localhost:3000
 **Quando alterar:**
 - Produção: `https://seudominio.com`
 - Outra porta: `http://localhost:3001`
+
+---
+
+## 💳 Variáveis do Stripe
+
+### Stripe Secret Key
+
+```env
+STRIPE_SECRET_KEY=sk_test_your_stripe_secret_key
+```
+
+**Como obter:**
+1. Acesse [Stripe Dashboard](https://dashboard.stripe.com/)
+2. Vá em **Developers** → **API Keys**
+3. Copie a **Secret key** (começa com `sk_test_` ou `sk_live_`)
+
+**⚠️ Importante:** 
+- Nunca exponha esta chave no frontend
+- Use `sk_test_` para desenvolvimento
+- Use `sk_live_` apenas em produção
+
+### Stripe Publishable Key
+
+```env
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_your_stripe_publishable_key
+```
+
+**Como obter:**
+1. Mesmo caminho acima (Stripe Dashboard)
+2. Copie a **Publishable key** (começa com `pk_test_` ou `pk_live_`)
+
+**Nota:** Esta chave pode ser exposta no frontend (prefixo `NEXT_PUBLIC_`)
 
 ---
 

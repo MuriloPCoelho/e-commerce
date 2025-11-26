@@ -13,6 +13,8 @@ Bem-vindo à documentação completa do projeto E-commerce desenvolvido com Next
 - [Sistema de Menus Hierárquicos](./features/menus-system.md)
 - [Sistema de Coleções](./features/collections.md)
 - [Sacola de Compras](./features/shopping-bag.md)
+- [Métodos de Pagamento (Stripe)](./features/payment-methods.md)
+- [Área do Usuário](./features/user-account.md)
 - [Autenticação](./features/authentication.md)
 - [Gerenciamento de Produtos](./features/products.md)
 
@@ -53,6 +55,7 @@ Bem-vindo à documentação completa do projeto E-commerce desenvolvido com Next
 - **Banco de Dados:** PostgreSQL
 - **ORM:** Drizzle ORM
 - **Autenticação:** Better Auth
+- **Pagamentos:** Stripe
 - **UI:** Tailwind CSS + shadcn/ui
 - **Linguagem:** TypeScript
 - **Validação:** Zod

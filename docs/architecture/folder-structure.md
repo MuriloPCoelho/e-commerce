@@ -47,26 +47,42 @@ src/app/
 ├── layout.tsx                 # Layout global
 ├── page.tsx                   # Página inicial (/)
 ├── globals.css               # Estilos globais
+├── (main)/
+│   ├── layout.tsx            # Layout principal
+│   ├── page.tsx              # Home
+│   ├── [...filters]/
+│   │   └── page.tsx          # Lista de produtos com filtros
+│   ├── p/
+│   │   └── [slug]/
+│   │       ├── page.tsx      # Página de produto (/p/:slug)
+│   │       └── components/   # Componentes específicos
+│   │           ├── add-to-bag-button.tsx
+│   │           ├── size-selector.tsx
+│   │           └── variant-selector.tsx
+│   └── user/                 # Área do usuário (autenticado)
+│       ├── layout.tsx        # Layout com tabs de navegação
+│       ├── orders/page.tsx   # Meus Pedidos
+│       ├── favorites/page.tsx # Favoritos
+│       ├── adresses/page.tsx # Endereços
+│       ├── cards/           
+│       │   ├── page.tsx      # Meus Cartões (Stripe)
+│       │   └── components/
+│       │       ├── payment-card.tsx
+│       │       └── add-payment-method-drawer.tsx
+│       ├── rma/page.tsx      # Devoluções e Trocas
+│       └── preferences/page.tsx # Preferências
 ├── api/
 │   └── auth/
 │       └── [...all]/
-│           └── route.ts      # Endpoints de autenticação
-├── p/
-│   └── [slug]/
-│       ├── page.tsx          # Página de produto (/p/:slug)
-│       └── components/       # Componentes específicos
-│           ├── add-to-bag-button.tsx
-│           ├── size-selector.tsx
-│           └── variant-selector.tsx
-├── products/
-│   └── page.tsx              # Lista de produtos
+│           └── route.ts      # Endpoints de autenticação (Better Auth)
+├── checkout/
+│   ├── page.tsx              # Página de checkout
+│   ├── layout.tsx
+│   └── components/
 ├── sign-in/
 │   └── page.tsx              # Página de login
-├── sign-up/
-│   └── page.tsx              # Página de cadastro
-└── w/
-    └── [slug]/
-        └── page.tsx          # Página de categoria (/w/:slug)
+└── sign-up/
+    └── page.tsx              # Página de cadastro
 ```
 
 **Convenções:**
@@ -84,20 +100,32 @@ src/components/
 │   ├── bag.tsx               # Drawer da sacola
 │   ├── header.tsx            # Header global
 │   ├── navigation-drawer.tsx # Menu lateral
+│   ├── user-dropdown.tsx     # Dropdown/Drawer do usuário
+│   ├── user-navigation-tabs.tsx # Tabs de navegação (área do usuário)
 │   ├── product-card.tsx      # Card de produto
 │   ├── product-rating.tsx    # Avaliação de produto
-│   └── quantity-selector.tsx # Seletor de quantidade
+│   ├── quantity-selector.tsx # Seletor de quantidade
+│   └── card-brand-icon/      # Ícones de bandeiras de cartão
+│       ├── index.tsx         # Componente principal
+│       ├── visa-icon.tsx
+│       ├── mastercard-icon.tsx
+│       ├── amex-icon.tsx
+│       └── unknown-card-icon.tsx
 └── ui/                        # Componentes do shadcn/ui
     ├── accordion.tsx
+    ├── badge.tsx
     ├── button-group.tsx
     ├── button.tsx
+    ├── drawer.tsx
+    ├── dropdown-menu.tsx
     ├── form.tsx
     ├── input.tsx
     ├── label.tsx
     ├── separator.tsx
     ├── sheet.tsx
     ├── sonner.tsx
-    └── spinner.tsx
+    ├── spinner.tsx
+    └── tabs.tsx
 ```
 
 **Convenções:**
@@ -121,10 +149,10 @@ src/db/
 **Tabelas do Schema:**
 
 **Autenticação (Better Auth):**
-- `user` - Usuários
-- `session` - Sessões
-- `account` - Contas OAuth
-- `verification` - Tokens de verificação
+- `usersTable` - Usuários (inclui `stripeCustomerId`)
+- `sessionsTable` - Sessões
+- `accountsTable` - Contas OAuth
+- `verificationsTable` - Tokens de verificação
 
 **Catálogo:**
 - `tb_categories` - Categorias e subcategorias
@@ -162,8 +190,33 @@ src/actions/
 │   └── index.ts              # Action para buscar produtos com filtros
 ├── get-menus/
 │   └── index.ts              # Action para buscar menus
-└── remove-bag-product/
-    └── index.ts              # Action para remover item da sacola
+├── get-product-variant-size-details/
+│   └── index.ts              # Detalhes de tamanho/variante
+├── merge-bag/
+│   └── index.ts              # Mesclar sacolas (guest → user)
+├── remove-bag-product/
+│   └── index.ts              # Action para remover item da sacola
+└── stripe/                    # Integração com Stripe
+    ├── create-stripe-customer/
+    │   └── index.ts          # Criar Customer no Stripe
+    ├── get-customer/
+    │   └── index.ts          # Buscar dados do Customer
+    ├── get-user-customer-id/
+    │   └── index.ts          # Buscar Customer ID do usuário
+    ├── get-customer-payment-methods/
+    │   └── index.ts          # Listar cartões salvos
+    ├── add-customer-payment-method/
+    │   └── index.ts          # Adicionar cartão
+    ├── set-default-payment-method/
+    │   └── index.ts          # Definir cartão padrão
+    ├── remove-payment-method/
+    │   └── index.ts          # Remover cartão
+    ├── create-customer-session/
+    │   └── index.ts          # Criar Customer Session
+    ├── create-payment-intent/
+    │   └── index.ts          # Criar Payment Intent
+    └── create-setup-intent/
+        └── index.ts          # Criar Setup Intent
 ```
 
 **Padrão:**
@@ -196,13 +249,17 @@ src/repositories/
 src/lib/
 ├── auth.ts                    # Configuração Better Auth (servidor)
 ├── auth-client.ts             # Cliente de autenticação (browser)
+├── stripe.ts                  # Configuração Stripe e helpers
 ├── filters.ts                 # Helpers para filtros de produtos
+├── product-specifications.ts  # Helpers para especificações
 └── utils.ts                   # Funções utilitárias gerais (cn, etc)
 ```
 
 **Principais funções:**
-- `auth` - Instância do Better Auth
+- `auth` - Instância do Better Auth (servidor)
 - `authClient` - Cliente para uso no navegador
+- `stripe` - Instância do Stripe
+- `getOrCreateStripeCustomer()` - Helper para Customer
 - `parseFilters()` - Parse de filtros de URL
 - `cn()` - Merge de classes CSS (clsx + tailwind-merge)
 
@@ -210,11 +267,13 @@ src/lib/
 
 ```
 src/providers/
-└── react-query.tsx            # Provider do React Query (TanStack Query)
+├── react-query.tsx            # Provider do React Query (TanStack Query)
+└── bag-provider.tsx           # Provider da sacola de compras
 ```
 
 **Providers implementados:**
 - React Query para cache e state management
+- Bag Provider para estado da sacola
 - Configurações de retry, stale time, etc.
 
 ---
@@ -463,6 +522,29 @@ import { Button } from "@/components/ui/button";
 import { db } from "@/db";
 import { getCurrentUser } from "@/lib/getCurrentUser";
 ```
+
+---
+
+## 📘 Tipos TypeScript
+
+### `/src/types` - Type Definitions
+
+```
+src/types/
+├── bag.ts              # Tipos relacionados à sacola
+└── better-auth.d.ts    # Extensão de tipos do Better Auth
+```
+
+**better-auth.d.ts:**
+```typescript
+declare module "better-auth/types" {
+  interface User {
+    stripeCustomerId: string | null;
+  }
+}
+```
+
+Isso adiciona o campo `stripeCustomerId` ao tipo `User` do Better Auth.
 
 ---
 
