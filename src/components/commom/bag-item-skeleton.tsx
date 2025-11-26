@@ -2,7 +2,7 @@ import { Skeleton } from "../ui/skeleton";
 
 const BagItemSkeleton = () => {
   return (
-    <div className="grid grid-cols-[96px_1fr] gap-2 pr-2">
+    <div className="grid grid-cols-[80px_1fr] gap-2 pr-2">
       <Skeleton className="aspect-square rounded-xs" />
 
       <div className="grid grid-cols-2 grid-rows-[auto_auto_1fr] text-xs py-0.5">

@@ -162,11 +162,11 @@ const Bag = () => {
             <div className="flex flex-col justify-center gap-2">
               <Link
                 href="/checkout"
-                className={buttonVariants({ className: "w-full", size: "md" })}
+                className={buttonVariants({ className: "w-full", size: "sm" })}
               >
                 Checkout
               </Link>
-              <Button variant="link" className="underline">
+              <Button variant="link" className="underline" size="sm">
                 Continue Shopping
               </Button>
             </div>

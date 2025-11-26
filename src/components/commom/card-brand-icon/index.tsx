@@ -1,11 +1,6 @@
-import { useEffect } from "react";
 import UnknownCardIcon from "./unknown-card-icon";
 
 const CardBrandIcon = ({ brand, size }: { brand: string; size: number }) => {
-  useEffect(() => {
-    console.log({ brand });
-  }, []);
-
   switch (brand.toLowerCase()) {
     case "visa":
       const VisaIcon = require("./visa-icon").default;

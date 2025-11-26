@@ -32,9 +32,7 @@ interface BagItemProps {
 
 const BagItem = ({ item }: BagItemProps) => {
   const queryClient = useQueryClient();
-  const { removeItem: removeFromBag, isAuthenticated } = useBag();
-
-  // Check if this is a local item (ID starts with 'local-')
+  const { removeItem: removeFromBag } = useBag();
   const isLocalItem = typeof item.id === 'string' && item.id.startsWith('local-');
 
   const { mutate: removeDbItem, isPending } = useMutation({
@@ -48,10 +46,8 @@ const BagItem = ({ item }: BagItemProps) => {
 
   const handleRemove = async () => {
     if (isLocalItem && item.productVariantSize) {
-      // Remove from local bag
       await removeFromBag(item.productVariantSizeId);
     } else {
-      // Remove from DB
       removeDbItem();
     }
   };
@@ -59,7 +55,7 @@ const BagItem = ({ item }: BagItemProps) => {
   if (!item.productVariantSize) return null;
 
   return (
-    <div className="grid grid-cols-[96px_1fr] gap-2 pr-2">
+    <div className="grid grid-cols-[80px_1fr] gap-2 pr-2">
       <div className="aspect-square relative rounded-xs">
         <Image
           src={item.productVariantSize.variant.imageUrl}
