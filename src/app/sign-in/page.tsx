@@ -83,7 +83,7 @@ export default function SignIn() {
   }
 
   return (
-    <div className="h-dvh">
+    <div className="min-h-dvh">
       <div className="flex justify-center flex-col items-center px-12 gap-4 pt-32">
         <h1 className="text-2xl font-bold">Sign In</h1>
         <p className="text-neutral-500">Log in to continue</p>

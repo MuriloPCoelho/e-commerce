@@ -14,7 +14,7 @@ export default function CheckoutLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <div className="h-dvh flex flex-col">
+    <div className="min-h-dvh flex flex-col">
       <header className="bg-white border-b py-3 px-4 flex items-center">
         <Link
           href="/"
