@@ -9,11 +9,18 @@ import {
   Package,
   RefreshCcw,
   Star,
+  UserCircle,
 } from "lucide-react";
 
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const menuItems = [
+  {
+    value: "account",
+    href: "/user",
+    label: "Account",
+    icon: UserCircle,
+  },
   {
     value: "orders",
     href: "/user/orders",
@@ -58,9 +65,17 @@ export function UserNavigationTabs() {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
+  const [startX, setStartX] = useState(0);
+  const [scrollLeft, setScrollLeft] = useState(0);
 
   const activeTab =
-    menuItems.find((item) => pathname.startsWith(item.href))?.value || "orders";
+    menuItems.find((item) => {
+      if (item.href === "/user") {
+        return pathname === "/user";
+      }
+      return pathname.startsWith(item.href);
+    })?.value || "account";
 
   const handleTabChange = (value: string) => {
     const item = menuItems.find((item) => item.value === value);
@@ -123,6 +138,32 @@ export function UserNavigationTabs() {
     }
   }, [activeTab]);
 
+  const handleMouseDown = (e: React.MouseEvent) => {
+    const element = scrollContainerRef.current;
+    if (!element) return;
+    setIsDragging(true);
+    setStartX(e.pageX - element.offsetLeft);
+    setScrollLeft(element.scrollLeft);
+  };
+
+  const handleMouseLeave = () => {
+    setIsDragging(false);
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isDragging) return;
+    e.preventDefault();
+    const element = scrollContainerRef.current;
+    if (!element) return;
+    const x = e.pageX - element.offsetLeft;
+    const walk = (x - startX) * 2;
+    element.scrollLeft = scrollLeft - walk;
+  };
+
   return (
     <Tabs value={activeTab} onValueChange={handleTabChange}>
       <div className="relative -mx-4 px-4 md:mx-0 md:px-0">
@@ -136,11 +177,16 @@ export function UserNavigationTabs() {
 
         <div
           ref={scrollContainerRef}
-          className="overflow-x-auto scrollbar-hide scroll-smooth md:overflow-visible"
+          className="overflow-x-auto scrollbar-hide scroll-smooth md:overflow-visible cursor-grab active:cursor-grabbing"
           style={{
             scrollSnapType: "x proximity",
             WebkitOverflowScrolling: "touch",
+            userSelect: isDragging ? "none" : "auto",
           }}
+          onMouseDown={handleMouseDown}
+          onMouseLeave={handleMouseLeave}
+          onMouseUp={handleMouseUp}
+          onMouseMove={handleMouseMove}
         >
           <TabsList className="mb-4 h-auto gap-2 rounded-none border-b bg-transparent py-1 text-foreground w-max justify-start min-w-full md:min-w-0 px-4 md:px-0">
             {menuItems.map((item) => {

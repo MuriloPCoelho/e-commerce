@@ -1,6 +1,6 @@
 "use client";
 
-import { User, Package, Heart, MapPin, CreditCard, RefreshCcw, Star, LogOut } from "lucide-react";
+import { User, Package, Heart, MapPin, CreditCard, RefreshCcw, Star, LogOut, UserCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
 import { useState } from "react";
@@ -22,6 +22,11 @@ import {
 } from "../ui/drawer";
 
 const userMenuItems = [
+  {
+    href: "/user",
+    label: "Account",
+    icon: UserCircle,
+  },
   {
     href: "/user/orders",
     label: "Orders",
