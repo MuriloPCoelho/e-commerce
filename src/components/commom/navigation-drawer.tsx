@@ -112,7 +112,7 @@ const NavigationDrawer = ({ menus = [] }: NavigationDrawerProps) => {
         side="left"
         className="border-none [&>button]:hidden w-[90%] p-0 overflow-y-auto gap-0"
       >
-        <SheetHeader className="bg-black px-4 flex items-end relative h-16">
+        <SheetHeader className="bg-black px-4 flex items-end relative h-[var(--header-height)]">
           <SheetTitle className="text-white">
             <SheetClose asChild>
               <Button

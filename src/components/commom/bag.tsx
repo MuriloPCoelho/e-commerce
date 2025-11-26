@@ -101,7 +101,7 @@ const Bag = () => {
         side="right"
         className="border-none [&>button]:hidden w-[90%] gap-0"
       >
-        <SheetHeader className="bg-black px-4 flex justify-center relative min-h-16">
+        <SheetHeader className="bg-black px-4 flex justify-center relative min-h-[var(--header-height)]">
           <SheetTitle className="text-white">
             <div className="flex">
               <Link
