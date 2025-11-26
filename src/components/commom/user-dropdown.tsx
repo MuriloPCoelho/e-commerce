@@ -1,7 +1,8 @@
 "use client";
 
-import { User, Package, Heart, MapPin, CreditCard, RefreshCcw, Star } from "lucide-react";
+import { User, Package, Heart, MapPin, CreditCard, RefreshCcw, Star, LogOut } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { authClient } from "@/lib/auth-client";
 import { useState } from "react";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { Button } from "../ui/button";
@@ -9,6 +10,7 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import {
@@ -83,6 +85,22 @@ export function UserDropdown() {
               </DropdownMenuItem>
             );
           })}
+          <DropdownMenuSeparator />
+          <DropdownMenuItem
+            onClick={() => {
+              authClient.signOut({
+                fetchOptions: {
+                  onSuccess: () => {
+                    window.location.href = "/";
+                  },
+                },
+              });
+            }}
+            className="text-red-600 focus:text-red-600"
+          >
+            <LogOut size={16} className="opacity-60" aria-hidden="true" />
+            <span>Sair da conta</span>
+          </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     );
@@ -113,6 +131,23 @@ export function UserDropdown() {
               </button>
             );
           })}
+          <div className="border-t mt-2 pt-2">
+            <button
+              onClick={() => {
+                authClient.signOut({
+                  fetchOptions: {
+                    onSuccess: () => {
+                      window.location.href = "/";
+                    },
+                  },
+                });
+              }}
+              className="flex items-center gap-3 w-full px-4 py-3 hover:bg-accent rounded-md transition-colors text-red-600"
+            >
+              <LogOut size={20} className="opacity-60" aria-hidden="true" />
+              <span className="text-base">Sair da conta</span>
+            </button>
+          </div>
         </div>
       </DrawerContent>
     </Drawer>

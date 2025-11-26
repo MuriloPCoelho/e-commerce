@@ -8,8 +8,6 @@ import {
   MapPin,
   Package,
   RefreshCcw,
-  ChevronLeft,
-  ChevronRight,
   Star,
 } from "lucide-react";
 
@@ -51,7 +49,7 @@ const menuItems = [
     href: "/user/preferences",
     label: "Preferences",
     icon: Star,
-  }
+  },
 ];
 
 export function UserNavigationTabs() {
@@ -62,8 +60,7 @@ export function UserNavigationTabs() {
   const [canScrollRight, setCanScrollRight] = useState(false);
 
   const activeTab =
-    menuItems.find((item) => pathname.startsWith(item.href))?.value ||
-    "orders";
+    menuItems.find((item) => pathname.startsWith(item.href))?.value || "orders";
 
   const handleTabChange = (value: string) => {
     const item = menuItems.find((item) => item.value === value);
@@ -82,7 +79,6 @@ export function UserNavigationTabs() {
     }
   };
 
-  // Centraliza a tab ativa
   const scrollToActiveTab = () => {
     const container = scrollContainerRef.current;
     if (!container) return;
@@ -92,18 +88,18 @@ export function UserNavigationTabs() {
 
     const tabElements = container.querySelectorAll('[role="tab"]');
     const activeElement = tabElements[activeIndex] as HTMLElement;
-    
+
     if (activeElement) {
       const containerWidth = container.clientWidth;
       const elementLeft = activeElement.offsetLeft;
       const elementWidth = activeElement.offsetWidth;
-      
-      // Calcula posição para centralizar
-      const scrollPosition = elementLeft - (containerWidth / 2) + (elementWidth / 2);
-      
+
+      const scrollPosition =
+        elementLeft - containerWidth / 2 + elementWidth / 2;
+
       container.scrollTo({
         left: scrollPosition,
-        behavior: 'smooth'
+        behavior: "smooth",
       });
     }
   };
@@ -114,13 +110,12 @@ export function UserNavigationTabs() {
     if (element) {
       element.addEventListener("scroll", checkScroll);
       window.addEventListener("resize", checkScroll);
-      
-      // Centraliza tab ativa após renderizar
+
       setTimeout(() => {
         scrollToActiveTab();
         checkScroll();
       }, 100);
-      
+
       return () => {
         element.removeEventListener("scroll", checkScroll);
         window.removeEventListener("resize", checkScroll);
@@ -131,23 +126,20 @@ export function UserNavigationTabs() {
   return (
     <Tabs value={activeTab} onValueChange={handleTabChange}>
       <div className="relative -mx-4 px-4 md:mx-0 md:px-0">
-        {/* Gradiente esquerda - indica mais conteúdo */}
         {canScrollLeft && (
           <div className="pointer-events-none absolute left-0 top-0 z-10 h-full w-16 bg-gradient-to-r from-background via-background/60 to-transparent md:hidden" />
         )}
 
-        {/* Gradiente direita - indica mais conteúdo */}
         {canScrollRight && (
           <div className="pointer-events-none absolute right-0 top-0 z-10 h-full w-16 bg-gradient-to-l from-background via-background/60 to-transparent md:hidden" />
         )}
 
-        {/* Container com scroll */}
-        <div 
+        <div
           ref={scrollContainerRef}
           className="overflow-x-auto scrollbar-hide scroll-smooth md:overflow-visible"
-          style={{ 
-            scrollSnapType: 'x proximity',
-            WebkitOverflowScrolling: 'touch'
+          style={{
+            scrollSnapType: "x proximity",
+            WebkitOverflowScrolling: "touch",
           }}
         >
           <TabsList className="mb-4 h-auto gap-2 rounded-none border-b bg-transparent py-1 text-foreground w-max justify-start min-w-full md:min-w-0 px-4 md:px-0">
@@ -158,7 +150,7 @@ export function UserNavigationTabs() {
                   key={item.value}
                   value={item.value}
                   className="relative after:absolute after:inset-x-0 after:bottom-0 after:-mb-1 after:h-0.5 hover:bg-accent hover:text-foreground data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:after:bg-primary data-[state=active]:hover:bg-accent px-4 py-2.5 md:px-3 md:py-2 whitespace-nowrap"
-                  style={{ scrollSnapAlign: 'center' }}
+                  style={{ scrollSnapAlign: "center" }}
                 >
                   <Icon
                     className="-ms-0.5 me-1.5 opacity-60"

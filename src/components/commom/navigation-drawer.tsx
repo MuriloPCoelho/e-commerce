@@ -2,13 +2,9 @@
 
 import {
   Menu,
-  User,
   X,
   ChevronRight,
   ChevronLeft,
-  Truck,
-  Heart,
-  Package,
 } from "lucide-react";
 import { Button, buttonVariants } from "../ui/button";
 import {
@@ -137,10 +133,9 @@ const NavigationDrawer = ({ menus = [] }: NavigationDrawerProps) => {
                     className: "text-white",
                   })}
                 >
-                  
                   <span>{session.user.name?.split(" ")[0]}'s Account</span>
                 </Link>
-                | 
+                |
                 <Link
                   href="/user/orders"
                   className={buttonVariants({
@@ -149,7 +144,6 @@ const NavigationDrawer = ({ menus = [] }: NavigationDrawerProps) => {
                     className: "text-white",
                   })}
                 >
-                  
                   Orders
                 </Link>
               </div>
