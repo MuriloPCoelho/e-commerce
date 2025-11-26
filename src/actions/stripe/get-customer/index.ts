@@ -3,7 +3,6 @@
 import { auth } from "@/lib/auth";
 import { stripe } from "@/lib/stripe";
 import { headers } from "next/headers";
-import Stripe from "stripe";
 
 export const getCustomer = async (customerId : string) => {
   const session = await auth.api.getSession({
