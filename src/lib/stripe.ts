@@ -1,5 +1,5 @@
 import Stripe from "stripe";
-import { getUserStripeCustomer } from "@/actions/stripe/get-user-customer";
+import { getUserStripeCustomerId } from "@/actions/stripe/get-user-customer-id";
 import { createStripeCustomer } from "@/actions/stripe/create-stripe-customer";
 
 export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
@@ -8,7 +8,7 @@ export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 });
 
 export const getOrCreateStripeCustomer = async (userId: string) => {
-  const customerId = await getUserStripeCustomer(userId);
+  const customerId = await getUserStripeCustomerId(userId);
 
   if (customerId) {
     return customerId;

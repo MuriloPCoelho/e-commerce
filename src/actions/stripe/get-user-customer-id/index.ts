@@ -4,11 +4,8 @@ import { db } from "@/db";
 import { usersTable } from "@/db/schema";
 import { eq } from "drizzle-orm";
 
-/**
- * Busca o Stripe Customer ID de um usuário
- * Retorna o customerId se existir, caso contrário retorna null
- */
-export const getUserStripeCustomer = async (userId: string) => {
+
+export const getUserStripeCustomerId = async (userId: string) => {
   const user = await db.query.usersTable.findFirst({
     where: eq(usersTable.id, userId),
   });
