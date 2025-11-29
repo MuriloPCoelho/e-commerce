@@ -34,8 +34,8 @@ const menuItems = [
     icon: Heart,
   },
   {
-    value: "adresses",
-    href: "/user/adresses",
+    value: "addresses",
+    href: "/user/addresses",
     label: "Addresses",
     icon: MapPin,
   },

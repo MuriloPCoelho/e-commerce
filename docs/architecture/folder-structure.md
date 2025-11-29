@@ -63,7 +63,7 @@ src/app/
 │       ├── layout.tsx        # Layout com tabs de navegação
 │       ├── orders/page.tsx   # Meus Pedidos
 │       ├── favorites/page.tsx # Favoritos
-│       ├── adresses/page.tsx # Endereços
+│       ├── addresses/page.tsx # Endereços
 │       ├── cards/           
 │       │   ├── page.tsx      # Meus Cartões (Stripe)
 │       │   └── components/

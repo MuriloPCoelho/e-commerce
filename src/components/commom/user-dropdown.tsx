@@ -38,7 +38,7 @@ const userMenuItems = [
     icon: Heart,
   },
   {
-    href: "/user/adresses",
+    href: "/user/addresses",
     label: "Addresses",
     icon: MapPin,
   },

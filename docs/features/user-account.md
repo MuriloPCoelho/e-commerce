@@ -24,7 +24,7 @@ A área do usuário oferece acesso centralizado a:
 /user
 ├── /orders         → Meus Pedidos
 ├── /favorites      → Meus Favoritos
-├── /adresses       → Meus Endereços
+├── /addresses       → Meus Endereços
 ├── /cards          → Meus Cartões
 ├── /rma            → Devoluções e Trocas
 └── /preferences    → Preferências
@@ -149,7 +149,7 @@ authClient.signOut({
 
 ### 3. Addresses (Endereços)
 
-**Rota:** `/user/adresses`  
+**Rota:** `/user/addresses`  
 **Status:** 🚧 TODO
 
 **Objetivo:** Gerenciar endereços de entrega e cobrança.
@@ -342,7 +342,7 @@ src/
 │   ├── layout.tsx              # Layout compartilhado
 │   ├── orders/page.tsx
 │   ├── favorites/page.tsx
-│   ├── adresses/page.tsx
+│   ├── addresses/page.tsx
 │   ├── cards/page.tsx         # ✅ Completo
 │   ├── rma/page.tsx
 │   └── preferences/page.tsx
