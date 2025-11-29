@@ -5,9 +5,6 @@ import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { getOrCreateStripeCustomer } from "@/lib/stripe";
 
-/**
- * Busca os métodos de pagamento de um customer específico
- */
 export const getCustomerPaymentMethods = async (customerId: string) => {
   const paymentMethods = await stripe.paymentMethods.list({
     customer: customerId,
@@ -17,9 +14,6 @@ export const getCustomerPaymentMethods = async (customerId: string) => {
   return paymentMethods.data;
 };
 
-/**
- * Busca os métodos de pagamento do usuário autenticado
- */
 export const getMyPaymentMethods = async () => {
   const session = await auth.api.getSession({
     headers: await headers(),
