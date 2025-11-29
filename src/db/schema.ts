@@ -257,6 +257,8 @@ export const userAddressesTable = pgTable("tb_user_addresses", {
   state: text("state").notNull(),
   zipCode: text("zip_code").notNull(),
   country: text("country").notNull(),
+  label: text("label"),
+  isDefault: boolean("is_default").notNull().default(false),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
