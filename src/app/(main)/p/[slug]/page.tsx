@@ -17,6 +17,7 @@ import ProductActionsWrapper from "./components/product-actions-wrapper";
 import { Button } from "@/components/ui/button";
 import { Suspense } from "react";
 import { ProductDetailSkeleton } from "@/components/commom/product-detail-skeleton";
+import ShippingCalculator from "@/components/commom/shipping-calculator";
 
 interface ProductPageProps {
   params: Promise<{ slug: string }>;
@@ -130,7 +131,9 @@ async function ProductContent({
           Product currently unavailable
         </div>
       )}
-      <div></div>
+      <div className="p-4">
+        <ShippingCalculator productPriceInCents={variant.priceInCents} />
+      </div>
       <div className="p-4">
         <Accordion
           type="multiple"
