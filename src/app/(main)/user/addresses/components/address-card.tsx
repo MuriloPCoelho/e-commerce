@@ -12,10 +12,9 @@ import {
 } from "@/components/ui/drawer";
 import { userAddressesTable } from "@/db/schema";
 import { useState } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { setDefaultUserAddress } from "@/actions/addresses/set-default-user-address";
 import EditAddressDrawer from "./edit-address-drawer";
 import { useRemoveUserAddress } from "@/hooks/address/use-remove-user-address";
+import { useSetDefaultUserAddress } from "@/hooks/address/use-set-default-user-address";
 
 const AddressCard = ({
   address,
@@ -32,15 +31,12 @@ const AddressCard = ({
     null
   );
   const removeAddressMutation = useRemoveUserAddress();
-  const queryClient = useQueryClient();
+  const setDefaultAddressMutation = useSetDefaultUserAddress();
 
-  const setDefaultAddressMutation = useMutation({
-    mutationFn: (addressId: string) => setDefaultUserAddress(addressId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["all-user-addresses"] });
-      setOptionsDrawerAddressId(null);
-    },
-  });
+  const setDefaultAddress = () => {
+    setDefaultAddressMutation.mutate(address.id);
+    setOptionsDrawerAddressId(null);
+  };
 
   const handleOptionsDrawerChange = (isOpen: boolean, addressId: string) => {
     setOptionsDrawerAddressId(isOpen ? addressId : null);
@@ -143,7 +139,7 @@ const AddressCard = ({
                       variant="outline"
                       className="flex-1"
                       onClick={cancelDeleteConfirm}
-                      // disabled={removeAddressMutation.isLoading}
+                      disabled={removeAddressMutation.isPending}
                     >
                       Cancelar
                     </Button>
@@ -151,7 +147,7 @@ const AddressCard = ({
                       variant="destructive"
                       className="flex-1"
                       onClick={() => confirmRemoveAddress(address.id)}
-                      // disabled={removeAddressMutation.isLoading}
+                      disabled={removeAddressMutation.isPending}
                     >
                       Remover endereço
                     </Button>
@@ -162,9 +158,7 @@ const AddressCard = ({
                   {!address.isDefault && (
                     <button
                       className="flex items-center gap-4 p-4 rounded-lg hover:bg-blue-50 active:bg-blue-100 transition-colors w-full"
-                      onClick={() =>
-                        setDefaultAddressMutation.mutate(address.id)
-                      }
+                      onClick={setDefaultAddress}
                     >
                       <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center">
                         <Star className="h-5 w-5 text-blue-600" />
@@ -183,7 +177,7 @@ const AddressCard = ({
                     className="flex items-center gap-4 p-4 rounded-lg hover:bg-gray-50 active:bg-gray-100 transition-colors w-full"
                     onClick={() => {
                       setEditAddressDrawerId(address.id);
-                      setOptionsDrawerAddressId(null); // Fecha o Drawer de opções
+                      setOptionsDrawerAddressId(null);
                     }}
                   >
                     <div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center">
