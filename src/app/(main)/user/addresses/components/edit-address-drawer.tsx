@@ -6,15 +6,25 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
+  Field,
+  FieldContent,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+  FieldTitle,
+} from "@/components/ui/field";
+import {
   Drawer,
   DrawerContent,
   DrawerHeader,
   DrawerTitle,
 } from "@/components/ui/drawer";
 import { Loader2 } from "lucide-react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { userAddressesTable } from "@/db/schema";
-import { updateUserAddress } from "@/actions/addresses/update-user-address";
+import { useForm, Controller } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { updateAddressSchema, UpdateAddressInput } from "@/actions/addresses/update-user-address/schema";
+import { useUpdateUserAddress } from "@/hooks/address/use-update-user-address";
 
 interface EditAddressDrawerProps {
   isOpen: boolean;
@@ -22,57 +32,91 @@ interface EditAddressDrawerProps {
   address: typeof userAddressesTable.$inferSelect;
 }
 
+export default function EditAddressDrawer({
+  isOpen,
+  onOpenChange,
+  address,
+}: EditAddressDrawerProps) {
+  const mutation = useUpdateUserAddress();
+  const [error, setError] = useState<Error | null>(null);
 
-const initialState = (address: typeof userAddressesTable.$inferSelect) => ({
-  id: address.id,
-  label: address.label || "",
-  recipientName: address.recipientName || "",
-  phone: address.phone || "",
-  street: address.street || "",
-  number: address.number || "",
-  complement: address.complement || "",
-  neighborhood: address.neighborhood || "",
-  city: address.city || "",
-  state: address.state || "",
-  zipCode: address.zipCode || "",
-  isDefault: !!address.isDefault,
-});
-
-const EditAddressDrawer = ({ isOpen, onOpenChange, address }: EditAddressDrawerProps) => {
-  const queryClient = useQueryClient();
-  const [formData, setFormData] = useState(initialState(address));
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (isOpen) setFormData(initialState(address));
-  }, [isOpen, address]);
-
-  const updateMutation = useMutation({
-    mutationFn: (data: unknown) => updateUserAddress(data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["user-addresses"] });
-      setError(null);
-      setIsLoading(false);
-      onOpenChange(false);
-    },
-    onError: (err: any) => {
-      setError(err?.message || "Erro ao atualizar endereço");
-      setIsLoading(false);
+  const form = useForm<UpdateAddressInput>({
+    resolver: zodResolver(updateAddressSchema),
+    defaultValues: {
+      id: address.id,
+      label: address.label || "",
+      recipientName: address.recipientName || "",
+      phone: address.phone || "",
+      street: address.street || "",
+      number: address.number || "",
+      complement: address.complement || "",
+      neighborhood: address.neighborhood || "",
+      city: address.city || "",
+      state: address.state || "",
+      zipCode: address.zipCode || "",
+      country: address.country || "BR",
+      isDefault: !!address.isDefault,
     },
   });
 
-  function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  }
+  useEffect(() => {
+    if (isOpen) {
+      form.reset({
+        id: address.id,
+        label: address.label || "",
+        recipientName: address.recipientName || "",
+        phone: address.phone || "",
+        street: address.street || "",
+        number: address.number || "",
+        complement: address.complement || "",
+        neighborhood: address.neighborhood || "",
+        city: address.city || "",
+        state: address.state || "",
+        zipCode: address.zipCode || "",
+        country: address.country || "BR",
+        isDefault: !!address.isDefault,
+      });
+      setError(null);
+    }
+  }, [isOpen, address, form]);
 
-  function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setIsLoading(true);
+  const formatZipCode = (value: string) => {
+    const numbers = value.replace(/\D/g, "");
+    if (numbers.length <= 5) {
+      return numbers;
+    }
+    return `${numbers.slice(0, 5)}-${numbers.slice(5, 8)}`;
+  };
+
+  const formatPhone = (value: string) => {
+    const numbers = value.replace(/\D/g, "");
+    if (numbers.length <= 10) {
+      return numbers.replace(/(\d{2})(\d{4})(\d{0,4})/, "($1) $2-$3");
+    }
+    return numbers.replace(/(\d{2})(\d{5})(\d{0,4})/, "($1) $2-$3");
+  };
+
+  const cleanPhone = (value: string) => value.replace(/\D/g, "");
+  const cleanZipCode = (value: string) => value.replace(/\D/g, "");
+
+  const onSubmit = async (values: UpdateAddressInput) => {
     setError(null);
-    updateMutation.mutate({ ...formData });
-  }
+    
+    const cleanedValues = {
+      ...values,
+      phone: cleanPhone(values.phone),
+      zipCode: cleanZipCode(values.zipCode),
+    };
+
+    mutation.mutate(cleanedValues, {
+      onSuccess: () => {
+        onOpenChange(false);
+      },
+      onError: (error) => {
+        setError(error || new Error("Error updating address"));
+      },
+    });
+  };
 
   return (
     <Drawer open={isOpen} onOpenChange={onOpenChange}>
@@ -81,173 +125,319 @@ const EditAddressDrawer = ({ isOpen, onOpenChange, address }: EditAddressDrawerP
           <DrawerTitle className="text-xl">Edit Address</DrawerTitle>
         </DrawerHeader>
         <div className="overflow-y-auto px-4">
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={form.handleSubmit(onSubmit)}>
             {error && (
               <div className="mb-4 p-3 bg-destructive/10 border border-destructive/20 rounded-md text-sm text-destructive">
-                {error}
+                {error.message}
               </div>
             )}
-            <div className="grid gap-4 py-4">
-              <div className="grid gap-2">
-                <Label htmlFor="label">
-                  Label<span className="font-normal text-xs">(optional)</span>
-                </Label>
-                <Input
-                  id="label"
+            <FieldGroup>
+              <div className="grid gap-4 py-4">
+                <Controller
+                  control={form.control}
                   name="label"
-                  placeholder="e.g., Home, Work"
-                  value={formData.label}
-                  onChange={handleChange}
+                  render={({ field, fieldState }) => (
+                    <Field data-invalid={fieldState.invalid}>
+                      <FieldLabel htmlFor="label">
+                        <FieldTitle>
+                          Label{" "}
+                          <span className="font-normal text-xs">(optional)</span>
+                        </FieldTitle>
+                      </FieldLabel>
+                      <FieldContent>
+                        <Input
+                          {...field}
+                          id="label"
+                          placeholder="e.g., Home, Work"
+                          aria-invalid={fieldState.invalid}
+                        />
+                      </FieldContent>
+                      {fieldState.invalid && (
+                        <FieldError errors={[fieldState.error]} />
+                      )}
+                    </Field>
+                  )}
                 />
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="recipientName">Recipient Name</Label>
-                <Input
-                  id="recipientName"
+
+                <Controller
+                  control={form.control}
                   name="recipientName"
-                  placeholder="Full name"
-                  value={formData.recipientName}
-                  onChange={handleChange}
-                  required
+                  render={({ field, fieldState }) => (
+                    <Field data-invalid={fieldState.invalid}>
+                      <FieldLabel htmlFor="recipientName">
+                        <FieldTitle>Recipient Name</FieldTitle>
+                      </FieldLabel>
+                      <FieldContent>
+                        <Input
+                          {...field}
+                          id="recipientName"
+                          placeholder="Full name"
+                          aria-invalid={fieldState.invalid}
+                        />
+                      </FieldContent>
+                      {fieldState.invalid && (
+                        <FieldError errors={[fieldState.error]} />
+                      )}
+                    </Field>
+                  )}
                 />
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="phone">Phone</Label>
-                <Input
-                  id="phone"
+
+                <Controller
+                  control={form.control}
                   name="phone"
-                  placeholder="(00) 00000-0000"
-                  value={formData.phone}
-                  onChange={handleChange}
-                  maxLength={15}
-                  required
+                  render={({ field, fieldState }) => (
+                    <Field data-invalid={fieldState.invalid}>
+                      <FieldLabel htmlFor="phone">
+                        <FieldTitle>Phone</FieldTitle>
+                      </FieldLabel>
+                      <FieldContent>
+                        <Input
+                          id="phone"
+                          placeholder="(00) 00000-0000"
+                          maxLength={15}
+                          value={field.value}
+                          onChange={(e) =>
+                            field.onChange(formatPhone(e.target.value))
+                          }
+                          onBlur={field.onBlur}
+                          aria-invalid={fieldState.invalid}
+                        />
+                      </FieldContent>
+                      {fieldState.invalid && (
+                        <FieldError errors={[fieldState.error]} />
+                      )}
+                    </Field>
+                  )}
                 />
-              </div>
-              <div className="grid grid-cols-3 gap-4">
-                <div className="col-span-2 grid gap-2">
-                  <Label htmlFor="street">Street</Label>
-                  <Input
-                    id="street"
-                    name="street"
-                    placeholder="Street name"
-                    value={formData.street}
-                    onChange={handleChange}
-                    required
-                  />
+
+                <div className="grid grid-cols-3 gap-4">
+                  <div className="col-span-2">
+                    <Controller
+                      control={form.control}
+                      name="street"
+                      render={({ field, fieldState }) => (
+                        <Field data-invalid={fieldState.invalid}>
+                          <FieldLabel htmlFor="street">
+                            <FieldTitle>Street</FieldTitle>
+                          </FieldLabel>
+                          <FieldContent>
+                            <Input
+                              {...field}
+                              id="street"
+                              placeholder="Street name"
+                              aria-invalid={fieldState.invalid}
+                            />
+                          </FieldContent>
+                          {fieldState.invalid && (
+                            <FieldError errors={[fieldState.error]} />
+                          )}
+                        </Field>
+                      )}
+                    />
+                  </div>
+                  <div>
+                    <Controller
+                      control={form.control}
+                      name="number"
+                      render={({ field, fieldState }) => (
+                        <Field data-invalid={fieldState.invalid}>
+                          <FieldLabel htmlFor="number">
+                            <FieldTitle>Number</FieldTitle>
+                          </FieldLabel>
+                          <FieldContent>
+                            <Input
+                              {...field}
+                              id="number"
+                              placeholder="123"
+                              aria-invalid={fieldState.invalid}
+                            />
+                          </FieldContent>
+                          {fieldState.invalid && (
+                            <FieldError errors={[fieldState.error]} />
+                          )}
+                        </Field>
+                      )}
+                    />
+                  </div>
                 </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="number">Number</Label>
-                  <Input
-                    id="number"
-                    name="number"
-                    placeholder="123"
-                    value={formData.number}
-                    onChange={handleChange}
-                    required
-                  />
-                </div>
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="complement">
-                  Complement
-                  <span className="font-normal text-xs">(optional)</span>
-                </Label>
-                <Input
-                  id="complement"
+
+                <Controller
+                  control={form.control}
                   name="complement"
-                  placeholder="Apt, suite, etc."
-                  value={formData.complement}
-                  onChange={handleChange}
+                  render={({ field, fieldState }) => (
+                    <Field data-invalid={fieldState.invalid}>
+                      <FieldLabel htmlFor="complement">
+                        <FieldTitle>
+                          Complement{" "}
+                          <span className="font-normal text-xs">(optional)</span>
+                        </FieldTitle>
+                      </FieldLabel>
+                      <FieldContent>
+                        <Input
+                          {...field}
+                          id="complement"
+                          placeholder="Apt, suite, etc."
+                          aria-invalid={fieldState.invalid}
+                        />
+                      </FieldContent>
+                      {fieldState.invalid && (
+                        <FieldError errors={[fieldState.error]} />
+                      )}
+                    </Field>
+                  )}
                 />
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="neighborhood">Neighborhood</Label>
-                <Input
-                  id="neighborhood"
+
+                <Controller
+                  control={form.control}
                   name="neighborhood"
-                  placeholder="Neighborhood"
-                  value={formData.neighborhood}
-                  onChange={handleChange}
-                  required
+                  render={({ field, fieldState }) => (
+                    <Field data-invalid={fieldState.invalid}>
+                      <FieldLabel htmlFor="neighborhood">
+                        <FieldTitle>Neighborhood</FieldTitle>
+                      </FieldLabel>
+                      <FieldContent>
+                        <Input
+                          {...field}
+                          id="neighborhood"
+                          placeholder="Neighborhood"
+                          aria-invalid={fieldState.invalid}
+                        />
+                      </FieldContent>
+                      {fieldState.invalid && (
+                        <FieldError errors={[fieldState.error]} />
+                      )}
+                    </Field>
+                  )}
                 />
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="grid gap-2">
-                  <Label htmlFor="city">City *</Label>
-                  <Input
-                    id="city"
+
+                <div className="grid grid-cols-2 gap-4">
+                  <Controller
+                    control={form.control}
                     name="city"
-                    placeholder="City"
-                    value={formData.city}
-                    onChange={handleChange}
-                    required
+                    render={({ field, fieldState }) => (
+                      <Field data-invalid={fieldState.invalid}>
+                        <FieldLabel htmlFor="city">
+                          <FieldTitle>City</FieldTitle>
+                        </FieldLabel>
+                        <FieldContent>
+                          <Input
+                            {...field}
+                            id="city"
+                            placeholder="City"
+                            aria-invalid={fieldState.invalid}
+                          />
+                        </FieldContent>
+                        {fieldState.invalid && (
+                          <FieldError errors={[fieldState.error]} />
+                        )}
+                      </Field>
+                    )}
                   />
-                </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="state">State</Label>
-                  <Input
-                    id="state"
+                  <Controller
+                    control={form.control}
                     name="state"
-                    placeholder="SP"
-                    value={formData.state}
-                    onChange={handleChange}
-                    maxLength={2}
-                    required
+                    render={({ field, fieldState }) => (
+                      <Field data-invalid={fieldState.invalid}>
+                        <FieldLabel htmlFor="state">
+                          <FieldTitle>State</FieldTitle>
+                        </FieldLabel>
+                        <FieldContent>
+                          <Input
+                            id="state"
+                            placeholder="SP"
+                            maxLength={2}
+                            value={field.value}
+                            onChange={(e) =>
+                              field.onChange(e.target.value.toUpperCase())
+                            }
+                            onBlur={field.onBlur}
+                            aria-invalid={fieldState.invalid}
+                          />
+                        </FieldContent>
+                        {fieldState.invalid && (
+                          <FieldError errors={[fieldState.error]} />
+                        )}
+                      </Field>
+                    )}
                   />
                 </div>
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="zipCode">Zip Code</Label>
-                <Input
-                  id="zipCode"
+
+                <Controller
+                  control={form.control}
                   name="zipCode"
-                  placeholder="00000-000"
-                  value={formData.zipCode}
-                  onChange={handleChange}
-                  maxLength={9}
-                  required
+                  render={({ field, fieldState }) => (
+                    <Field data-invalid={fieldState.invalid}>
+                      <FieldLabel htmlFor="zipCode">
+                        <FieldTitle>Zip Code</FieldTitle>
+                      </FieldLabel>
+                      <FieldContent>
+                        <Input
+                          id="zipCode"
+                          placeholder="00000-000"
+                          maxLength={9}
+                          value={field.value}
+                          onChange={(e) =>
+                            field.onChange(formatZipCode(e.target.value))
+                          }
+                          onBlur={field.onBlur}
+                          aria-invalid={fieldState.invalid}
+                        />
+                      </FieldContent>
+                      {fieldState.invalid && (
+                        <FieldError errors={[fieldState.error]} />
+                      )}
+                    </Field>
+                  )}
+                />
+
+                <Controller
+                  control={form.control}
+                  name="isDefault"
+                  render={({ field }) => (
+                    <Label
+                      htmlFor="isDefault"
+                      className="hover:bg-accent/50 flex items-start gap-3 rounded-lg border p-3 has-[[aria-checked=true]]:border-blue-600 has-[[aria-checked=true]]:bg-blue-50 cursor-pointer"
+                    >
+                      <Checkbox
+                        id="isDefault"
+                        checked={field.value}
+                        onCheckedChange={(checked) =>
+                          field.onChange(Boolean(checked))
+                        }
+                        className="data-[state=checked]:border-blue-600 data-[state=checked]:bg-blue-600 data-[state=checked]:text-white"
+                      />
+                      <div className="grid gap-1.5 font-normal">
+                        <p className="text-sm leading-none font-medium">
+                          Set as default address
+                        </p>
+                        <p className="text-muted-foreground text-sm">
+                          This address will be used by default for your orders.
+                        </p>
+                      </div>
+                    </Label>
+                  )}
                 />
               </div>
-              <Label className="hover:bg-accent/50 flex items-start gap-3 rounded-lg border p-3 has-[[aria-checked=true]]:border-blue-600 has-[[aria-checked=true]]:bg-blue-50 cursor-pointer">
-                <Checkbox
-                  id="isDefault"
-                  checked={formData.isDefault}
-                  onCheckedChange={(checked) =>
-                    setFormData((prev) => ({
-                      ...prev,
-                      isDefault: checked as boolean,
-                    }))
-                  }
-                  className="data-[state=checked]:border-blue-600 data-[state=checked]:bg-blue-600 data-[state=checked]:text-white"
-                />
-                <div className="grid gap-1.5 font-normal">
-                  <p className="text-sm leading-none font-medium">
-                    Set as default address
-                  </p>
-                  <p className="text-muted-foreground text-sm">
-                    This address will be used by default for your orders.
-                  </p>
-                </div>
-              </Label>
-            </div>
-            <div className="flex-row gap-2 flex pb-4 pt-6">
+            </FieldGroup>
+
+            <div className="flex gap-2 pb-4 pt-6">
               <Button
                 type="button"
                 variant="outline"
                 onClick={() => onOpenChange(false)}
-                disabled={isLoading}
+                disabled={mutation.isPending}
                 className="flex-1"
               >
                 Cancel
               </Button>
-              <Button type="submit" disabled={isLoading} className="flex-1">
-                {isLoading ? (
+              <Button type="submit" disabled={mutation.isPending} className="flex-1">
+                {mutation.isPending ? (
                   <>
                     <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                     Saving...
                   </>
                 ) : (
-                  "Save"
+                  "Save Changes"
                 )}
               </Button>
             </div>
@@ -256,6 +446,4 @@ const EditAddressDrawer = ({ isOpen, onOpenChange, address }: EditAddressDrawerP
       </DrawerContent>
     </Drawer>
   );
-};
-
-export default EditAddressDrawer;
+}

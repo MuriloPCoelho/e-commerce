@@ -1,4 +1,3 @@
-
 "use client";
 
 import { MapPin, Star, EllipsisVertical, Pencil, Trash2 } from "lucide-react";
@@ -14,33 +13,31 @@ import {
 import { userAddressesTable } from "@/db/schema";
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { removeUserAddress } from "@/actions/addresses/remove-user-address";
 import { setDefaultUserAddress } from "@/actions/addresses/set-default-user-address";
 import EditAddressDrawer from "./edit-address-drawer";
+import { useRemoveUserAddress } from "@/hooks/address/use-remove-user-address";
 
 const AddressCard = ({
   address,
 }: {
   address: typeof userAddressesTable.$inferSelect;
 }) => {
-  const [optionsDrawerAddressId, setOptionsDrawerAddressId] = useState<string | null>(null);
-  const [deleteConfirmAddressId, setDeleteConfirmAddressId] = useState<string | null>(null);
-  const [editAddressDrawerId, setEditAddressDrawerId] = useState<string | null>(null);
+  const [optionsDrawerAddressId, setOptionsDrawerAddressId] = useState<
+    string | null
+  >(null);
+  const [deleteConfirmAddressId, setDeleteConfirmAddressId] = useState<
+    string | null
+  >(null);
+  const [editAddressDrawerId, setEditAddressDrawerId] = useState<string | null>(
+    null
+  );
+  const removeAddressMutation = useRemoveUserAddress();
   const queryClient = useQueryClient();
 
   const setDefaultAddressMutation = useMutation({
     mutationFn: (addressId: string) => setDefaultUserAddress(addressId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["user-addresses"] });
-      setOptionsDrawerAddressId(null);
-    },
-  });
-
-  const removeAddressMutation = useMutation({
-    mutationFn: (addressId: string) => removeUserAddress(addressId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["user-addresses"] });
-      setDeleteConfirmAddressId(null);
+      queryClient.invalidateQueries({ queryKey: ["all-user-addresses"] });
       setOptionsDrawerAddressId(null);
     },
   });
@@ -55,6 +52,8 @@ const AddressCard = ({
 
   const confirmRemoveAddress = (addressId: string) => {
     removeAddressMutation.mutate(addressId);
+    setDeleteConfirmAddressId(null);
+    setOptionsDrawerAddressId(null);
   };
 
   const cancelDeleteConfirm = () => {
@@ -99,7 +98,9 @@ const AddressCard = ({
           )}
           <Drawer
             open={optionsDrawerAddressId === address.id}
-            onOpenChange={(isOpen) => handleOptionsDrawerChange(isOpen, address.id)}
+            onOpenChange={(isOpen) =>
+              handleOptionsDrawerChange(isOpen, address.id)
+            }
           >
             <DrawerTrigger asChild>
               <Button

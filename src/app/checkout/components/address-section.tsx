@@ -1,6 +1,5 @@
 "use client";
 
-import { getAllUserAddresses } from "@/actions/addresses/get-all-user-addresses";
 import { Button } from "@/components/ui/button";
 import {
   Drawer,
@@ -24,10 +23,10 @@ import {
 import { RadioGroupItem } from "@/components/ui/radio-group";
 import { Skeleton } from "@/components/ui/skeleton";
 import { userAddressesTable } from "@/db/schema";
+import { useAllUserAddresses } from "@/hooks/address/use-all-user-addresses";
 import { authClient } from "@/lib/auth-client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { RadioGroup } from "@radix-ui/react-radio-group";
-import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import z from "zod";
@@ -63,11 +62,7 @@ const AddressSection = () => {
     useState<typeof userAddressesTable.$inferSelect>();
   const [isOpen, setIsOpen] = useState(false);
   const { data: session } = authClient.useSession();
-  const { data: addresses = [], isLoading } = useQuery({
-    queryKey: ["user-addresses"],
-    queryFn: async () => await getAllUserAddresses(session?.user.id!),
-    enabled: !!session?.user,
-  });
+  const { data: addresses = [], isLoading } = useAllUserAddresses(session?.user.id!);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
