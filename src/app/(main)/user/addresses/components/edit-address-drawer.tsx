@@ -14,7 +14,7 @@ import {
 import { Loader2 } from "lucide-react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { userAddressesTable } from "@/db/schema";
-import { updateAddress } from "@/actions/addresses/update-address";
+import { updateUserAddress } from "@/actions/addresses/update-user-address";
 
 interface EditAddressDrawerProps {
   isOpen: boolean;
@@ -49,7 +49,7 @@ const EditAddressDrawer = ({ isOpen, onOpenChange, address }: EditAddressDrawerP
   }, [isOpen, address]);
 
   const updateMutation = useMutation({
-    mutationFn: updateAddress,
+    mutationFn: (data: unknown) => updateUserAddress(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["user-addresses"] });
       setError(null);

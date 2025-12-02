@@ -13,9 +13,9 @@ import {
 } from "@/components/ui/drawer";
 import { userAddressesTable } from "@/db/schema";
 import { useState } from "react";
-import { removeAddress } from "@/actions/addresses/remove-address";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { setDefaultAddress } from "@/actions/addresses/set-default-address";
+import { removeUserAddress } from "@/actions/addresses/remove-user-address";
+import { setDefaultUserAddress } from "@/actions/addresses/set-default-user-address";
 import EditAddressDrawer from "./edit-address-drawer";
 
 const AddressCard = ({
@@ -29,7 +29,7 @@ const AddressCard = ({
   const queryClient = useQueryClient();
 
   const setDefaultAddressMutation = useMutation({
-    mutationFn: (addressId: string) => setDefaultAddress(addressId),
+    mutationFn: (addressId: string) => setDefaultUserAddress(addressId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["user-addresses"] });
       setOptionsDrawerAddressId(null);
@@ -37,7 +37,7 @@ const AddressCard = ({
   });
 
   const removeAddressMutation = useMutation({
-    mutationFn: (addressId: string) => removeAddress(addressId),
+    mutationFn: (addressId: string) => removeUserAddress(addressId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["user-addresses"] });
       setDeleteConfirmAddressId(null);

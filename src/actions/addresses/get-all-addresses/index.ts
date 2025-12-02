@@ -6,7 +6,7 @@ import { db } from "@/db";
 import { userAddressesTable } from "@/db/schema";
 import { eq, desc } from "drizzle-orm";
 
-export const getAddresses = async (userId: string) => {
+export const getAllAddresses = async (userId: string) => {
   const session = await auth.api.getSession({
     headers: await headers(),
   });

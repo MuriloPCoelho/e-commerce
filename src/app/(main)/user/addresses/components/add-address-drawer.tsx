@@ -11,7 +11,7 @@ import {
   DrawerHeader,
   DrawerTitle,
 } from "@/components/ui/drawer";
-import { createAddress } from "@/actions/addresses/create-address";
+import { createUserAddress } from "@/actions/addresses/create-user-address";
 import { Loader2 } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 
@@ -79,12 +79,12 @@ export default function AddAddressDrawer({
     setError(null);
 
     try {
-      await createAddress(formData);
-      
+      await createUserAddress(formData);
+
       queryClient.invalidateQueries({
         queryKey: ["user-addresses"],
       });
-      
+
       onOpenChange(false);
       setFormData({
         recipientName: "",

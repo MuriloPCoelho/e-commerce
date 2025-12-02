@@ -6,7 +6,7 @@ import { auth } from "@/lib/auth";
 import { and, eq } from "drizzle-orm";
 import { headers } from "next/headers";
 
-export const removeAddress = async (addressId: string) => {
+export const removeUserAddress = async (addressId: string) => {
   const session = await auth.api.getSession({
     headers: await headers(),
   });

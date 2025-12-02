@@ -6,7 +6,7 @@ import { auth } from "@/lib/auth";
 import { and, eq } from "drizzle-orm";
 import { headers } from "next/headers";
 
-export const setDefaultAddress = async (addressId: string) => {
+export const setDefaultUserAddress = async (addressId: string) => {
   const session = await auth.api.getSession({
     headers: await headers(),
   });

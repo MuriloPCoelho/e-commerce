@@ -1,6 +1,6 @@
 "use client";
 
-import { getAddresses } from "@/actions/addresses/get-addresses";
+import { getAllUserAddresses } from "@/actions/addresses/get-all-user-addresses";
 import AddAddressDrawer from "./components/add-address-drawer";
 import { Plus } from "lucide-react";
 import { useState } from "react";
@@ -15,7 +15,7 @@ export default function AddressesPage() {
 
   const { data: addresses = [], isLoading } = useQuery({
     queryKey: ["user-addresses"],
-    queryFn: async () => getAddresses(session?.user.id!),
+    queryFn: async () => getAllUserAddresses(session?.user.id!),
     enabled: !!session?.user,
   });
 

@@ -2,14 +2,13 @@
 
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
-import { CreateAddressSchema, createAddressSchema } from "./schema";
 import { db } from "@/db";
 import { userAddressesTable } from "@/db/schema";
 import { eq, and } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
-import { success } from "zod";
+import { CreateAddressSchema, createAddressSchema } from "./schema";
 
-export const createAddress = async (data: CreateAddressSchema) => {
+export const createUserAddress = async (data: CreateAddressSchema) => {
   createAddressSchema.parse(data);
 
   const session = await auth.api.getSession({

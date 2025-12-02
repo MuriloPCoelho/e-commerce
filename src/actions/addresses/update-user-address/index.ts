@@ -2,12 +2,12 @@
 
 import { db } from "@/db";
 import { userAddressesTable } from "@/db/schema";
-import { updateAddressSchema } from "./schema";
 import { auth } from "@/lib/auth";
 import { eq, and } from "drizzle-orm";
 import { headers } from "next/headers";
+import { updateAddressSchema } from "./schema";
 
-export async function updateAddress(input: unknown) {
+export async function updateUserAddress(input: unknown) {
   const session = await auth.api.getSession({ headers: await headers() });
   if (!session?.user) throw new Error("Unauthorized");
 
@@ -40,8 +40,7 @@ export async function updateAddress(input: unknown) {
         eq(userAddressesTable.id, data.id),
         eq(userAddressesTable.userId, session.user.id)
       )
-    )
-    
+    );
 
   return { success: true };
 }
