@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -53,7 +53,6 @@ const DeliverySection = () => {
       });
       setShippingOptions(options);
       setHasCalculated(true);
-      // Auto-select first option
       if (options.length > 0) {
         setSelectedOption(options[0].id);
       }
