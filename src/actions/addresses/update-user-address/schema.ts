@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const updateAddressSchema = z.object({
-  id: z.string().uuid(),
+  id: z.uuid(),
   label: z.string().optional(),
   recipientName: z.string().min(1),
   phone: z.string().min(8),
@@ -13,6 +13,7 @@ export const updateAddressSchema = z.object({
   state: z.string().min(1),
   zipCode: z.string().min(8),
   isDefault: z.boolean().optional(),
+  country: z.string().min(2).max(2).optional(),
 });
 
 export type UpdateAddressInput = z.infer<typeof updateAddressSchema>;

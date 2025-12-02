@@ -10,9 +10,9 @@ export const createAddressSchema = z.object({
   city: z.string().min(2, "City is required"),
   state: z.string().length(2, "State must be 2 characters (e.g., SP)"),
   zipCode: z.string().min(8, "Invalid zip code"),
-  country: z.string().default("BR"),
+  country: z.string(),
   label: z.string().optional(),
-  isDefault: z.boolean().default(false),
+  isDefault: z.boolean(),
 });
 
 export type CreateAddressSchema = z.infer<typeof createAddressSchema>;
