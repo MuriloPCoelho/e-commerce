@@ -17,10 +17,6 @@ export const auth = betterAuth({
 
   trustedOrigins: [
     "http://localhost:3000",
-    "http://192.168.0.103:3000",
-    "http://192.168.0.102:3000",
-    "http://192.168.0.101:3000",
-    "http://192.168.0.100:3000"
   ],
   database: drizzleAdapter(db, {
     provider: "pg",
