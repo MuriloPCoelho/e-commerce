@@ -13,7 +13,6 @@ export async function updateAddress(input: unknown) {
 
   const data = updateAddressSchema.parse(input);
 
-  // Se for setar como default, remove o default dos outros
   if (data.isDefault) {
     await db
       .update(userAddressesTable)
@@ -21,7 +20,7 @@ export async function updateAddress(input: unknown) {
       .where(and(eq(userAddressesTable.userId, session.user.id)));
   }
 
-  const [updated] = await db
+  await db
     .update(userAddressesTable)
     .set({
       label: data.label,
@@ -36,8 +35,13 @@ export async function updateAddress(input: unknown) {
       zipCode: data.zipCode,
       isDefault: !!data.isDefault,
     })
-    .where(and(eq(userAddressesTable.id, data.id), eq(userAddressesTable.userId, session.user.id)))
-    .returning();
+    .where(
+      and(
+        eq(userAddressesTable.id, data.id),
+        eq(userAddressesTable.userId, session.user.id)
+      )
+    )
+    
 
-  return updated;
+  return { success: true };
 }
