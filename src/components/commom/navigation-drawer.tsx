@@ -169,13 +169,13 @@ const NavigationDrawer = ({ menus = [] }: NavigationDrawerProps) => {
             <div>
               <button
                 onClick={handleBack}
-                className="flex items-center gap-3 w-full px-4 py-4 text-sm hover:bg-zinc-100 transition-colors"
+                className="flex items-center gap-3 w-full px-4 py-3 text-sm hover:bg-zinc-100 transition-colors"
               >
                 <ChevronLeft className="size-4" />
                 <span className="font-medium">Back</span>
               </button>
             </div>
-            <div className="px-4 py-4 bg-white border-b">
+            <div className="px-4 py-3 bg-white">
               <h2 className="text-xl font-semibold">{currentMenu.name}</h2>
             </div>
             <nav className="flex flex-col w-full">
