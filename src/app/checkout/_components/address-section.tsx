@@ -25,6 +25,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { userAddressesTable } from "@/db/schema";
 import { useAllUserAddresses } from "@/hooks/address/use-all-user-addresses";
 import { authClient } from "@/lib/auth-client";
+import { useBagContext } from "@/providers/bag-provider";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { RadioGroup } from "@radix-ui/react-radio-group";
 import { useEffect, useState } from "react";
@@ -62,7 +63,10 @@ const AddressSection = () => {
     useState<typeof userAddressesTable.$inferSelect>();
   const [isOpen, setIsOpen] = useState(false);
   const { data: session } = authClient.useSession();
-  const { data: addresses = [], isLoading } = useAllUserAddresses(session?.user.id!);
+  const { data: addresses = [], isLoading } = useAllUserAddresses(
+    session?.user.id!
+  );
+  const { bag } = useBagContext();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -83,6 +87,7 @@ const AddressSection = () => {
         setDefaultAddress(defaultAddress);
       }
     }
+    console.log({ bag });
   }, [addresses]);
 
   useEffect(() => {

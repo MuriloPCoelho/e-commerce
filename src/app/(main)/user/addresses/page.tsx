@@ -1,12 +1,12 @@
 "use client";
 
-import AddAddressDrawer from "./components/add-address-drawer";
+import AddAddressDrawer from "./_components/add-address-drawer";
 import { Plus } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { authClient } from "@/lib/auth-client";
-import AddressCard from "./components/address-card";
+import AddressCard from "./_components/address-card";
 import { useAllUserAddresses } from "@/hooks/address/use-all-user-addresses";
 
 const AddressCardSkeleton = () => {

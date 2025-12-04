@@ -1,9 +1,9 @@
 "use client";
 import BagItem from "@/components/commom/bag-item";
-import { useBag } from "@/providers/bag-provider";
+import { useBagContext } from "@/providers/bag-provider";
 
 const OrderSummary = () => {
-  const { bag } = useBag();
+  const { bag } = useBagContext();
 
   if (!bag) return <p>Loading...</p>;
 

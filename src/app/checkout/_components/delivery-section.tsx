@@ -10,11 +10,11 @@ import {
   ShippingOption,
 } from "@/actions/calculate-shipping";
 import { centsToReais } from "@/lib/utils";
-import { useBag } from "@/providers/bag-provider";
+import { useBagContext } from "@/providers/bag-provider";
 import { Truck, Loader2, CheckCircle2 } from "lucide-react";
 
 const DeliverySection = () => {
-  const { bag } = useBag();
+  const { bag } = useBagContext();
   const [postalCode, setPostalCode] = useState("");
   const [shippingOptions, setShippingOptions] = useState<ShippingOption[]>([]);
   const [selectedOption, setSelectedOption] = useState<string>("");

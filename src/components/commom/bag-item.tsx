@@ -15,7 +15,7 @@ import { removeBagProduct } from "@/actions/remove-bag-product";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Spinner } from "../ui/spinner";
 import { toast } from "sonner";
-import { useBag } from "@/providers/bag-provider";
+import { useBagContext } from "@/providers/bag-provider";
 
 interface BagItemProps {
   item: typeof bagItemsTable.$inferSelect & {
@@ -32,7 +32,7 @@ interface BagItemProps {
 
 const BagItem = ({ item }: BagItemProps) => {
   const queryClient = useQueryClient();
-  const { removeItem: removeFromBag } = useBag();
+  const { removeItem: removeFromBag } = useBagContext();
   const isLocalItem = typeof item.id === 'string' && item.id.startsWith('local-');
 
   const { mutate: removeDbItem, isPending } = useMutation({

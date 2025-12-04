@@ -5,9 +5,9 @@ import { Button } from "@/components/ui/button";
 import { Plus, Loader2 } from "lucide-react";
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
-import AddPaymentMethodDrawer from "./components/add-payment-method-drawer";
-import PaymentCard from "./components/payment-card";
-import { getMyPaymentMethods } from "@/actions/stripe/get-customer-payment-methods";
+import AddPaymentMethodDrawer from "./_components/add-payment-method-drawer";
+import PaymentCard from "./_components/payment-card";
+import { getCustomerPaymentMethods } from "@/actions/stripe/get-customer-payment-methods";
 import { createCustomerSession } from "@/actions/stripe/create-customer-session";
 import { authClient } from "@/lib/auth-client";
 import { getCustomer } from "@/actions/stripe/get-customer";
@@ -24,7 +24,7 @@ export default function CardsPage() {
   const { data: paymentData, isLoading } = useQuery({
     queryKey: ["payment-methods", session?.user?.stripeCustomerId],
     queryFn: async () => {
-      const methods = await getMyPaymentMethods();
+      const methods = await getCustomerPaymentMethods(session?.user?.stripeCustomerId!);
       const customer = await getCustomer(session?.user.stripeCustomerId!);
       return {
         methods,

@@ -19,9 +19,7 @@ import {
   DrawerHeader,
   DrawerTitle,
 } from "@/components/ui/drawer";
-import { createUserAddress } from "@/actions/addresses/create-user-address";
 import { Loader2 } from "lucide-react";
-import { useQueryClient } from "@tanstack/react-query";
 import { createAddressSchema, CreateAddressSchema } from "@/actions/addresses/create-user-address/schema";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";

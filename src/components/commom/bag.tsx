@@ -17,7 +17,7 @@ import { centsToReais } from "@/lib/utils";
 import { useEffect, useState } from "react";
 import { Badge } from "../ui/badge";
 import { usePathname } from "next/navigation";
-import { useBag } from "@/providers/bag-provider";
+import { useBagContext } from "@/providers/bag-provider";
 import { useQuery } from "@tanstack/react-query";
 import { getMultipleProductVariantSizeDetails } from "@/actions/get-product-variant-size-details";
 import FreeShippingProgress from "./free-shipping-progress";
@@ -32,7 +32,7 @@ const Bag = () => {
     totalPriceInCents,
     isPending,
     isAuthenticated,
-  } = useBag();
+  } = useBagContext();
 
   const { data: localBagDetails, isPending: localBagPending } = useQuery({
     queryKey: [

@@ -1,14 +1,14 @@
 "use client";
 import { Elements } from "@stripe/react-stripe-js";
-import AddressSection from "./components/address-section";
-import DeliverySection from "./components/delivery-section";
-import OrderSummary from "./components/order-summary";
-import PaymentSection from "./components/payment-section";
-import StickyAdvanceButton from "./components/sticky-advance-button";
+import AddressSection from "./_components/address-section";
+import DeliverySection from "./_components/delivery-section";
+import OrderSummary from "./_components/order-summary";
+import PaymentSection from "./_components/payment-section";
+import StickyAdvanceButton from "./_components/sticky-advance-button";
 import { loadStripe } from "@stripe/stripe-js";
 import { createPaymentIntent } from "@/actions/stripe/create-payment-intent";
 import { createCustomerSession } from "@/actions/stripe/create-customer-session";
-import { useBag } from "@/providers/bag-provider";
+import { useBagContext } from "@/providers/bag-provider";
 import { useEffect, useState } from "react";
 import Loading from "./loading";
 
@@ -19,7 +19,7 @@ const stripePromise = loadStripe(
 const CheckoutPage = () => {
   const [clientSecret, setClientSecret] = useState<string | null>("");
   const [customerSessionSecret, setCustomerSessionSecret] = useState<string | null>("");
-  const { bag } = useBag();
+  const { bag } = useBagContext();
 
   useEffect(() => {
     if (!bag) return;

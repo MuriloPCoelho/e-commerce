@@ -3,13 +3,13 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerFooter } from "@/components/ui/drawer";
-import { useBag } from "@/providers/bag-provider";
+import { useBagContext } from "@/providers/bag-provider";
 import { centsToReais } from "@/lib/utils";
 import Image from "next/image";
 
 const StickyAdvanceButton = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const { bag } = useBag();
+  const { bag } = useBagContext();
 
   if (!bag) return null;
 
@@ -18,7 +18,7 @@ const StickyAdvanceButton = () => {
     return total + price * item.quantity;
   }, 0);
 
-  const shipping = 0; // Pode ser calculado
+  const shipping = 0; 
   const total = subtotal + shipping;
 
   return (
