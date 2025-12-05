@@ -1,12 +1,12 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState, useCallback } from "react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { getBag } from "@/actions/get-bag";
+import { useQueryClient } from "@tanstack/react-query";
 import { addProductToBag } from "@/actions/add-bag-product";
-import { mergeBag } from "@/actions/merge-bag";
-import { LocalBag, LocalBagItem, BagContextValue, BagWithTotal } from "@/types/bag";
+import { LocalBag, BagContextValue, BagWithTotal } from "@/types/bag";
 import { toast } from "sonner";
+import { useGetBag } from "@/hooks/bag/use-get-bag";
+import { useMergeBag } from "@/hooks/bag/use-merge-bag";
 
 const BagContext = createContext<BagContextValue | undefined>(undefined);
 
@@ -57,31 +57,23 @@ export function BagProvider({ children, isAuthenticated }: BagProviderProps) {
     setLocalBagState(getLocalBag());
   }, []);
 
-  const { data: dbBag, isPending } = useQuery({
-    queryKey: ["bag"],
-    queryFn: () => getBag(),
-    enabled: isAuthenticated,
-  });
-
-  const mergeMutation = useMutation({
-    mutationFn: async (items: LocalBagItem[]) => {
-      await mergeBag({ localBagItems: items });
-    },
-    onSuccess: () => {
-      clearLocalBag();
-      setLocalBagState({ items: [] });
-      queryClient.invalidateQueries({ queryKey: ["bag"] });
-      setHasMerged(true);
-    },
-    onError: (error) => {
-      console.error("Failed to merge bag:", error);
-      toast.error("Error syncing cart");
-    },
-  });
+  const { data: dbBag, isPending } = useGetBag();
+  const mergeMutation = useMergeBag();
 
   useEffect(() => {
     if (isAuthenticated && localBag.items.length > 0 && !hasMerged && !mergeMutation.isPending) {
-      mergeMutation.mutate(localBag.items);
+      mergeMutation.mutate(localBag.items, {
+        onSuccess: () => {
+          clearLocalBag();
+          setLocalBagState({ items: [] });
+          queryClient.invalidateQueries({ queryKey: ["bag"] });
+          setHasMerged(true);
+        },
+        onError: (error) => {
+          console.error("Failed to merge bag:", error);
+          toast.error("Error syncing cart");
+        },
+      });
     }
   }, [isAuthenticated, localBag.items.length, hasMerged]);
 
@@ -218,10 +210,10 @@ export function BagProvider({ children, isAuthenticated }: BagProviderProps) {
   return <BagContext.Provider value={values}>{children}</BagContext.Provider>;
 }
 
-export function useBag() {
+export function useBagContext() {
   const context = useContext(BagContext);
   if (!context) {
-    throw new Error("useBag must be used within BagProvider");
+    throw new Error("useBagContext must be used within BagProvider");
   }
   return context;
 }
