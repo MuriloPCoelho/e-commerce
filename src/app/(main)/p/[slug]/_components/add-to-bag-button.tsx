@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { ShoppingBag } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useBag } from "@/providers/bag-provider";
+import { useBagContext } from "@/providers/bag-provider";
 import { useState } from "react";
 
 interface AddToBagButtonProps {
@@ -24,7 +24,7 @@ const AddToBagButton = ({
   className,
 }: AddToBagButtonProps) => {
   const router = useRouter();
-  const { addItem } = useBag();
+  const { addItem } = useBagContext();
   const [isPending, setIsPending] = useState(false);
 
   const handleAddToBag = async () => {
