@@ -5,6 +5,7 @@ import { ShoppingBag } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useBagContext } from "@/providers/bag-provider";
 import { useState } from "react";
+import { toast } from "sonner";
 
 interface AddToBagButtonProps {
   productVariantSizeId: number | null | undefined;
@@ -28,7 +29,10 @@ const AddToBagButton = ({
   const [isPending, setIsPending] = useState(false);
 
   const handleAddToBag = async () => {
-    if (!productVariantSizeId) return;
+    if (!productVariantSizeId) {
+      toast.error("Please select a size before adding to bag");
+      return;
+    }
     
     setIsPending(true);
     try {
@@ -51,7 +55,7 @@ const AddToBagButton = ({
       variant={variant}
       size="lg"
       onClick={handleAddToBag}
-      disabled={!productVariantSizeId || isPending}
+      disabled={isPending}
       className={className}
       title={iconOnly ? "Add to shopping bag" : undefined}
     >

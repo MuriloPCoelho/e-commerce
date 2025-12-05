@@ -53,15 +53,11 @@ async function ProductContent({
     },
   });
 
-  let selectedProductVariantSize;
+  let selectedProductVariantSize = null;
   if (selectedSizeName) {
     selectedProductVariantSize = variantSizes.find(
       (s) => s.size.name === selectedSizeName
-    );
-  }
-
-  if (!selectedProductVariantSize) {
-    selectedProductVariantSize = variantSizes[0] ?? null;
+    ) ?? null;
   }
 
   const content = (
@@ -102,7 +98,7 @@ async function ProductContent({
           </div>
         </div>
       </div>
-      {selectedProductVariantSize.stock > 0 ? (
+      {selectedProductVariantSize && selectedProductVariantSize.stock > 0 ? (
         <div className="flex flex-col gap-4 p-4" id="product-action-buttons">
           <AddToBagButton
             productVariantSizeId={selectedProductVariantSize.id}
@@ -126,9 +122,33 @@ async function ProductContent({
             </Button>
           </div>
         </div>
-      ) : (
+      ) : selectedProductVariantSize && selectedProductVariantSize.stock <= 0 ? (
         <div className="p-4 text-red-600 font-semibold">
           Product currently unavailable
+        </div>
+      ) : (
+        <div className="flex flex-col gap-4 p-4" id="product-action-buttons">
+          <AddToBagButton
+            productVariantSizeId={null}
+            variant="default"
+            redirectToCheckout
+          >
+            Buy now
+          </AddToBagButton>
+          <AddToBagButton
+            productVariantSizeId={null}
+          />
+          <div className="grid grid-cols-[1fr_auto_1fr]">
+            <Button variant="link" size="xs" className="place-self-center">
+              <Heart className="size-5" />
+              Favorite
+            </Button>
+            <div className="w-[1px] h-6 bg-neutral-300"></div>
+            <Button variant="link" size="xs" className="place-self-center">
+              <Share2 className="size-5" />
+              Share
+            </Button>
+          </div>
         </div>
       )}
       <div className="p-4">
@@ -203,11 +223,11 @@ async function ProductContent({
     </div>
   );
 
-  if (selectedProductVariantSize.stock <= 0) return content;
+  if (selectedProductVariantSize && selectedProductVariantSize.stock <= 0) return content;
 
   return (
     <ProductActionsWrapper
-      productVariantSizeId={selectedProductVariantSize?.id}
+      productVariantSizeId={selectedProductVariantSize?.id ?? null}
     >
       {content}
     </ProductActionsWrapper>
