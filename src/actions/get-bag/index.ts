@@ -1,11 +1,29 @@
 "use server";
 
 import { db } from "@/db";
-import { bagsTable } from "@/db/schema";
+import {
+  bagItemsTable,
+  bagsTable,
+  productVariantSizesTable,
+  productVariantsTable,
+} from "@/db/schema";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 
-export const getBag = async () => {
+export type BagWithItemsAndTotal = typeof bagsTable.$inferSelect & {
+  items:
+    | ((
+        typeof bagItemsTable.$inferSelect & {
+          productVariantSize: typeof productVariantSizesTable.$inferSelect & {
+            variant: typeof productVariantsTable.$inferSelect;
+          };
+        }
+      )[])
+    | [];
+  totalPriceInCents: number;
+};
+
+export const getBag = async (): Promise<BagWithItemsAndTotal> => {
   const session = await auth.api.getSession({
     headers: await headers(),
   });
