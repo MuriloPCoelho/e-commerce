@@ -10,7 +10,7 @@ export const createCustomerSession = async () => {
   });
 
   if (!session?.user?.id) {
-    throw new Error("Usuário não autenticado");
+    throw new Error("User not authenticated");
   }
 
   const customerId = await getOrCreateStripeCustomer(session.user.id);

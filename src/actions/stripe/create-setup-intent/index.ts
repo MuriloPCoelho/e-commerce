@@ -10,10 +10,9 @@ export const createSetupIntent = async () => {
   });
 
   if (!session?.user?.id) {
-    throw new Error("Usuário não autenticado");
+    throw new Error("User not authenticated");
   }
 
-  // Obtém ou cria customer no Stripe
   const customerId = await getOrCreateStripeCustomer(session.user.id);
 
   const setupIntent = await stripe.setupIntents.create({

@@ -1,8 +1,9 @@
 "use server";
 
-import { stripe } from "@/lib/stripe";
+import { stripe } from "@/lib/stripe/client";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
+import Stripe from "stripe";
 
 interface UpdatePaymentMethodParams {
   paymentMethodId: string;
@@ -21,19 +22,43 @@ export const updatePaymentMethod = async ({
     headers: await headers(),
   });
 
-  if (!session) {
-    throw new Error("Usuário não autenticado");
+  if (!session?.user) {
+    throw new Error("User not authenticated");
   }
 
   if (!session?.user?.stripeCustomerId) {
-    throw new Error("Usuário não possui cliente Stripe associado");
+    throw new Error("User does not have an associated Stripe customer");
   }
 
-  const paymentMethod = await stripe.paymentMethods.retrieve(paymentMethodId);
-
-  if (paymentMethod.customer !== session.user.stripeCustomerId) {
-    throw new Error("Método de pagamento não pertence ao usuário");
+  if (expMonth !== undefined) {
+    if (!Number.isInteger(expMonth) || expMonth < 1 || expMonth > 12) {
+      throw new Error("Invalid expiration month");
+    }
   }
+
+  if (expYear !== undefined) {
+    const currentYear = new Date().getFullYear();
+    if (
+      !Number.isInteger(expYear) ||
+      expYear < currentYear ||
+      expYear > currentYear + 20
+    ) {
+      throw new Error("Invalid expiration year");
+    }
+  }
+
+  let paymentMethod: Stripe.PaymentMethod;
+  try {
+    paymentMethod = await stripe.paymentMethods.retrieve(paymentMethodId);
+  } catch (error) {
+    throw new Error("Payment method not found");
+  }
+
+  if (paymentMethod.customer !== session.user.stripeCustomerId)
+    throw new Error("Payment method does not belong to the user");
+
+  if (paymentMethod.type !== "card")
+    throw new Error("Only card payment methods can be updated");
 
   const updateData: any = {};
 
@@ -53,10 +78,11 @@ export const updatePaymentMethod = async ({
     }
   }
 
-  await stripe.paymentMethods.update(
-    paymentMethodId,
-    updateData
-  );
-
-  return { success: true };
+  try {
+    await stripe.paymentMethods.update(paymentMethodId, updateData);
+    return { success: true };
+  } catch (error) {
+    console.error("Error updating payment method:", error);
+    throw new Error("Failed to update payment method");
+  }
 };

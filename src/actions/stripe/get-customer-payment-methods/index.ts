@@ -1,29 +1,36 @@
 "use server";
 
-import { stripe } from "@/lib/stripe";
+import { stripe } from "@/lib/stripe/client";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
-import { getOrCreateStripeCustomer } from "@/lib/stripe";
 
 export const getCustomerPaymentMethods = async (customerId: string) => {
-  const paymentMethods = await stripe.paymentMethods.list({
-    customer: customerId,
-    type: "card",
-  });
+  if (!customerId) {
+    throw new Error("Customer ID is required");
+  }
 
-  return paymentMethods.data;
-};
-
-export const getMyPaymentMethods = async () => {
   const session = await auth.api.getSession({
     headers: await headers(),
   });
 
-  if (!session?.user?.id) {
-    throw new Error("Usuário não autenticado");
+  if (!session?.user) throw new Error("User not authenticated");
+
+  if (typeof customerId !== "string" || !customerId.startsWith("cus_")) {
+    throw new Error("Invalid customer ID");
   }
 
-  const customerId = await getOrCreateStripeCustomer(session.user.id);
+  if (customerId !== session.user.stripeCustomerId) {
+    throw new Error("Customer ID does not belong to the user");
+  }
 
-  return getCustomerPaymentMethods(customerId);
+  try {
+    const paymentMethods = await stripe.paymentMethods.list({
+      customer: customerId,
+      type: "card",
+    });
+
+    return paymentMethods.data;
+  } catch (error) {
+    throw new Error("Failed to retrieve payment methods");
+  }
 };

@@ -17,7 +17,7 @@ export const createPaymentIntent = async (
   });
 
   if (!session?.user?.id) {
-    throw new Error("Usuário não autenticado");
+    throw new Error("User not authenticated");
   }
 
   const customerId = await getOrCreateStripeCustomer(session.user.id);
@@ -29,6 +29,8 @@ export const createPaymentIntent = async (
   if (!bag) {
     throw new Error("Bag not found");
   }
+
+  if (bag.userId !== session.user.id) throw new Error("Operation not allowed");
 
   if (bag.paymentIntentId) {
     try {
