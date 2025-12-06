@@ -17,7 +17,14 @@ export const createUserAddress = async (data: CreateAddressSchema) => {
 
   if (!session?.user) throw new Error("Unauthorized");
 
-  if (data.isDefault) {
+  const existingAddresses = await db.query.userAddressesTable.findFirst({
+    where: (address) => eq(address.userId, session.user.id),
+  });
+
+  const isFirstAddress = !existingAddresses;
+  const shouldBeDefault = isFirstAddress || data.isDefault;
+
+  if (shouldBeDefault) {
     await db
       .update(userAddressesTable)
       .set({ isDefault: false })
@@ -33,6 +40,7 @@ export const createUserAddress = async (data: CreateAddressSchema) => {
     .insert(userAddressesTable)
     .values({
       ...data,
+      isDefault: shouldBeDefault,
       userId: session.user.id,
     })
     .returning();
