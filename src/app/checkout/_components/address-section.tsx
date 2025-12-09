@@ -25,12 +25,12 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { userAddressesTable } from "@/db/schema";
 import { useAllUserAddresses } from "@/hooks/address/use-all-user-addresses";
 import { authClient } from "@/lib/auth-client";
-import { useBagContext } from "@/providers/bag-provider";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { RadioGroup } from "@radix-ui/react-radio-group";
 import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import z from "zod";
+import AddAddressDrawer from "@/app/(main)/user/addresses/_components/add-address-drawer";
 
 const formSchema = z.object({
   addressId: z.string().min(1, "You must select an address"),
@@ -62,11 +62,11 @@ const AddressSection = () => {
   const [defaultAddress, setDefaultAddress] =
     useState<typeof userAddressesTable.$inferSelect>();
   const [isOpen, setIsOpen] = useState(false);
+  const [isAddDrawerOpen, setIsAddDrawerOpen] = useState(false);
   const { data: session } = authClient.useSession();
   const { data: addresses = [], isLoading } = useAllUserAddresses(
     session?.user.id!
   );
-  const { bag } = useBagContext();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -87,7 +87,6 @@ const AddressSection = () => {
         setDefaultAddress(defaultAddress);
       }
     }
-    console.log({ bag });
   }, [addresses]);
 
   useEffect(() => {
@@ -101,19 +100,29 @@ const AddressSection = () => {
   }
 
   return (
-    <div className="bg-white p-4 rounded-xs">
+    <div className="bg-white p-4 rounded">
       <div className="flex justify-between mb-3">
         <h4 className="font-semibold text-lg">Address</h4>
-        <Drawer open={isOpen} onOpenChange={setIsOpen}>
-          <DrawerTrigger asChild>
-            <Button variant="link" size="xs" className="underline">
-              Change
-            </Button>
-          </DrawerTrigger>
-          <DrawerContent>
-            <DrawerHeader>
-              <DrawerTitle>Select Address</DrawerTitle>
-            </DrawerHeader>
+        {addresses.length === 0 ? (
+          <Button 
+            variant="link" 
+            size="xs" 
+            className="underline"
+            onClick={() => setIsAddDrawerOpen(true)}
+          >
+            Add address
+          </Button>
+        ) : (
+          <Drawer open={isOpen} onOpenChange={setIsOpen}>
+            <DrawerTrigger asChild>
+              <Button variant="link" size="xs" className="underline">
+                Change
+              </Button>
+            </DrawerTrigger>
+            <DrawerContent>
+              <DrawerHeader>
+                <DrawerTitle>Select Address</DrawerTitle>
+              </DrawerHeader>
 
             <form
               id="form-select-address"
@@ -198,24 +207,37 @@ const AddressSection = () => {
             </DrawerFooter>
           </DrawerContent>
         </Drawer>
+        )}
       </div>
-      <div className="text-xs">
-        <div className="font-bold">{defaultAddress?.label}</div>
-        <div className="flex gap-4">
-          <span>{defaultAddress?.recipientName}</span>
-          <span>{defaultAddress?.phone}</span>
+      {addresses.length === 0 ? (
+        <div className="text-sm text-neutral-500 py-4">
+          Please add a delivery address to continue.
         </div>
-        <div className="text-neutral-500">
-          <div>
-            {defaultAddress?.street}, {defaultAddress?.number}{" "}
-            {defaultAddress?.complement} - {defaultAddress?.neighborhood}
+      ) : (
+        <div className="text-xs">
+          <div className="font-bold">{defaultAddress?.label}</div>
+          <div className="flex gap-4">
+            <span>{defaultAddress?.recipientName}</span>
+            <span>{defaultAddress?.phone}</span>
           </div>
-          <div>
-            {defaultAddress?.city}/{defaultAddress?.state} -{" "}
-            {defaultAddress?.zipCode}
+          <div className="text-neutral-500">
+            <div>
+              {defaultAddress?.street}, {defaultAddress?.number}{" "}
+              {defaultAddress?.complement} - {defaultAddress?.neighborhood}
+            </div>
+            <div>
+              {defaultAddress?.city}/{defaultAddress?.state} -{" "}
+              {defaultAddress?.zipCode}
+            </div>
           </div>
         </div>
-      </div>
+      )}
+      
+      <AddAddressDrawer 
+        isOpen={isAddDrawerOpen} 
+        onOpenChange={setIsAddDrawerOpen}
+        isFirstAddress={addresses.length === 0}
+      />
     </div>
   );
 };

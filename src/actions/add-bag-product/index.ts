@@ -31,10 +31,24 @@ export const addProductToBag = async (data: AddProductToBagSchema) => {
 
   let bagId = bag?.id;
   if (!bag) {
+    const userAddresses = await db.query.userAddressesTable.findMany({
+      where: (address, { eq }) => eq(address.userId, session.user.id),
+    });
+
+    let addressId: string | undefined;
+    
+    if (userAddresses.length === 1) {
+      addressId = userAddresses[0].id;
+    } else if (userAddresses.length > 1) {
+      const defaultAddress = userAddresses.find((addr) => addr.isDefault);
+      addressId = defaultAddress?.id;
+    }
+
     const [newBag] = await db
       .insert(bagsTable)
       .values({
         userId: session.user.id,
+        userAddressId: addressId,
       })
       .returning();
 

@@ -78,7 +78,11 @@ export default function AddressesPage() {
         </div>
       )}
 
-      <AddAddressDrawer isOpen={isDrawerOpen} onOpenChange={setIsDrawerOpen} />
+      <AddAddressDrawer 
+        isOpen={isDrawerOpen} 
+        onOpenChange={setIsDrawerOpen}
+        isFirstAddress={addresses.length === 0}
+      />
     </div>
   );
 }

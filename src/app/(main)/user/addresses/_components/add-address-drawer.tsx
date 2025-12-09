@@ -28,9 +28,10 @@ import { useCreateUserAddress } from "@/hooks/address/use-create-user-address";
 interface AddAddressDrawerProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
+  isFirstAddress?: boolean;
 }
 
-export default function AddAddressDrawer({ isOpen, onOpenChange }: AddAddressDrawerProps) {
+export default function AddAddressDrawer({ isOpen, onOpenChange, isFirstAddress = false }: AddAddressDrawerProps) {
   const mutation = useCreateUserAddress();
   const [error, setError] = useState<string | null>(null);
 
@@ -48,7 +49,7 @@ export default function AddAddressDrawer({ isOpen, onOpenChange }: AddAddressDra
       state: "",
       zipCode: "",
       country: "BR",
-      isDefault: false,
+      isDefault: isFirstAddress,
     },
   });
 
@@ -355,17 +356,26 @@ export default function AddAddressDrawer({ isOpen, onOpenChange }: AddAddressDra
                   render={({ field }) => (
                     <Label 
                       htmlFor="isDefault"
-                      className="hover:bg-accent/50 flex items-start gap-3 rounded-lg border p-3 has-[[aria-checked=true]]:border-blue-600 has-[[aria-checked=true]]:bg-blue-50 cursor-pointer"
+                      className={`flex items-start gap-3 rounded-lg border p-3 has-[[aria-checked=true]]:border-blue-600 has-[[aria-checked=true]]:bg-blue-50 ${
+                        isFirstAddress ? '' : 'hover:bg-accent/50 cursor-pointer'
+                      }`}
                     >
                       <Checkbox
                         id="isDefault"
                         checked={field.value}
-                        onCheckedChange={(checked) => field.onChange(Boolean(checked))}
+                        onCheckedChange={isFirstAddress ? undefined : (checked) => field.onChange(Boolean(checked))}
+                        disabled={isFirstAddress}
                         className="data-[state=checked]:border-blue-600 data-[state=checked]:bg-blue-600 data-[state=checked]:text-white"
                       />
                       <div className="grid gap-1.5 font-normal">
-                        <p className="text-sm leading-none font-medium">Set as default address</p>
-                        <p className="text-muted-foreground text-sm">This address will be used by default for your orders.</p>
+                        <p className="text-sm leading-none font-medium">
+                          {isFirstAddress ? 'Default address' : 'Set as default address'}
+                        </p>
+                        <p className="text-muted-foreground text-sm">
+                          {isFirstAddress 
+                            ? 'Your first address will be set as default automatically.' 
+                            : 'This address will be used by default for your orders.'}
+                        </p>
                       </div>
                     </Label>
                   )}

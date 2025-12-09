@@ -5,6 +5,10 @@ import { createPaymentIntent } from "../create-payment-intent";
 import { createCustomerSession } from "../create-customer-session";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
+import { getAllUserAddresses } from "@/actions/addresses/get-all-user-addresses";
+import { db } from "@/db";
+import { bagsTable } from "@/db/schema";
+import { eq } from "drizzle-orm";
 
 export const initializeCheckout = async () => {
   const session = await auth.api.getSession({
@@ -26,6 +30,22 @@ export const initializeCheckout = async () => {
 
   if (bag.totalPriceInCents <= 0) {
     throw new Error("Bag is empty");
+  }
+
+  if (!bag.userAddressId) {
+    try {
+      const userAddresses = await getAllUserAddresses(session.user.id);
+      const defaultAddress = userAddresses.find((addr) => addr.isDefault);
+
+      if (defaultAddress) {
+        await db.update(bagsTable).set({ userAddressId: defaultAddress.id }).where(
+          eq(bagsTable.id, bag.id)
+        );
+      }
+    } catch (error) {
+      console.error("Error setting default address for bag:", error);
+      throw error;
+    }
   }
 
   let paymentIntent = await createPaymentIntent(
