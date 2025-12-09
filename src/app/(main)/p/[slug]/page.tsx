@@ -80,7 +80,7 @@ async function ProductContent({
           .toFixed(2)
           .replace(".", ",")}`}</p>
         <span>
-          ou 12x de R${" "}
+          or 12x of R${" "}
           {(variant.priceInCents / 100 / 12).toFixed(2).replace(".", ",")}
         </span>
       </div>

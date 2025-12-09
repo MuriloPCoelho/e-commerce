@@ -1,11 +1,18 @@
 "use client";
 
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerFooter } from "@/components/ui/drawer";
+import { Button, buttonVariants } from "@/components/ui/button";
+import {
+  Drawer,
+  DrawerContent,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerFooter,
+} from "@/components/ui/drawer";
 import { useBagContext } from "@/providers/bag-provider";
 import { centsToReais } from "@/lib/utils";
 import Image from "next/image";
+import Link from "next/link";
 
 const StickyAdvanceButton = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -18,16 +25,28 @@ const StickyAdvanceButton = () => {
     return total + price * item.quantity;
   }, 0);
 
-  const shipping = 0; 
+  const shipping = bag.shippingPriceInCents ?? 0;
   const total = subtotal + shipping;
 
   return (
     <>
       <div className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-neutral-200 shadow-lg">
-        <div className="p-4">
-          <Button className="w-full" size="lg" onClick={() => setIsOpen(true)}>
-            Proceed
-          </Button>
+        <div className="p-4 flex flex-col gap-2">
+          <div className="flex justify-between items-center mb-2">
+            <span className="text-md text-neutral-600">Total:</span>
+            <span className="text-md font-bold">{centsToReais(total)}</span>
+          </div>
+          <Button size="sm" onClick={() => setIsOpen(true)}>Proceed</Button>
+          <Link
+            href="/"
+            className={buttonVariants({
+              className: "w-full",
+              variant: "outline",
+              size: "sm",
+            })}
+          >
+            Continue Shopping
+          </Link>
         </div>
       </div>
 
@@ -38,7 +57,6 @@ const StickyAdvanceButton = () => {
           </DrawerHeader>
 
           <div className="px-4 pb-6 max-h-[60vh] overflow-y-auto">
-            {/* Order Items */}
             <div className="mb-6">
               <h3 className="font-semibold mb-3">Items ({bag.items.length})</h3>
               <div className="space-y-3">
@@ -46,9 +64,9 @@ const StickyAdvanceButton = () => {
                   const variant = item.productVariantSize?.variant;
                   const product = variant?.product;
                   const size = item.productVariantSize?.size;
-                  
+
                   if (!variant || !product || !size) {
-                    console.log('Missing data for item:', item);
+                    console.log("Missing data for item:", item);
                     return (
                       <div key={item.id} className="text-xs text-red-500">
                         Item data incomplete
@@ -58,7 +76,7 @@ const StickyAdvanceButton = () => {
 
                   return (
                     <div key={item.id} className="flex gap-3">
-                      <div className="relative w-20 h-20 rounded-md overflow-hidden flex-shrink-0">
+                      <div className="relative w-20 h-20 rounded overflow-hidden flex-shrink-0">
                         <Image
                           src={variant.imageUrl}
                           alt={product.name}
@@ -67,11 +85,15 @@ const StickyAdvanceButton = () => {
                         />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <h4 className="font-medium text-sm truncate">{product.name}</h4>
+                        <h4 className="font-medium text-sm truncate">
+                          {product.name}
+                        </h4>
                         <p className="text-xs text-neutral-600">
-                          {variant.name} • Size {size.name}
+                          {variant.name} • {size.name}
                         </p>
-                        <p className="text-xs text-neutral-600">Qty: {item.quantity}</p>
+                        <p className="text-xs text-neutral-600">
+                          Qty: {item.quantity}
+                        </p>
                         <p className="font-semibold text-sm mt-1">
                           {centsToReais(variant.priceInCents * item.quantity)}
                         </p>
@@ -82,33 +104,36 @@ const StickyAdvanceButton = () => {
               </div>
             </div>
 
-            {/* Payment Method */}
-            <div className="mb-6 pb-6 border-b">
-              <h3 className="font-semibold mb-2">Payment Method</h3>
-              <p className="text-sm text-neutral-600">Card ending in ••••</p>
-            </div>
-
-            {/* Delivery Address */}
-            <div className="mb-6 pb-6 border-b">
-              <h3 className="font-semibold mb-2">Delivery Address</h3>
-              <div className="text-sm text-neutral-600">
-                <p>Not selected</p>
+            
+            <div className="flex flex-col gap-3">
+              <div>
+                <h3 className="font-semibold mb-2">Payment Method</h3>
+                <p className="text-sm text-neutral-600">Card ending in ••••</p>
               </div>
-            </div>
-
-            {/* Order Summary */}
-            <div className="space-y-2">
-              <div className="flex justify-between text-sm">
-                <span className="text-neutral-600">Subtotal</span>
-                <span className="font-medium">{centsToReais(subtotal)}</span>
+              <hr />
+              <div >
+                <h3 className="font-semibold mb-2">Delivery Address</h3>
+                <div className="text-sm text-neutral-600">
+                  <p>Not selected</p>
+                </div>
               </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-neutral-600">Shipping</span>
-                <span className="font-medium">{shipping === 0 ? "Free" : centsToReais(shipping)}</span>
-              </div>
-              <div className="flex justify-between text-lg font-bold pt-2 border-t">
-                <span>Total</span>
-                <span>{centsToReais(total)}</span>
+              <hr />
+              <div className="flex flex-col gap-2">
+                <div className="flex justify-between text-sm">
+                  <span className="text-neutral-600">Subtotal</span>
+                  <span className="font-medium">{centsToReais(subtotal)}</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-neutral-600">Shipping</span>
+                  <span className="font-medium">
+                    {shipping === 0 ? "Free" : centsToReais(shipping)}
+                  </span>
+                </div>
+                <hr />
+                <div className="flex justify-between text-lg font-bold pt-2">
+                  <span>Total</span>
+                  <span>{centsToReais(total)}</span>
+                </div>
               </div>
             </div>
           </div>
@@ -117,10 +142,12 @@ const StickyAdvanceButton = () => {
             <Button variant="outline" onClick={() => setIsOpen(false)}>
               Cancel
             </Button>
-            <Button onClick={() => {
-              // Lógica de confirmação do pedido
-              console.log("Order confirmed");
-            }}>
+            <Button
+              onClick={() => {
+                // Lógica de confirmação do pedido
+                console.log("Order confirmed");
+              }}
+            >
               Confirm
             </Button>
           </DrawerFooter>

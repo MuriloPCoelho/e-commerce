@@ -27,7 +27,7 @@ export default function CheckoutLayout({
           <span className="text-lg font-semibold">Voltar</span>
         </Link>
       </header>
-      <main className="bg-neutral-100 h-full">{children}</main>
+      <main className="bg-neutral-100 min-h-dvh flex-grow">{children}</main>
     </div>
   );
 }

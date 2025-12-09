@@ -14,10 +14,10 @@ const stripePromise = loadStripe(
 
 const CheckoutPage = () => {
   const { data } = useInitializeCheckout();
-
+  
   return (
     <>
-      <div className="grid p-4 gap-4 pb-24">
+      <div className="grid p-2 gap-2 pb-40">
         <OrderSummary />
         {data?.clientSecret && data?.customerSessionSecret && (
           <Elements

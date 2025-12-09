@@ -5,6 +5,7 @@ import {
   Sheet,
   SheetClose,
   SheetContent,
+  SheetFooter,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
@@ -71,9 +72,9 @@ const Bag = () => {
       return total + priceInCents * item.quantity;
     }, 0) ?? 0;
 
-  const isLoading = isAuthenticated 
-    ? isPending 
-    : (localBagPending && localBag.items.length > 0);
+  const isLoading = isAuthenticated
+    ? isPending
+    : localBagPending && localBag.items.length > 0;
 
   const itemsToDisplay = isAuthenticated ? bag?.items : localBagDetails;
 
@@ -127,7 +128,7 @@ const Bag = () => {
             </SheetClose>
           </SheetTitle>
         </SheetHeader>
-        <div className="h-full px-3 pt-4 relative flex flex-col gap-4">
+        <div className="h-full relative flex flex-col gap-4">
           <div className="flex flex-col gap-3 overflow-y-auto grow mb-16">
             {isLoading && (
               <>
@@ -148,29 +149,44 @@ const Bag = () => {
                 <BagItem key={item.id} item={item} />
               ))}
           </div>
-          <div className="bg-neutral-100 rounded px-2 py-3">
-            <FreeShippingProgress subtotal={subtotal} />
-          </div>
-          <div className="flex flex-col gap-4 bg-white sticky bottom-0 w-full left-0 pb-4">
-            <hr />
-            <div className="flex justify-between">
-              <span className="text-neutral-600">Subtotal:</span>
-              <span className="font-semibold">
-                {centsToReais(subtotal)}
-              </span>
+          <SheetFooter className="p-3">
+            <div className="bg-neutral-100 rounded px-2 py-3">
+              <FreeShippingProgress subtotal={subtotal} />
             </div>
-            <div className="flex flex-col justify-center gap-2">
-              <Link
-                href="/checkout"
-                className={buttonVariants({ className: "w-full", size: "sm" })}
-              >
-                Checkout
-              </Link>
-              <Button variant="link" className="underline" size="sm">
-                Continue Shopping
-              </Button>
+            <div className="flex flex-col gap-4 bg-white sticky bottom-0 w-full left-0 pb-4">
+              <hr />
+              {bag && bag.items.length > 0 ? (
+                <>
+                  <div className="flex justify-between">
+                    <span className="text-neutral-600">Subtotal:</span>
+                    <span className="font-semibold">
+                      {centsToReais(subtotal)}
+                    </span>
+                  </div>
+                  <div className="flex flex-col justify-center gap-2">
+                    <Link
+                      href="/checkout"
+                      className={buttonVariants({
+                        className: "w-full",
+                        size: "sm",
+                      })}
+                    >
+                      Checkout
+                    </Link>
+                    <SheetClose asChild>
+                      <Button variant="link" className="underline" size="sm">
+                        Continue Shopping
+                      </Button>
+                    </SheetClose>
+                  </div>
+                </>
+              ) : (
+                <SheetClose asChild>
+                  <Button className="w-full">Continue Shopping</Button>
+                </SheetClose>
+              )}
             </div>
-          </div>
+          </SheetFooter>
         </div>
       </SheetContent>
     </Sheet>
