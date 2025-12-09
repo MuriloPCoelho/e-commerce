@@ -3,6 +3,7 @@
 import { createContext, useContext, useEffect, useState, useCallback } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { addProductToBag } from "@/actions/add-bag-product";
+import { updateBagProductQuantity } from "@/actions/update-bag-product-quantity";
 import { LocalBag, BagContextValue, BagWithTotal } from "@/types/bag";
 import { toast } from "sonner";
 import { useGetBag } from "@/hooks/bag/use-get-bag";
@@ -167,12 +168,32 @@ export function BagProvider({ children, isAuthenticated }: BagProviderProps) {
   const updateQuantity = useCallback(
     async (productVariantSizeId: number, quantity: number) => {
       if (isAuthenticated) {
-        toast.info("Feature in development");
+        if (!dbBag) return;
+        
+        const item = dbBag.items.find(
+          (item) => item.productVariantSizeId === productVariantSizeId
+        );
+        
+        if (!item) {
+          toast.error("Item not found in bag");
+          return;
+        }
+
+        try {
+          await updateBagProductQuantity({
+            bagItemId: item.id as string,
+            quantity,
+          });
+          queryClient.invalidateQueries({ queryKey: ["bag"] });
+        } catch (error) {
+          console.error("Failed to update quantity:", error);
+          toast.error((error as Error).message || "Error updating quantity");
+        }
       } else {
         updateLocalQuantity(productVariantSizeId, quantity);
       }
     },
-    [isAuthenticated, updateLocalQuantity]
+    [isAuthenticated, updateLocalQuantity, dbBag, queryClient]
   );
 
   const clearBag = useCallback(async () => {

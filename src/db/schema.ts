@@ -284,6 +284,8 @@ export const bagsTable = pgTable("tb_bags", {
     .unique(),
   userAddressId: uuid("user_address_id")
     .references(() => userAddressesTable.id),
+  shippingMethod: text("shipping_method"),
+  shippingPriceInCents: integer("shipping_price_in_cents").default(0),
   status: boolean("status").notNull().default(false),
   paymentIntentId: text("payment_intent_id"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
