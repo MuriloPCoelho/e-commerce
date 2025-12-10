@@ -16,9 +16,12 @@
 
 - **🚀 [Guia de Instalação](./docs/getting-started/installation.md)** - Configure o ambiente completo
 - **⚡ [Quick Start (5 minutos)](./docs/getting-started/quick-start.md)** - Comece rapidamente
+- **🔐 [Autenticação](./docs/features/authentication.md)** - Login com email/senha e Google OAuth
 - **📱 [Sistema de Menus](./docs/features/menus-system.md)** - Navegação hierárquica avançada
 - **🎨 [Collections](./docs/features/collections.md)** - Coleções de produtos (Sport, Lifestyle, Promoções)
 - **🛒 [Sacola de Compras](./docs/features/shopping-bag.md)** - Sistema de carrinho de compras
+- **🛍️ [Checkout](./docs/features/checkout.md)** - Processo completo de finalização
+- **📍 [Endereços](./docs/features/addresses.md)** - Gerenciamento de endereços de entrega
 - **💳 [Métodos de Pagamento](./docs/features/payment-methods.md)** - Integração com Stripe
 - **👤 [Área do Usuário](./docs/features/user-account.md)** - Gerenciamento de conta
 - **📁 [Estrutura de Pastas](./docs/architecture/folder-structure.md)** - Organização do projeto
@@ -31,6 +34,9 @@ Este é um e-commerce completo e moderno desenvolvido com as melhores práticas 
 
 - ✅ Sistema de autenticação completo (email/senha + OAuth)
 - ✅ Integração com Stripe para pagamentos
+- ✅ Sistema de checkout completo
+- ✅ Cálculo de frete por região (CEP)
+- ✅ Gerenciamento de endereços de entrega
 - ✅ Área do usuário com gerenciamento de cartões
 - ✅ Catálogo de produtos com variantes (cores e tamanhos)
 - ✅ Sistema de navegação hierárquica por menus

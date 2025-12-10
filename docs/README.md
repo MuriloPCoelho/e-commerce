@@ -13,10 +13,11 @@ Bem-vindo à documentação completa do projeto E-commerce desenvolvido com Next
 - [Sistema de Menus Hierárquicos](./features/menus-system.md)
 - [Sistema de Coleções](./features/collections.md)
 - [Sacola de Compras](./features/shopping-bag.md)
+- [Sistema de Checkout](./features/checkout.md)
 - [Métodos de Pagamento (Stripe)](./features/payment-methods.md)
-- [Área do Usuário](./features/user-account.md)
+- [Endereços de Entrega](./features/addresses.md)
 - [Autenticação](./features/authentication.md)
-- [Gerenciamento de Produtos](./features/products.md)
+- [Área do Usuário](./features/user-account.md)
 
 ### 🏗️ Arquitetura
 - [Estrutura de Pastas](./architecture/folder-structure.md)
@@ -40,11 +41,14 @@ Bem-vindo à documentação completa do projeto E-commerce desenvolvido com Next
 | Recurso | Descrição |
 |---------|-----------|
 | [Quick Start](./getting-started/quick-start.md) | Comece em 5 minutos |
+| [Autenticação](./features/authentication.md) | Login com email/senha e Google OAuth |
 | [Menus](./features/menus-system.md) | Sistema de navegação hierárquica |
 | [Collections](./features/collections.md) | Coleções Sport, Lifestyle e Promoções |
 | [Sacola](./features/shopping-bag.md) | Sistema de carrinho de compras |
+| [Checkout](./features/checkout.md) | Processo completo de finalização de compra |
+| [Endereços](./features/addresses.md) | Gerenciamento de endereços de entrega |
+| [Pagamentos](./features/payment-methods.md) | Integração Stripe e cartões salvos |
 | [Repository Pattern](./architecture/repository-pattern.md) | Data Access Layer |
-| [Database](./architecture/database-schema.md) | Estrutura do banco |
 
 ---
 
@@ -76,18 +80,16 @@ docs/
 │   ├── menus-system.md
 │   ├── collections.md
 │   ├── shopping-bag.md
+│   ├── checkout.md
+│   ├── payment-methods.md
+│   ├── addresses.md
 │   ├── authentication.md
-│   └── products.md
+│   └── user-account.md
 ├── architecture/                  # Arquitetura técnica
 │   ├── folder-structure.md
-│   ├── database-schema.md
 │   └── repository-pattern.md
 ├── guides/                        # Guias práticos
-│   ├── creating-menus.md
-│   ├── adding-products.md
-│   ├── collections-setup.md
-│   ├── seeding-data.md
-│   └── customization.md
+│   └── seeding-data.md
 └── testing/                       # Testes
     └── strategy.md
 ```
