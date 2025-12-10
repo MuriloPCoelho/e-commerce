@@ -55,7 +55,7 @@ src/app/
 │   ├── p/
 │   │   └── [slug]/
 │   │       ├── page.tsx      # Página de produto (/p/:slug)
-│   │       └── components/   # Componentes específicos
+│   │       └── _components/  # Componentes específicos
 │   │           ├── add-to-bag-button.tsx
 │   │           ├── size-selector.tsx
 │   │           └── variant-selector.tsx
@@ -63,10 +63,15 @@ src/app/
 │       ├── layout.tsx        # Layout com tabs de navegação
 │       ├── orders/page.tsx   # Meus Pedidos
 │       ├── favorites/page.tsx # Favoritos
-│       ├── addresses/page.tsx # Endereços
+│       ├── addresses/        # Endereços de entrega
+│       │   ├── page.tsx
+│       │   └── _components/
+│       │       ├── address-card.tsx
+│       │       ├── add-address-drawer.tsx
+│       │       └── edit-address-drawer.tsx
 │       ├── cards/           
 │       │   ├── page.tsx      # Meus Cartões (Stripe)
-│       │   └── components/
+│       │   └── _components/
 │       │       ├── payment-card.tsx
 │       │       └── add-payment-method-drawer.tsx
 │       ├── rma/page.tsx      # Devoluções e Trocas
@@ -77,8 +82,12 @@ src/app/
 │           └── route.ts      # Endpoints de autenticação (Better Auth)
 ├── checkout/
 │   ├── page.tsx              # Página de checkout
-│   ├── layout.tsx
-│   └── components/
+│   └── _components/
+│       ├── order-summary.tsx
+│       ├── address-section.tsx
+│       ├── delivery-section.tsx
+│       ├── payment-section.tsx
+│       └── sticky-advance-button.tsx
 ├── sign-in/
 │   └── page.tsx              # Página de login
 └── sign-up/
@@ -196,6 +205,30 @@ src/actions/
 │   └── index.ts              # Mesclar sacolas (guest → user)
 ├── remove-bag-product/
 │   └── index.ts              # Action para remover item da sacola
+├── update-bag-product-quantity/
+│   ├── index.ts              # Atualizar quantidade de item
+│   └── schema.ts             # Validação Zod
+├── update-bag-shipping/
+│   ├── index.ts              # Atualizar frete da sacola
+│   └── schema.ts             # Validação Zod
+├── calculate-shipping/
+│   ├── index.ts              # Calcular opções de frete
+│   └── schema.ts             # Validação Zod
+├── addresses/                 # Gerenciamento de endereços
+│   ├── create-user-address/
+│   │   ├── index.ts
+│   │   └── schema.ts
+│   ├── get-all-user-addresses/
+│   │   └── index.ts
+│   ├── get-user-address/
+│   │   └── index.ts
+│   ├── update-user-address/
+│   │   ├── index.ts
+│   │   └── schema.ts
+│   ├── remove-user-address/
+│   │   └── index.ts
+│   └── set-default-user-address/
+│       └── index.ts
 └── stripe/                    # Integração com Stripe
     ├── create-stripe-customer/
     │   └── index.ts          # Criar Customer no Stripe
@@ -209,14 +242,18 @@ src/actions/
     │   └── index.ts          # Adicionar cartão
     ├── set-default-payment-method/
     │   └── index.ts          # Definir cartão padrão
+    ├── update-payment-method/
+    │   └── index.ts          # Atualizar cartão
     ├── remove-payment-method/
     │   └── index.ts          # Remover cartão
     ├── create-customer-session/
     │   └── index.ts          # Criar Customer Session
     ├── create-payment-intent/
     │   └── index.ts          # Criar Payment Intent
-    └── create-setup-intent/
-        └── index.ts          # Criar Setup Intent
+    ├── create-setup-intent/
+    │   └── index.ts          # Criar Setup Intent
+    └── initialize-checkout/
+        └── index.ts          # Inicializar checkout completo
 ```
 
 **Padrão:**
@@ -249,10 +286,12 @@ src/repositories/
 src/lib/
 ├── auth.ts                    # Configuração Better Auth (servidor)
 ├── auth-client.ts             # Cliente de autenticação (browser)
-├── stripe.ts                  # Configuração Stripe e helpers
 ├── filters.ts                 # Helpers para filtros de produtos
 ├── product-specifications.ts  # Helpers para especificações
-└── utils.ts                   # Funções utilitárias gerais (cn, etc)
+├── utils.ts                   # Funções utilitárias gerais (cn, etc)
+└── stripe/
+    ├── client.ts              # Instância do Stripe
+    └── customers.ts           # Helpers para Customer
 ```
 
 **Principais funções:**
@@ -262,6 +301,7 @@ src/lib/
 - `getOrCreateStripeCustomer()` - Helper para Customer
 - `parseFilters()` - Parse de filtros de URL
 - `cn()` - Merge de classes CSS (clsx + tailwind-merge)
+- `centsToReais()` - Formatar valores em centavos para reais
 
 #### `/src/providers` - Context Providers
 
@@ -365,18 +405,16 @@ docs/
 │   ├── menus-system.md
 │   ├── collections.md
 │   ├── shopping-bag.md
+│   ├── checkout.md
+│   ├── payment-methods.md
+│   ├── addresses.md
 │   ├── authentication.md
-│   └── products.md
+│   └── user-account.md
 ├── architecture/                  # Arquitetura
 │   ├── folder-structure.md        # Este arquivo
-│   ├── database-schema.md
 │   └── repository-pattern.md
 ├── guides/                        # Guias práticos
-│   ├── creating-menus.md
-│   ├── adding-products.md
-│   ├── collections-setup.md
-│   ├── seeding-data.md
-│   └── customization.md
+│   └── seeding-data.md
 └── testing/
     └── strategy.md
 ```
@@ -387,7 +425,29 @@ docs/
 
 ```
 src/providers/
-└── react-query.tsx            # Provider do TanStack Query
+├── react-query.tsx            # Provider do TanStack Query
+└── bag-provider.tsx           # Provider da sacola de compras
+```
+
+#### `/src/hooks` - Custom Hooks (React Query)
+
+```
+src/hooks/
+├── use-media-query.ts         # Hook para responsive design
+├── address/
+│   ├── use-all-user-addresses.ts
+│   ├── use-create-address.ts
+│   ├── use-update-address.ts
+│   ├── use-remove-address.ts
+│   └── use-set-default-address.ts
+├── bag/
+│   ├── use-add-bag-product.ts
+│   ├── use-remove-bag-product.ts
+│   └── use-update-bag-product-quantity.ts
+├── shipping/
+│   └── use-shipping.tsx       # Context e hook de frete
+└── stripe/
+    └── use-initialize-checkout.ts
 ```
 
 ---
