@@ -150,18 +150,17 @@ authClient.signOut({
 ### 3. Addresses (Endereços)
 
 **Rota:** `/user/addresses`  
-**Status:** 🚧 TODO
+**Status:** ✅ Implementado
 
-**Objetivo:** Gerenciar endereços de entrega e cobrança.
+**Documentação:** [Sistema de Endereços](./addresses.md)
 
-**Schema existente:** `tb_user_addresses`
-
-**Features planejadas:**
-- Listar endereços
-- Adicionar novo
-- Editar existente
+**Features:**
+- Listar todos os endereços
+- Adicionar novo endereço
+- Editar endereço existente
 - Definir endereço padrão
-- Remover
+- Remover endereço
+- Validação completa com máscaras (CEP, Telefone)
 
 ---
 
